@@ -9,7 +9,7 @@ import {DialogProvider} from "@/providers/DialogProvider/DialogProvider";
 import {PageTitleProvider} from "@/providers/PageTitleProvider/PageTitleProvider";
 import React, {useEffect} from "react";
 import {MediaQueryProvider} from "@/providers/MediaQueryProvider/MediaQueryProvider";
-import { AuthProvider, useAuth } from "@/providers/AuthProvider/AuthProvider"; // Added useAuth
+import { useAuth } from "@/providers/AuthProvider/AuthProvider";
 import {ReactFlowProvider} from "reactflow";
 import ErrorBoundary from "@/components/ErrorBoundary/ErrorBoundary";
 import { ConnectionStatusProvider } from '@/providers/ConnectionStatusProvider/ConnectionStatusProvider';
@@ -44,9 +44,5 @@ function AppContent() {
 }
 
 export default function App() {
-    return (
-        <AuthProvider>
-            <AppContent />
-        </AuthProvider>
-    );
+    return <AppContent />;
 }
