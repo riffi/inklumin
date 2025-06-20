@@ -21,3 +21,8 @@ Use concise commit messages and describe your changes clearly.
 ## Pull Requests
 
 Summaries should mention any manual steps or special considerations.
+
+## Endpoint changing in inklumin-back
+
+when adding, changing, deleting endpoints contract in inklumin-back update [openapi.yaml](openapi.yaml)
+
