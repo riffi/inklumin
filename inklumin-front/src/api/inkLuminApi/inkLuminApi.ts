@@ -12,7 +12,8 @@ import {
   SaveConfigDataRequest,
 } from "./generatedTypes";
 
-const API_BASE = "http://localhost:8080/api";
+
+const API_BASE = 'https://api.inclumin.ru/api';
 
 export const inkLuminAPI = {
   async register(userData: RegisterRequest): Promise<ApiResponse<AuthResponse>> {
