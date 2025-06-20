@@ -23,7 +23,8 @@ public class SecurityConfig {
       "http://localhost:5173",
       "http://localhost:3000",
       "http://localhost:63342",
-      "https://soulwriter3.onrender.com"
+      "https://soulwriter3.onrender.com",
+      "https://inclumin.ru"
   };
 
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
