@@ -1,15 +1,11 @@
+import { bookDb, connectToBookDatabase, deleteBookDatabase } from "@/entities/bookDb";
 import { IBook } from "@/entities/BookEntities";
 import { configDatabase } from "@/entities/configuratorDb";
-import { generateUUID } from "@/utils/UUIDUtils";
-import { bookDb, connectToBookDatabase, deleteBookDatabase } from "@/entities/bookDb";
-import {
-  IBlock,
-  IBlockStructureKind,
-  IBookConfiguration
-} from "@/entities/ConstructorEntities";
+import { IBlock, IBlockStructureKind, IBookConfiguration } from "@/entities/ConstructorEntities";
 import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";
 import { BlockParameterInstanceRepository } from "@/repository/BlockInstance/BlockParameterInstanceRepository";
 import { BookRepository } from "@/repository/Book/BookRepository";
+import { generateUUID } from "@/utils/UUIDUtils";
 
 export interface ServiceResult<T = any> {
   success: boolean;
@@ -29,19 +25,15 @@ async function copyParameterPossibleValues(parameterUuid: string) {
 }
 
 async function copyBlockParameters(groupUuid: string) {
-  const parameters = await configDatabase.blockParameters
-    .where({ groupUuid })
-    .toArray();
+  const parameters = await configDatabase.blockParameters.where({ groupUuid }).toArray();
   await bookDb.blockParameters.bulkAdd(parameters);
-  await Promise.all(parameters.map(p => copyParameterPossibleValues(p.uuid!)));
+  await Promise.all(parameters.map((p) => copyParameterPossibleValues(p.uuid!)));
 }
 
 async function copyBlockParameterGroups(blockUuid: string) {
-  const parameterGroups = await configDatabase.blockParameterGroups
-    .where({ blockUuid })
-    .toArray();
+  const parameterGroups = await configDatabase.blockParameterGroups.where({ blockUuid }).toArray();
   await bookDb.blockParameterGroups.bulkAdd(parameterGroups);
-  await Promise.all(parameterGroups.map(g => copyBlockParameters(g.uuid!)));
+  await Promise.all(parameterGroups.map((g) => copyBlockParameters(g.uuid!)));
 }
 
 async function copyBlockTabs(blockUuid: string) {
@@ -60,21 +52,23 @@ async function copyBlocks(oldConfigurationUuid: string, newConfigurationUuid: st
   const blocks = await configDatabase.blocks
     .where({ configurationUuid: oldConfigurationUuid })
     .toArray();
-  blocks.forEach(b => {
+  blocks.forEach((b) => {
     b.configurationUuid = newConfigurationUuid;
   });
   await bookDb.blocks.bulkAdd(blocks);
   await Promise.all(
-    blocks.map(block => Promise.all([copyBlockParameterGroups(block.uuid!), copyBlockTabs(block.uuid!)]))
+    blocks.map((block) =>
+      Promise.all([copyBlockParameterGroups(block.uuid!), copyBlockTabs(block.uuid!)])
+    )
   );
-  await Promise.all(blocks.map(block => createSingleInstance(block)));
+  await Promise.all(blocks.map((block) => createSingleInstance(block)));
 }
 
 async function copyBlockRelations(oldConfigurationUuid: string, newConfigurationUuid: string) {
   const relations = await configDatabase.blocksRelations
     .where({ configurationUuid: oldConfigurationUuid })
     .toArray();
-  relations.forEach(r => {
+  relations.forEach((r) => {
     r.configurationUuid = newConfigurationUuid;
   });
   await bookDb.blocksRelations.bulkAdd(relations);
@@ -84,7 +78,7 @@ async function copyKnowledgeBasePages(oldConfigurationUuid: string, newConfigura
   const pages = await configDatabase.knowledgeBasePages
     .where({ configurationUuid: oldConfigurationUuid })
     .toArray();
-  pages.forEach(page => {
+  pages.forEach((page) => {
     page.configurationUuid = newConfigurationUuid;
   });
   await bookDb.knowledgeBasePages.bulkAdd(pages);
@@ -109,10 +103,10 @@ async function initBookDb(book: IBook): Promise<ServiceResult> {
     if (book.configurationUuid) {
       configuration = await getBookConfiguration(book.configurationUuid);
       if (!configuration) {
-        return { success: false, message: 'Конфигурация не найдена' };
+        return { success: false, message: "Конфигурация не найдена" };
       }
     } else {
-      configuration = { uuid: '', title: book.title, description: '' };
+      configuration = { uuid: "", title: book.title, description: "" };
     }
     const configurationUuid = await copyConfigurationToBookDb(configuration, isNew);
     book.configurationUuid = configurationUuid;
@@ -172,4 +166,3 @@ export const BookService = {
 };
 
 export type { ServiceResult };
-

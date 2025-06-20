@@ -1,6 +1,6 @@
 // utils.ts
 
-import {relations, TableName} from "@/pages/tech/DbViewer/types";
+import { relations, TableName } from "@/pages/tech/DbViewer/types";
 
 export const getReverseRelations = (currentTableName: TableName) => {
   const reverseRels = [];

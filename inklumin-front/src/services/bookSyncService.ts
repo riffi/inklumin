@@ -1,11 +1,15 @@
-import moment from 'moment';
-import { notifications } from '@mantine/notifications';
-import { useEffect } from 'react';
-import { inkLuminAPI } from '@/api/inkLuminApi/inkLuminApi';
-import { configDatabase } from '@/entities/configuratorDb';
-import { BookRepository } from '@/repository/Book/BookRepository';
-import { collectBookBackupData, importBookData, BackupData } from '@/utils/bookBackupUtils/bookBackupManager';
-import { IBook } from '@/entities/BookEntities';
+import { useEffect } from "react";
+import moment from "moment";
+import { notifications } from "@mantine/notifications";
+import { inkLuminAPI } from "@/api/inkLuminApi/inkLuminApi";
+import { IBook } from "@/entities/BookEntities";
+import { configDatabase } from "@/entities/configuratorDb";
+import { BookRepository } from "@/repository/Book/BookRepository";
+import {
+  BackupData,
+  collectBookBackupData,
+  importBookData,
+} from "@/utils/bookBackupUtils/bookBackupManager";
 
 /** Save a book to the server */
 export const saveBookToServer = async (bookUuid: string, token: string) => {
@@ -18,26 +22,29 @@ export const saveBookToServer = async (bookUuid: string, token: string) => {
       uuid: bookUuid,
       bookTitle: backupData.book.title,
       kind: backupData.book.kind,
-      bookData: JSON.stringify(sanitizedBackup)
+      bookData: JSON.stringify(sanitizedBackup),
     });
 
     if (response.success) {
-      notifications.show({ message: 'Книга успешно сохранена на сервер', color: 'green' });
+      notifications.show({ message: "Книга успешно сохранена на сервер", color: "green" });
       if (response.data?.updatedAt) {
         await BookRepository.update(configDatabase, bookUuid, {
           serverUpdatedAt: response.data.updatedAt,
           localUpdatedAt: response.data.updatedAt,
-          syncState: 'synced'
+          syncState: "synced",
         });
       } else {
-        await BookRepository.update(configDatabase, bookUuid, { syncState: 'synced' });
+        await BookRepository.update(configDatabase, bookUuid, { syncState: "synced" });
       }
       return true;
     } else {
-      throw new Error(response.message || 'Ошибка сохранения на сервер');
+      throw new Error(response.message || "Ошибка сохранения на сервер");
     }
   } catch (error: any) {
-    notifications.show({ message: `Ошибка сохранения на сервер: ${error.message || ''}`, color: 'red' });
+    notifications.show({
+      message: `Ошибка сохранения на сервер: ${error.message || ""}`,
+      color: "red",
+    });
     return false;
   }
 };
@@ -47,21 +54,24 @@ export const loadBookFromServer = async (bookUuid: string, token: string) => {
   try {
     const response = await inkLuminAPI.getBookData(token, bookUuid);
     if (!response.success) {
-      throw new Error(response.message || 'Ошибка загрузки с сервера');
+      throw new Error(response.message || "Ошибка загрузки с сервера");
     }
 
     const backupData: BackupData = JSON.parse(response.data.bookData);
     if (response.data?.updatedAt) {
       backupData.book.serverUpdatedAt = response.data.updatedAt;
       backupData.book.localUpdatedAt = response.data.updatedAt;
-      backupData.book.syncState = 'synced';
+      backupData.book.syncState = "synced";
     }
 
     await importBookData(backupData);
-    notifications.show({ message: 'Книга успешно загружена с сервера', color: 'green' });
+    notifications.show({ message: "Книга успешно загружена с сервера", color: "green" });
     return true;
   } catch (error: any) {
-    notifications.show({ message: `Ошибка загрузки с сервера: ${error.message || ''}`, color: 'red' });
+    notifications.show({
+      message: `Ошибка загрузки с сервера: ${error.message || ""}`,
+      color: "red",
+    });
     return false;
   }
 };
@@ -75,7 +85,7 @@ export const getServerBooksList = async (token: string) => {
       const localBooks = await BookRepository.getAll(configDatabase);
 
       for (const srvBook of serverBooks) {
-        const localBook = localBooks.find(b => b.uuid === srvBook.uuid);
+        const localBook = localBooks.find((b) => b.uuid === srvBook.uuid);
         if (!localBook) continue;
 
         const serverDate = moment(srvBook.updatedAt);
@@ -83,9 +93,9 @@ export const getServerBooksList = async (token: string) => {
         const updates: any = { serverUpdatedAt: srvBook.updatedAt };
 
         if (serverDate > localDate) {
-          updates.syncState = 'serverChanges';
-        } else if (localBook.syncState !== 'localChanges') {
-          updates.syncState = 'synced';
+          updates.syncState = "serverChanges";
+        } else if (localBook.syncState !== "localChanges") {
+          updates.syncState = "synced";
         }
 
         await BookRepository.update(configDatabase, localBook.uuid, updates);
@@ -93,9 +103,12 @@ export const getServerBooksList = async (token: string) => {
 
       return serverBooks;
     }
-    throw new Error(response.message || 'Ошибка получения списка книг');
+    throw new Error(response.message || "Ошибка получения списка книг");
   } catch (error: any) {
-    notifications.show({ message: `Ошибка получения списка книг с сервера: ${error.message || ''}`, color: 'red' });
+    notifications.show({
+      message: `Ошибка получения списка книг с сервера: ${error.message || ""}`,
+      color: "red",
+    });
     return [];
   }
 };
@@ -132,24 +145,28 @@ export const useServerSync = (token: string | undefined) => {
 
         for (const serverBook of serverBooks) {
           if (!serverBook.uuid || !serverBook.serverUpdatedAt) continue;
-          const localBook = localBooks.find(b => b.uuid === serverBook.uuid);
+          const localBook = localBooks.find((b) => b.uuid === serverBook.uuid);
           if (localBook && localBook.uuid) {
             const serverDate = moment(serverBook.serverUpdatedAt);
-            const localDate = localBook.localUpdatedAt ? moment(localBook.localUpdatedAt) : moment(0);
+            const localDate = localBook.localUpdatedAt
+              ? moment(localBook.localUpdatedAt)
+              : moment(0);
             if (serverDate.unix() > localDate.unix()) {
               await BookRepository.update(configDatabase, localBook.uuid, {
                 serverUpdatedAt: serverBook.serverUpdatedAt,
-                syncState: 'serverChanges',
+                syncState: "serverChanges",
               });
-            } else if (localBook.syncState !== 'localChanges') {
-              if (localBook.syncState !== 'synced') {
-                await BookRepository.update(configDatabase, localBook.uuid, { syncState: 'synced' });
+            } else if (localBook.syncState !== "localChanges") {
+              if (localBook.syncState !== "synced") {
+                await BookRepository.update(configDatabase, localBook.uuid, {
+                  syncState: "synced",
+                });
               }
             }
           }
         }
       } catch (error) {
-        console.error('Error during server sync:', error);
+        console.error("Error during server sync:", error);
       }
     };
 

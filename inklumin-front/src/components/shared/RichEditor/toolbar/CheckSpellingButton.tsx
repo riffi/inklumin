@@ -1,15 +1,15 @@
-import {useEditor} from "@tiptap/react";
-import {useState} from "react";
-import {OpenRouterApi} from "@/api/openRouterApi";
-import {YandexSpellerApi} from "@/api/yandexSpellerApi";
-import {RichTextEditor} from "@mantine/tiptap";
-import {IconTextSpellcheck} from "@tabler/icons-react";
+import { useState } from "react";
+import { IconTextSpellcheck } from "@tabler/icons-react";
+import { useEditor } from "@tiptap/react";
+import { RichTextEditor } from "@mantine/tiptap";
+import { OpenRouterApi } from "@/api/openRouterApi";
+import { YandexSpellerApi } from "@/api/yandexSpellerApi";
 
 interface CheckSpellingButtonProps {
   editor: ReturnType<typeof useEditor>;
   onLoadingChange: (isLoading: boolean, message?: string) => void;
   onCorrectionFound: (correction: string) => void;
-  checkKind?: 'openrouter' | 'yandex-speller'; // Новый пропс
+  checkKind?: "openrouter" | "yandex-speller"; // Новый пропс
 }
 
 const applyYandexCorrections = (originalText: string, corrections: any[]): string => {
@@ -31,15 +31,15 @@ const applyYandexCorrections = (originalText: string, corrections: any[]): strin
 };
 
 export const CheckSpellingButton = ({
-                                      editor,
-                                      onLoadingChange,
-                                      onCorrectionFound,
-                                      checkKind = 'openrouter' // Значение по умолчанию
-                                    }: CheckSpellingButtonProps) => {
+  editor,
+  onLoadingChange,
+  onCorrectionFound,
+  checkKind = "openrouter", // Значение по умолчанию
+}: CheckSpellingButtonProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleClick = async () => {
-    const {from, to} = editor.state.selection;
+    const { from, to } = editor.state.selection;
     const selectedText = editor.state.doc.textBetween(from, to, " ");
 
     if (!selectedText.trim()) {
@@ -52,7 +52,7 @@ export const CheckSpellingButton = ({
       onLoadingChange(true, "Проверяем орфографию...");
 
       let correction;
-      if (checkKind === 'yandex-speller') {
+      if (checkKind === "yandex-speller") {
         const result = await YandexSpellerApi.fetchSpellingCorrection(selectedText);
         correction = applyYandexCorrections(selectedText, result);
       } else {
@@ -69,15 +69,8 @@ export const CheckSpellingButton = ({
   };
 
   return (
-      <RichTextEditor.Control
-          onClick={handleClick}
-          title="Проверить орфографию"
-          disabled={isLoading}
-      >
-        <IconTextSpellcheck
-            size={20}
-            color={"gray"}
-        />
-      </RichTextEditor.Control>
+    <RichTextEditor.Control onClick={handleClick} title="Проверить орфографию" disabled={isLoading}>
+      <IconTextSpellcheck size={20} color={"gray"} />
+    </RichTextEditor.Control>
   );
 };

@@ -1,16 +1,14 @@
 // CheckClichesButton.tsx
-import { RichTextEditor } from "@mantine/tiptap";
 import { useState } from "react";
+import { IconClipboardCheck, IconHandStop, IconLayersLinked } from "@tabler/icons-react";
 import { PluginKey } from "prosemirror-state";
-import {IconClipboardCheck, IconHandStop, IconLayersLinked} from "@tabler/icons-react";
-import {
-  clicheHighlighterKey
-} from "@/components/shared/RichEditor/plugins/ClisheHightligherExtension";
-import {IClicheWarning, IWarningGroup, IWarningKind} from "@/components/shared/RichEditor/types";
-import {generateUUID} from "@/utils/UUIDUtils";
-import {ActionIcon} from "@mantine/core";
-import {InkLuminMlApi} from "@/api/inkLuminMlApi";
-import {notifications} from "@mantine/notifications";
+import { ActionIcon } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
+import { RichTextEditor } from "@mantine/tiptap";
+import { InkLuminMlApi } from "@/api/inkLuminMlApi";
+import { clicheHighlighterKey } from "@/components/shared/RichEditor/plugins/ClisheHightligherExtension";
+import { IClicheWarning, IWarningGroup, IWarningKind } from "@/components/shared/RichEditor/types";
+import { generateUUID } from "@/utils/UUIDUtils";
 
 interface CheckClichesButtonProps {
   editor: any;
@@ -33,28 +31,26 @@ export const CheckClichesButton = ({ editor, onLoadingChange }: CheckClichesButt
     try {
       const text = editor.getText();
       const cliches = await InkLuminMlApi.fetchCliches(text);
-      console.log(cliches)
+      console.log(cliches);
       updateHighlights(cliches);
       setIsActive(true);
     } catch (error) {
       notifications.show({
         message: error.message,
-        color: 'red',
-      })
-      console.error('Error checking cliches:', error);
+        color: "red",
+      });
+      console.error("Error checking cliches:", error);
     } finally {
       onLoadingChange(false);
       setIsLoading(false);
     }
   };
 
-
-
   const updateHighlights = (warningGroups: IWarningGroup[]) => {
     const tr = editor.state.tr;
     tr.setMeta(clicheHighlighterKey, {
       action: "UPDATE_DECORATIONS",
-      warningGroups
+      warningGroups,
     });
     editor.view.dispatch(tr);
   };
@@ -64,17 +60,14 @@ export const CheckClichesButton = ({ editor, onLoadingChange }: CheckClichesButt
   };
 
   return (
-      <RichTextEditor.Control
-          onClick={handleCheckCliches}
-          icon={<IconClipboardCheck/>}
-          title="Проверить штампы"
-          active={isActive}
-          disabled={isLoading}
-      >
-          <IconHandStop
-              size={20}
-              color={"gray"}
-          />
-      </RichTextEditor.Control>
+    <RichTextEditor.Control
+      onClick={handleCheckCliches}
+      icon={<IconClipboardCheck />}
+      title="Проверить штампы"
+      active={isActive}
+      disabled={isLoading}
+    >
+      <IconHandStop size={20} color={"gray"} />
+    </RichTextEditor.Control>
   );
 };

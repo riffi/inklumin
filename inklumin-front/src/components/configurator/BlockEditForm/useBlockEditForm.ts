@@ -1,77 +1,79 @@
-import { useLiveQuery } from 'dexie-react-hooks';
+import { useLiveQuery } from "dexie-react-hooks";
+import { notifications } from "@mantine/notifications";
+import { InkLuminApiError } from "@/api/inkLuminMlApi";
+import { BookDB, bookDb } from "@/entities/bookDb";
+import { configDatabase } from "@/entities/configuratorDb";
 import {
   IBlock,
   IBlockParameter,
   IBlockParameterGroup,
-  IBlockRelation, IBlockStructureKind, IBlockTitleForms
+  IBlockRelation,
+  IBlockStructureKind,
+  IBlockTitleForms,
 } from "@/entities/ConstructorEntities";
-import {configDatabase} from "@/entities/configuratorDb";
-import {generateUUID} from "@/utils/UUIDUtils";
-import { InkLuminApiError } from "@/api/inkLuminMlApi";
-import {notifications} from "@mantine/notifications";
-import {BookDB, bookDb} from "@/entities/bookDb";
-import {BlockRelationRepository} from "@/repository/Block/BlockRelationRepository";
-import {ConfigurationRepository} from "@/repository/ConfigurationRepository";
-import {BlockRepository} from "@/repository/Block/BlockRepository";
-import {BlockParameterRepository} from "@/repository/Block/BlockParameterRepository"; // Added
-import {BlockInstanceRepository} from "@/repository/BlockInstance/BlockInstanceRepository";
-import {BlockParameterInstanceRepository} from "@/repository/BlockInstance/BlockParameterInstanceRepository";
+import { BlockParameterRepository } from "@/repository/Block/BlockParameterRepository"; // Added
+import { BlockRelationRepository } from "@/repository/Block/BlockRelationRepository";
+import { BlockRepository } from "@/repository/Block/BlockRepository";
+import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";
+import { BlockParameterInstanceRepository } from "@/repository/BlockInstance/BlockParameterInstanceRepository";
+import { ConfigurationRepository } from "@/repository/ConfigurationRepository";
+import { generateUUID } from "@/utils/UUIDUtils";
 
-export const useBlockEditForm = (blockUuid: string, bookUuid?: string, currentGroupUuid?: string) => {
-
-  const db = bookUuid? bookDb : configDatabase;
+export const useBlockEditForm = (
+  blockUuid: string,
+  bookUuid?: string,
+  currentGroupUuid?: string
+) => {
+  const db = bookUuid ? bookDb : configDatabase;
   const isBookDb = !!bookUuid;
 
-  const block = useLiveQuery<IBlock>( () => {
-    if (!blockUuid){
-      return
+  const block = useLiveQuery<IBlock>(() => {
+    if (!blockUuid) {
+      return;
     }
     return BlockRepository.getByUuid(db, blockUuid);
-  }, [blockUuid])
+  }, [blockUuid]);
 
   const otherBlocks = useLiveQuery<IBlock[]>(() => {
-    if (!block) return []
-    return BlockRepository.getSiblings(db,block)
-  },[block])
+    if (!block) return [];
+    return BlockRepository.getSiblings(db, block);
+  }, [block]);
 
   const paramGroupList = useLiveQuery<IBlockParameterGroup[]>(() => {
     return db.blockParameterGroups.where("blockUuid").equals(blockUuid).sortBy("orderNumber");
-  }, [block])
+  }, [block]);
 
   const paramList = useLiveQuery<IBlockParameter[]>(() => {
     if (currentGroupUuid) {
       // If a specific group UUID is provided, fetch parameters for that group and block
       return db.blockParameters
-          .where({ groupUuid: currentGroupUuid, blockUuid: blockUuid })
-          .sortBy("orderNumber");
+        .where({ groupUuid: currentGroupUuid, blockUuid: blockUuid })
+        .sortBy("orderNumber");
     } else {
       // If no specific group UUID is provided, fetch all parameters for the block
-      return db.blockParameters
-          .where({ blockUuid: blockUuid })
-          .sortBy("orderNumber");
+      return db.blockParameters.where({ blockUuid: blockUuid }).sortBy("orderNumber");
     }
   }, [blockUuid, currentGroupUuid]);
 
-
   const configuration = useLiveQuery(() => {
-    if (!block) return undefined
-    return ConfigurationRepository.getByUuid(db, block.configurationUuid)
-  }, [block?.uuid])
+    if (!block) return undefined;
+    return ConfigurationRepository.getByUuid(db, block.configurationUuid);
+  }, [block?.uuid]);
 
   const blockRelations = useLiveQuery<IBlockRelation[]>(() => {
     return BlockRelationRepository.getBlockRelations(db, blockUuid);
   }, [blockUuid]);
 
-
   const saveBlock = async (blockData: Partial<IBlock>, manualTitleForms?: IBlockTitleForms) => {
-    if (!blockData.uuid && !block?.uuid) { // If it's a new block (no UUID yet)
+    if (!blockData.uuid && !block?.uuid) {
+      // If it's a new block (no UUID yet)
       blockData.uuid = generateUUID(); // Assign a UUID if not already present
     }
 
     // Ensure we have a full block object to save, using existing block data as a base if partial data is provided
     const blockToSave: IBlock = {
       ...(block || {}), // Spread existing block data from the hook's state
-      ...blockData,     // Spread new/updated data
+      ...blockData, // Spread new/updated data
     } as IBlock; // Type assertion might be needed if fields are truly partial
 
     if (!blockToSave.uuid) {
@@ -81,7 +83,6 @@ export const useBlockEditForm = (blockUuid: string, bookUuid?: string, currentGr
     if (!blockToSave.configurationUuid && configuration?.uuid) {
       blockToSave.configurationUuid = configuration.uuid;
     }
-
 
     try {
       await BlockRepository.save(db, blockToSave, isBookDb, manualTitleForms);
@@ -104,45 +105,46 @@ export const useBlockEditForm = (blockUuid: string, bookUuid?: string, currentGr
         // For now, we show a notification for non-API errors.
       }
     }
-  }
-
+  };
 
   const saveParam = async (param: IBlockParameter) => {
     if (!param.id) {
-      param.uuid = generateUUID()
+      param.uuid = generateUUID();
       param.groupUuid = currentGroupUuid;
       param.orderNumber = paramList?.length;
       param.blockUuid = blockUuid;
       const paramToSave: IBlockParameter = {
         ...param,
         knowledgeBasePageUuid: param.knowledgeBasePageUuid ?? undefined,
-      }
+      };
       db.blockParameters.add(paramToSave);
     } else {
-
-      const prevData = await db.blockParameters.get(param.id)
+      const prevData = await db.blockParameters.get(param.id);
       const paramToUpdate: IBlockParameter = {
         ...param,
         knowledgeBasePageUuid: param.knowledgeBasePageUuid ?? undefined,
-      }
+      };
       db.blockParameters.update(param.id, paramToUpdate);
 
       // Обновляем значения по умолчанию для одиночных блоков
-      if (isBookDb
-          && prevData
-          && prevData.isDefault === 0 && param.isDefault === 1
-      ) {
+      if (isBookDb && prevData && prevData.isDefault === 0 && param.isDefault === 1) {
         const block = await BlockRepository.getByUuid(db, blockUuid);
         if (block?.structureKind === IBlockStructureKind.single) {
-          const instances = await BlockInstanceRepository.getBlockInstances(db as BookDB, blockUuid)
+          const instances = await BlockInstanceRepository.getBlockInstances(
+            db as BookDB,
+            blockUuid
+          );
           for (const instance of instances) {
-            await BlockParameterInstanceRepository.appendDefaultParam(db as BookDB, instance, param)
+            await BlockParameterInstanceRepository.appendDefaultParam(
+              db as BookDB,
+              instance,
+              param
+            );
           }
         }
       }
     }
-  }
-
+  };
 
   const deleteParam = async (paramId: number) => {
     try {
@@ -155,16 +157,16 @@ export const useBlockEditForm = (blockUuid: string, bookUuid?: string, currentGr
       // Update order numbers for remaining parameters in the same group
       if (currentGroupUuid) {
         const remainingParams = await db.blockParameters
-            .where('groupUuid')
-            .equals(currentGroupUuid)
-            .sortBy('orderNumber');
+          .where("groupUuid")
+          .equals(currentGroupUuid)
+          .sortBy("orderNumber");
 
         await Promise.all(
-            remainingParams.map((param, index) =>
-                db.blockParameters.update(param.id!, {
-                  orderNumber: index
-                })
-            )
+          remainingParams.map((param, index) =>
+            db.blockParameters.update(param.id!, {
+              orderNumber: index,
+            })
+          )
         );
       }
     } catch (error) {
@@ -183,15 +185,16 @@ export const useBlockEditForm = (blockUuid: string, bookUuid?: string, currentGr
     // Determine siblings based on whether currentGroupUuid is set
     let siblings = paramList;
     if (targetParam.groupUuid) {
-      siblings = paramList?.filter(p => p.groupUuid === targetParam.groupUuid && p.blockUuid === targetParam.blockUuid);
+      siblings = paramList?.filter(
+        (p) => p.groupUuid === targetParam.groupUuid && p.blockUuid === targetParam.blockUuid
+      );
     } else {
-      siblings = paramList?.filter(p => !p.groupUuid && p.blockUuid === targetParam.blockUuid);
+      siblings = paramList?.filter((p) => !p.groupUuid && p.blockUuid === targetParam.blockUuid);
     }
 
     if (!siblings) return;
 
-
-    const currentIndex = siblings.findIndex(p => p.id === paramId);
+    const currentIndex = siblings.findIndex((p) => p.id === paramId);
 
     if (currentIndex <= 0) {
       notifications.show({
@@ -230,14 +233,16 @@ export const useBlockEditForm = (blockUuid: string, bookUuid?: string, currentGr
     // Determine siblings based on whether currentGroupUuid is set
     let siblings = paramList;
     if (targetParam.groupUuid) {
-      siblings = paramList?.filter(p => p.groupUuid === targetParam.groupUuid && p.blockUuid === targetParam.blockUuid);
+      siblings = paramList?.filter(
+        (p) => p.groupUuid === targetParam.groupUuid && p.blockUuid === targetParam.blockUuid
+      );
     } else {
-      siblings = paramList?.filter(p => !p.groupUuid && p.blockUuid === targetParam.blockUuid);
+      siblings = paramList?.filter((p) => !p.groupUuid && p.blockUuid === targetParam.blockUuid);
     }
 
     if (!siblings) return;
 
-    const currentIndex = siblings.findIndex(p => p.id === paramId);
+    const currentIndex = siblings.findIndex((p) => p.id === paramId);
 
     if (currentIndex === -1 || currentIndex >= siblings.length - 1) {
       notifications.show({
@@ -292,53 +297,52 @@ export const useBlockEditForm = (blockUuid: string, bookUuid?: string, currentGr
         color: "red",
       });
     }
-  }
+  };
 
   const moveGroupUp = async (groupUuid: string) => {
-    const groups = await BlockParameterRepository // Changed
-        .getParameterGroups(db, blockUuid);
+    const groups = await BlockParameterRepository.getParameterGroups(db, blockUuid); // Changed
 
-    const currentIndex = groups.findIndex(g => g.uuid === groupUuid);
+    const currentIndex = groups.findIndex((g) => g.uuid === groupUuid);
     if (currentIndex <= 0) return;
 
     const previousGroup = groups[currentIndex - 1];
     const currentGroup = groups[currentIndex];
 
     await db.blockParameterGroups.update(previousGroup.id!, {
-      orderNumber: currentGroup.orderNumber
+      orderNumber: currentGroup.orderNumber,
     });
     await db.blockParameterGroups.update(currentGroup.id!, {
-      orderNumber: previousGroup.orderNumber
+      orderNumber: previousGroup.orderNumber,
     });
-  }
+  };
 
   const moveGroupDown = async (groupUuid: string) => {
     const groups = await db.blockParameterGroups
-        .where("blockUuid")
-        .equals(blockUuid)
-        .sortBy("orderNumber");
+      .where("blockUuid")
+      .equals(blockUuid)
+      .sortBy("orderNumber");
 
-    const currentIndex = groups.findIndex(g => g.uuid === groupUuid);
+    const currentIndex = groups.findIndex((g) => g.uuid === groupUuid);
     if (currentIndex === -1 || currentIndex >= groups.length - 1) return;
 
     const nextGroup = groups[currentIndex + 1];
     const currentGroup = groups[currentIndex];
 
     await db.blockParameterGroups.update(nextGroup.id!, {
-      orderNumber: currentGroup.orderNumber
+      orderNumber: currentGroup.orderNumber,
     });
     await db.blockParameterGroups.update(currentGroup.id!, {
-      orderNumber: nextGroup.orderNumber
+      orderNumber: nextGroup.orderNumber,
     });
-  }
+  };
 
   const updateGroupTitle = async (groupUuid: string, newTitle: string) => {
     try {
-      const group = await BlockParameterRepository.getGroupByUuid(db, groupUuid) // Changed
+      const group = await BlockParameterRepository.getGroupByUuid(db, groupUuid); // Changed
 
       if (group) {
         await db.blockParameterGroups.update(group.id!, {
-          title: newTitle
+          title: newTitle,
         });
         notifications.show({
           title: "Успешно",
@@ -370,9 +374,8 @@ export const useBlockEditForm = (blockUuid: string, bookUuid?: string, currentGr
     }
   };
 
-
   const loadPossibleValues = async (parameterUuid: string) => {
-    return BlockParameterRepository.getParamPossibleValues(db, parameterUuid) // Changed
+    return BlockParameterRepository.getParamPossibleValues(db, parameterUuid); // Changed
   };
 
   const savePossibleValues = async (parameterUuid: string, values: string[]) => {
@@ -391,9 +394,6 @@ export const useBlockEditForm = (blockUuid: string, bookUuid?: string, currentGr
       });
     }
   };
-
-
-
 
   return {
     block,
@@ -414,5 +414,5 @@ export const useBlockEditForm = (blockUuid: string, bookUuid?: string, currentGr
     loadPossibleValues,
     savePossibleValues,
     blockRelations,
-  }
-}
+  };
+};

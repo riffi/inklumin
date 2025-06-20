@@ -2,20 +2,11 @@ import { BookDB } from "@/entities/bookDb";
 import { IBlockInstanceSceneLink } from "@/entities/BookEntities";
 
 export const getLinksBySceneId = async (db: BookDB, sceneId: number) => {
-  return db.blockInstanceSceneLinks
-    .where('sceneId')
-    .equals(sceneId)
-    .toArray();
+  return db.blockInstanceSceneLinks.where("sceneId").equals(sceneId).toArray();
 };
 
-export const getLinksByBlockInstance = async (
-  db: BookDB,
-  blockInstanceUuid: string
-) => {
-  return db.blockInstanceSceneLinks
-    .where('blockInstanceUuid')
-    .equals(blockInstanceUuid)
-    .toArray();
+export const getLinksByBlockInstance = async (db: BookDB, blockInstanceUuid: string) => {
+  return db.blockInstanceSceneLinks.where("blockInstanceUuid").equals(blockInstanceUuid).toArray();
 };
 
 export const createLink = async (db: BookDB, link: IBlockInstanceSceneLink) => {
@@ -39,23 +30,14 @@ export const deleteLink = async (db: BookDB, id: number) => {
 };
 
 export const removeLinksForScene = async (db: BookDB, sceneId: number) => {
-  await db.blockInstanceSceneLinks.where('sceneId').equals(sceneId).delete();
+  await db.blockInstanceSceneLinks.where("sceneId").equals(sceneId).delete();
 };
 
-export const removeLinksForInstance = async (
-  db: BookDB,
-  blockInstanceUuid: string
-) => {
-  await db.blockInstanceSceneLinks
-    .where('blockInstanceUuid')
-    .equals(blockInstanceUuid)
-    .delete();
+export const removeLinksForInstance = async (db: BookDB, blockInstanceUuid: string) => {
+  await db.blockInstanceSceneLinks.where("blockInstanceUuid").equals(blockInstanceUuid).delete();
 };
 
-export const bulkAddLinks = async (
-  db: BookDB,
-  links: IBlockInstanceSceneLink[]
-) => {
+export const bulkAddLinks = async (db: BookDB, links: IBlockInstanceSceneLink[]) => {
   if (links.length > 0) {
     await db.blockInstanceSceneLinks.bulkAdd(links);
   }

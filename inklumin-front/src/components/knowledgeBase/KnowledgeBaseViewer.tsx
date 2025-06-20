@@ -1,12 +1,12 @@
-import {Container, LoadingOverlay} from '@mantine/core';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import {useEffect, useState} from 'react';
-import {useParams} from 'react-router-dom';
-import {IKnowledgeBasePage} from '@/entities/KnowledgeBaseEntities';
-import {bookDb} from '@/entities/bookDb';
-import {configDatabase} from '@/entities/configuratorDb';
-import {KnowledgeBaseRepository} from '@/repository/KnowledgeBaseRepository';
+import { useEffect, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import { useParams } from "react-router-dom";
+import remarkGfm from "remark-gfm";
+import { Container, LoadingOverlay } from "@mantine/core";
+import { bookDb } from "@/entities/bookDb";
+import { configDatabase } from "@/entities/configuratorDb";
+import { IKnowledgeBasePage } from "@/entities/KnowledgeBaseEntities";
+import { KnowledgeBaseRepository } from "@/repository/KnowledgeBaseRepository";
 
 interface KnowledgeBaseViewerProps {
   uuid?: string;

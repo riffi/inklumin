@@ -1,11 +1,11 @@
-import {Modal, Button, Stack, TextInput} from '@mantine/core';
-import MDEditor from '@uiw/react-md-editor';
-import {useEffect, useState} from 'react';
-import {IKnowledgeBasePage} from '@/entities/KnowledgeBaseEntities';
-import {bookDb} from '@/entities/bookDb';
-import {configDatabase} from '@/entities/configuratorDb';
-import {KnowledgeBaseRepository} from '@/repository/KnowledgeBaseRepository';
-import {generateUUID} from '@/utils/UUIDUtils';
+import { useEffect, useState } from "react";
+import MDEditor from "@uiw/react-md-editor";
+import { Button, Modal, Stack, TextInput } from "@mantine/core";
+import { bookDb } from "@/entities/bookDb";
+import { configDatabase } from "@/entities/configuratorDb";
+import { IKnowledgeBasePage } from "@/entities/KnowledgeBaseEntities";
+import { KnowledgeBaseRepository } from "@/repository/KnowledgeBaseRepository";
+import { generateUUID } from "@/utils/UUIDUtils";
 
 interface KnowledgeBasePageEditorProps {
   opened: boolean;
@@ -25,8 +25,8 @@ export const KnowledgeBasePageEditor = ({
   onSave,
 }: KnowledgeBasePageEditorProps) => {
   const db = bookUuid ? bookDb : configDatabase;
-  const [title, setTitle] = useState('');
-  const [markdown, setMarkdown] = useState('');
+  const [title, setTitle] = useState("");
+  const [markdown, setMarkdown] = useState("");
 
   useEffect(() => {
     if (!opened) return;
@@ -39,8 +39,8 @@ export const KnowledgeBasePageEditor = ({
           return;
         }
       }
-      setTitle('');
-      setMarkdown('');
+      setTitle("");
+      setMarkdown("");
     };
     load();
   }, [opened, pageUuid, db]);
@@ -59,10 +59,20 @@ export const KnowledgeBasePageEditor = ({
   };
 
   return (
-    <Modal opened={opened} onClose={onClose} title="Страница базы знаний" size="xl" fullScreen={false}>
+    <Modal
+      opened={opened}
+      onClose={onClose}
+      title="Страница базы знаний"
+      size="xl"
+      fullScreen={false}
+    >
       <Stack gap="md">
-        <TextInput label="Название" value={title} onChange={(e) => setTitle(e.currentTarget.value)} />
-        <MDEditor value={markdown} onChange={(v) => setMarkdown(v || '')} height={400} />
+        <TextInput
+          label="Название"
+          value={title}
+          onChange={(e) => setTitle(e.currentTarget.value)}
+        />
+        <MDEditor value={markdown} onChange={(v) => setMarkdown(v || "")} height={400} />
         <Button onClick={handleSave}>Сохранить</Button>
       </Stack>
     </Modal>

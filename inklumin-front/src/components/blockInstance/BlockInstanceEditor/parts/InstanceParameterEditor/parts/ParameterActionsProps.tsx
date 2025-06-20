@@ -1,5 +1,5 @@
-import {ActionIcon, Group} from "@mantine/core";
-import {IconCheck, IconEdit, IconTrash} from "@tabler/icons-react";
+import { IconCheck, IconEdit, IconTrash } from "@tabler/icons-react";
+import { ActionIcon, Group } from "@mantine/core";
 
 interface ParameterActionsProps {
   isEditing: boolean;
@@ -10,26 +10,26 @@ interface ParameterActionsProps {
 }
 
 export const ParameterActions = ({
-                            isEditing,
-                            onEdit,
-                            onSave,
-                            onDelete,
-                            isDefault
-                          }: ParameterActionsProps) => (
-    <Group gap={4}>
-      {isEditing ? (
-          <ActionIcon variant="subtle" onClick={onSave}>
-            <IconCheck size="1rem" />
-          </ActionIcon>
-      ) : (
-          <ActionIcon variant="subtle" onClick={onEdit}>
-            <IconEdit size="1rem" />
-          </ActionIcon>
-      )}
-      {!isDefault && (
-          <ActionIcon variant="subtle" color="red" onClick={onDelete}>
-            <IconTrash size="1rem" />
-          </ActionIcon>
-      )}
-    </Group>
+  isEditing,
+  onEdit,
+  onSave,
+  onDelete,
+  isDefault,
+}: ParameterActionsProps) => (
+  <Group gap={4}>
+    {isEditing ? (
+      <ActionIcon variant="subtle" onClick={onSave}>
+        <IconCheck size="1rem" />
+      </ActionIcon>
+    ) : (
+      <ActionIcon variant="subtle" onClick={onEdit}>
+        <IconEdit size="1rem" />
+      </ActionIcon>
+    )}
+    {!isDefault && (
+      <ActionIcon variant="subtle" color="red" onClick={onDelete}>
+        <IconTrash size="1rem" />
+      </ActionIcon>
+    )}
+  </Group>
 );

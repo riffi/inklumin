@@ -1,26 +1,26 @@
 // Утилиты для импорта книги из DOCX.
 // Функции отвечают за разбор документа и преобразование его в внутренний формат.
-import JSZip from 'jszip';
-import { IBook, IChapter, IScene } from '@/entities/BookEntities';
-import { generateUUID } from '@/utils/UUIDUtils';
-import { notifications } from '@mantine/notifications';
-import { importBookData } from '@/utils/bookBackupUtils/bookBackupManager';
-import moment from 'moment';
-import { buildBackupData, textFromHtml } from '@/utils/bookBackupUtils/vendorFormat/shared';
+import JSZip from "jszip";
+import moment from "moment";
+import { notifications } from "@mantine/notifications";
+import { IBook, IChapter, IScene } from "@/entities/BookEntities";
+import { importBookData } from "@/utils/bookBackupUtils/bookBackupManager";
+import { buildBackupData, textFromHtml } from "@/utils/bookBackupUtils/vendorFormat/shared";
+import { generateUUID } from "@/utils/UUIDUtils";
 
 /**
  * Читает файл document.xml.rels и строит карту связей между rId и путями к ресурсам.
  */
 async function extractRelations(zip: JSZip): Promise<Map<string, string>> {
   const map = new Map<string, string>();
-  const relsFile = zip.file('word/_rels/document.xml.rels');
+  const relsFile = zip.file("word/_rels/document.xml.rels");
   if (!relsFile) return map;
 
-  const relsXml = await relsFile.async('string');
-  const doc = new DOMParser().parseFromString(relsXml, 'application/xml');
-  doc.querySelectorAll('Relationship').forEach(rel => {
-    const id = rel.getAttribute('Id');
-    const target = rel.getAttribute('Target');
+  const relsXml = await relsFile.async("string");
+  const doc = new DOMParser().parseFromString(relsXml, "application/xml");
+  doc.querySelectorAll("Relationship").forEach((rel) => {
+    const id = rel.getAttribute("Id");
+    const target = rel.getAttribute("Target");
     if (id && target) map.set(id, target);
   });
   return map;
@@ -28,17 +28,17 @@ async function extractRelations(zip: JSZip): Promise<Map<string, string>> {
 
 // Карта расширений изображений к соответствующим MIME-типам
 const mimeMap: Record<string, string> = {
-  jpg: 'image/jpeg',
-  jpeg: 'image/jpeg',
-  png: 'image/png',
-  gif: 'image/gif',
-  svg: 'image/svg+xml',
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  png: "image/png",
+  gif: "image/gif",
+  svg: "image/svg+xml",
 };
 
 // Определение MIME-типа по расширению файла
 function mimeFromExt(ext: string): string {
   const key = ext.toLowerCase();
-  return mimeMap[key] ?? 'image/png';
+  return mimeMap[key] ?? "image/png";
 }
 
 /**
@@ -46,17 +46,17 @@ function mimeFromExt(ext: string): string {
  * Это помогает определить границы глав в документе.
  */
 export function extractHeadingStyleIds(stylesXml: string): Set<string> {
-  const doc = new DOMParser().parseFromString(stylesXml, 'text/xml');
-  const styles = doc.getElementsByTagName('w:style');
+  const doc = new DOMParser().parseFromString(stylesXml, "text/xml");
+  const styles = doc.getElementsByTagName("w:style");
   const headingStyleIds = new Set<string>();
 
   for (let i = 0; i < styles.length; i++) {
     const style = styles[i];
-    const nameNode = style.getElementsByTagName('w:name')[0];
-    const styleId = style.getAttribute('w:styleId');
+    const nameNode = style.getElementsByTagName("w:name")[0];
+    const styleId = style.getAttribute("w:styleId");
 
     if (nameNode && styleId) {
-      const nameVal = nameNode.getAttribute('w:val')?.toLowerCase();
+      const nameVal = nameNode.getAttribute("w:val")?.toLowerCase();
       if (nameVal && /(heading|заголовок|title|подзаголовок)/i.test(nameVal)) {
         headingStyleIds.add(styleId);
       }
@@ -84,22 +84,22 @@ export function isHeadingStyle(styleValNorm: string | null, headingStyleIds: Set
 async function extractImageHtml(
   paragraph: Element,
   zip: JSZip,
-  relsMap: Map<string, string>,
+  relsMap: Map<string, string>
 ): Promise<string> {
-  const blip = paragraph.querySelector('*|blip');
-  const rId = blip?.getAttribute('r:embed') || blip?.getAttribute('r:id');
+  const blip = paragraph.querySelector("*|blip");
+  const rId = blip?.getAttribute("r:embed") || blip?.getAttribute("r:id");
   if (rId && relsMap.has(rId)) {
     const target = relsMap.get(rId)!;
     const path = `word/${target}`;
     const imgFile = zip.file(path);
     if (imgFile) {
-      const base64 = await imgFile.async('base64');
-      const ext = path.split('.').pop() || 'png';
+      const base64 = await imgFile.async("base64");
+      const ext = path.split(".").pop() || "png";
       const mime = mimeFromExt(ext);
       return `<img src="data:${mime};base64,${base64}" />`;
     }
   }
-  return '';
+  return "";
 }
 
 /**
@@ -110,13 +110,13 @@ async function buildScenesAndChapters(
   paragraphs: Element[],
   zip: JSZip,
   relsMap: Map<string, string>,
-  headingStyleIds: Set<string>,
-): Promise<{ chapters: Omit<IChapter, 'id'>[]; scenes: IScene[] }> {
-  const chapters: Omit<IChapter, 'id'>[] = [];
+  headingStyleIds: Set<string>
+): Promise<{ chapters: Omit<IChapter, "id">[]; scenes: IScene[] }> {
+  const chapters: Omit<IChapter, "id">[] = [];
   const scenes: IScene[] = [];
   let hasHeadings = false;
-  let currentTitle = '';
-  let currentBody = '';
+  let currentTitle = "";
+  let currentBody = "";
   let chapterOrder = 1;
 
   // Сохраняет накопленный текст как новую сцену и главу
@@ -128,7 +128,7 @@ async function buildScenesAndChapters(
       order: scenes.length + 1,
       chapterId: chapterOrder,
       totalSymbolCountWithSpaces: text.length,
-      totalSymbolCountWoSpaces: text.replace(/\s/g, '').length,
+      totalSymbolCountWoSpaces: text.replace(/\s/g, "").length,
     });
     chapters.push({
       title: currentTitle || `Глава ${chapterOrder}`,
@@ -139,8 +139,8 @@ async function buildScenesAndChapters(
 
   // Перебираем все параграфы и собираем текст и изображения
   for (const p of paragraphs) {
-    const styleEl = p.querySelector('*|pPr *|pStyle');
-    const styleVal = styleEl?.getAttribute('w:val') || styleEl?.getAttribute('val');
+    const styleEl = p.querySelector("*|pPr *|pStyle");
+    const styleVal = styleEl?.getAttribute("w:val") || styleEl?.getAttribute("val");
     const styleValNorm = styleVal?.toLowerCase();
 
     const imgHtml = await extractImageHtml(p, zip, relsMap);
@@ -151,12 +151,12 @@ async function buildScenesAndChapters(
       if (currentBody) {
         pushScene();
         chapterOrder += 1;
-        currentBody = '';
+        currentBody = "";
       }
-      currentTitle = p.textContent?.trim() || '';
+      currentTitle = p.textContent?.trim() || "";
     } else {
       // Обычный текстовый параграф
-      const paragraphText = p.textContent || '';
+      const paragraphText = p.textContent || "";
       currentBody += `<p>${paragraphText}</p>${imgHtml}`;
     }
   }
@@ -168,7 +168,7 @@ async function buildScenesAndChapters(
 
   // Если не было заголовков, собираем весь текст в одну главу
   if (!hasHeadings && scenes.length > 1) {
-    const combinedBody = scenes.map(s => s.body).join('');
+    const combinedBody = scenes.map((s) => s.body).join("");
     const text = textFromHtml(combinedBody);
     scenes.splice(0, scenes.length, {
       title: `Глава 1`,
@@ -176,7 +176,7 @@ async function buildScenesAndChapters(
       order: 1,
       chapterId: 1,
       totalSymbolCountWithSpaces: text.length,
-      totalSymbolCountWoSpaces: text.replace(/\s/g, '').length,
+      totalSymbolCountWoSpaces: text.replace(/\s/g, "").length,
     });
     chapters.splice(0, chapters.length, {
       title: `Глава 1`,
@@ -194,42 +194,41 @@ async function buildScenesAndChapters(
  * после чего книга сохраняется во внутреннюю БД.
  */
 export const importDocxFile = async (file: File): Promise<boolean> => {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const reader = new FileReader();
 
     reader.onload = async () => {
       try {
         const arrayBuffer = reader.result as ArrayBuffer;
-          // Загружаем DOCX как zip-архив
+        // Загружаем DOCX как zip-архив
         const zip = await JSZip.loadAsync(arrayBuffer);
         // Чтение метаданных (название, автор)
-        const coreXml = await zip.file('docProps/core.xml')?.async('string');
+        const coreXml = await zip.file("docProps/core.xml")?.async("string");
         const coreDoc = coreXml
-          ? new DOMParser().parseFromString(coreXml, 'application/xml')
+          ? new DOMParser().parseFromString(coreXml, "application/xml")
           : null;
         const title =
-          coreDoc?.getElementsByTagName('dc:title')[0]?.textContent ||
-          file.name.replace('.docx', '');
+          coreDoc?.getElementsByTagName("dc:title")[0]?.textContent ||
+          file.name.replace(".docx", "");
         const author =
-          coreDoc?.getElementsByTagName('dc:creator')[0]?.textContent ||
-          'Автор не указан';
+          coreDoc?.getElementsByTagName("dc:creator")[0]?.textContent || "Автор не указан";
 
         // Формируем карту вложенных ресурсов (изображений)
         const relsMap = await extractRelations(zip);
-        const docXml = await zip.file('word/document.xml')?.async('string');
-        const stylesXml = await zip.file('word/styles.xml')?.async('string');
-        if (!docXml) throw new Error('document.xml not found');
-        if (!stylesXml) throw new Error('styles.xml not found');
-        const doc = new DOMParser().parseFromString(docXml, 'application/xml');
+        const docXml = await zip.file("word/document.xml")?.async("string");
+        const stylesXml = await zip.file("word/styles.xml")?.async("string");
+        if (!docXml) throw new Error("document.xml not found");
+        if (!stylesXml) throw new Error("styles.xml not found");
+        const doc = new DOMParser().parseFromString(docXml, "application/xml");
         // Разбираем стили параграфов из файла styles.xml
         const headingStyleIds = extractHeadingStyleIds(stylesXml);
 
-        const paragraphs = Array.from(doc.querySelectorAll('*|p'));
+        const paragraphs = Array.from(doc.querySelectorAll("*|p"));
         const { chapters, scenes } = await buildScenesAndChapters(
           paragraphs,
           zip,
           relsMap,
-          headingStyleIds,
+          headingStyleIds
         );
 
         // Создаём объект книги и заполняем его данными
@@ -237,16 +236,16 @@ export const importDocxFile = async (file: File): Promise<boolean> => {
           uuid: generateUUID(),
           title,
           author,
-          form: 'Роман',
-          genre: '',
-          configurationUuid: '',
-          configurationTitle: '',
+          form: "Роман",
+          genre: "",
+          configurationUuid: "",
+          configurationTitle: "",
           cover: undefined,
-          kind: 'book',
+          kind: "book",
           description: `Книга импортирована из (${file.name})`,
           chapterOnlyMode: 1,
           localUpdatedAt: moment().toISOString(true),
-          syncState: 'localChanges'
+          syncState: "localChanges",
         };
 
         // Подготавливаем данные для импорта и сохраняем книгу
@@ -256,19 +255,19 @@ export const importDocxFile = async (file: File): Promise<boolean> => {
 
         // Показываем сообщение об успешном импорте
         notifications.show({
-          title: 'Импорт завершён',
+          title: "Импорт завершён",
           message: `${file.name} успешно импортирован`,
-          color: 'teal',
+          color: "teal",
         });
         resolve(true);
-      // Если что-то пошло не так, выводим ошибку
+        // Если что-то пошло не так, выводим ошибку
         // Ошибка парсинга или сохранения
       } catch (error) {
-        console.error('Error importing DOCX:', error);
+        console.error("Error importing DOCX:", error);
         notifications.show({
-          title: 'Ошибка импорта',
+          title: "Ошибка импорта",
           message: `Не удалось импортировать ${file.name}`,
-          color: 'red',
+          color: "red",
         });
         resolve(false);
       }
@@ -276,11 +275,11 @@ export const importDocxFile = async (file: File): Promise<boolean> => {
 
     // Обработка ошибок чтения файла
     reader.onerror = () => {
-      console.error('FileReader error:', reader.error);
+      console.error("FileReader error:", reader.error);
       notifications.show({
-        title: 'Ошибка',
-        message: 'Не удалось прочитать файл.',
-        color: 'red',
+        title: "Ошибка",
+        message: "Не удалось прочитать файл.",
+        color: "red",
       });
       resolve(false);
     };

@@ -1,5 +1,5 @@
-import { Modal, TextInput, Button } from "@mantine/core";
 import { useState } from "react";
+import { Button, Modal, TextInput } from "@mantine/core";
 
 interface CreateSceneModalProps {
   opened: boolean;
@@ -16,17 +16,17 @@ export const CreateSceneModal = ({ opened, onClose, onCreate }: CreateSceneModal
   };
 
   return (
-      <Modal opened={opened} onClose={onClose} title="Создать новую сцену">
-        <TextInput
-            label="Название сцены"
-            value={title}
-            onChange={(e) => setTitle(e.currentTarget.value)}
-            placeholder="Введите название сцены"
-            mb="md"
-        />
-        <Button fullWidth onClick={handleSubmit}>
-          Создать
-        </Button>
-      </Modal>
+    <Modal opened={opened} onClose={onClose} title="Создать новую сцену">
+      <TextInput
+        label="Название сцены"
+        value={title}
+        onChange={(e) => setTitle(e.currentTarget.value)}
+        placeholder="Введите название сцены"
+        mb="md"
+      />
+      <Button fullWidth onClick={handleSubmit}>
+        Создать
+      </Button>
+    </Modal>
   );
 };

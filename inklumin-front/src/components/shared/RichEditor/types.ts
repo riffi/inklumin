@@ -1,9 +1,9 @@
-export enum IWarningKind{
+export enum IWarningKind {
   CLICHE = "CLICHE",
   REPEAT = "REPEAT",
 }
 
-export enum IWarningKindTile{
+export enum IWarningKindTile {
   CLICHE = "Штампы",
   REPEAT = "Повторы",
 }
@@ -16,20 +16,18 @@ export interface IWarning {
   groupIndex: string;
   active: boolean;
 }
-export interface IClicheWarning extends IWarning{
+export interface IClicheWarning extends IWarning {
   pattern: string;
 }
 
-export interface IRepeatWarning extends IWarning {
+export interface IRepeatWarning extends IWarning {}
 
-}
-
-export interface IWarningGroup{
+export interface IWarningGroup {
   groupIndex: string;
   warningKind: IWarningKind;
   warnings: IWarning[];
 }
-export interface IWarningContainer{
+export interface IWarningContainer {
   warningKind: IWarningKind;
   warningGroups: IWarningGroup[];
 }

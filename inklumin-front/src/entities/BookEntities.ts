@@ -1,4 +1,4 @@
-import {IBlock, IIcon} from "@/entities/ConstructorEntities";
+import { IBlock, IIcon } from "@/entities/ConstructorEntities";
 
 export interface IBook {
   id?: number;
@@ -15,17 +15,17 @@ export interface IBook {
   description?: string;
   localUpdatedAt?: string;
   serverUpdatedAt?: string;
-  syncState?: 'localChanges' | 'serverChanges' | 'synced';
+  syncState?: "localChanges" | "serverChanges" | "synced";
 }
 
-export interface IBlockInstance{
+export interface IBlockInstance {
   id?: number;
   uuid?: string;
   blockUuid: string; // Ссылка на блок, экземпляр которого мы создаем
   title: string; // Название экземпляра блока
   parentInstanceUuid?: string; // Ссылка на родительский экземпляр блока
   shortDescription?: string; // Краткое описание экземпляра блока
-  icon?: IIcon,
+  icon?: IIcon;
   updatedAt?: string;
   blockInstanceGroupUuid?: string; // Ссылка на группу экземпляров
 }
@@ -38,25 +38,25 @@ export interface IBlockInstanceGroup {
   order: number;
 }
 
-export interface IBlockInstanceSceneLink{
-  id?: number
-  uuid?: string
-  blockInstanceUuid: string // Ссылка на экземпляр блока, который мы хотим связать с сценой
-  blockUuid: string // Ссылка на блок, который будет связан с сценой
-  sceneId: number // Ссылка на сцену
+export interface IBlockInstanceSceneLink {
+  id?: number;
+  uuid?: string;
+  blockInstanceUuid: string; // Ссылка на экземпляр блока, который мы хотим связать с сценой
+  blockUuid: string; // Ссылка на блок, который будет связан с сценой
+  sceneId: number; // Ссылка на сцену
   title?: string; // Title from entity description
 }
 
-export interface IBlockParameterInstance{
+export interface IBlockParameterInstance {
   id?: number;
   uuid?: string;
-  blockInstanceUuid: string // Ссылка на экземпляр блока, к которому привязан параметр
-  blockParameterUuid: string // Ссылка на параметр блока
+  blockInstanceUuid: string; // Ссылка на экземпляр блока, к которому привязан параметр
+  blockParameterUuid: string; // Ссылка на параметр блока
   blockParameterGroupUuid: string; // Ссылка на группу параметров блока, к которой принадлежит параметр
   value: string | number; // Значение параметра
 }
 
-export interface IScene{
+export interface IScene {
   id?: number;
   title: string; // Название сцены
   body: string; // Тело сцены
@@ -72,14 +72,13 @@ export interface ISceneBody {
   body: string;
 }
 
-export interface ISceneWithInstancesBlock{
-  block: IBlock,
-  instances: IBlockInstance[]
+export interface ISceneWithInstancesBlock {
+  block: IBlock;
+  instances: IBlockInstance[];
 }
-export interface ISceneWithInstances extends IScene{
-  blockInstances: ISceneWithInstancesBlock[]
+export interface ISceneWithInstances extends IScene {
+  blockInstances: ISceneWithInstancesBlock[];
 }
-
 
 export interface IChapter {
   id?: number;
@@ -91,14 +90,14 @@ export interface IChapter {
 export interface IBlockInstanceRelation {
   id?: number;
   uuid?: string;
-  sourceInstanceUuid: string;    // UUID исходного экземпляра блока
-  targetInstanceUuid: string;    // UUID целевого экземпляра блока
-  sourceBlockUuid: string;       // UUID исходного блока
-  targetBlockUuid: string;       // UUID целевого блока
-  blockRelationUuid: string;     // Ссылка на исходную связь между блоками
+  sourceInstanceUuid: string; // UUID исходного экземпляра блока
+  targetInstanceUuid: string; // UUID целевого экземпляра блока
+  sourceBlockUuid: string; // UUID исходного блока
+  targetBlockUuid: string; // UUID целевого блока
+  blockRelationUuid: string; // Ссылка на исходную связь между блоками
 }
 
-export interface INoteGroup{
+export interface INoteGroup {
   id?: number;
   uuid?: string;
   title: string;
@@ -107,7 +106,7 @@ export interface INoteGroup{
   kindCode?: string; // Added this line
 }
 
-export interface INote{
+export interface INote {
   id?: number;
   uuid?: string;
   title: string;

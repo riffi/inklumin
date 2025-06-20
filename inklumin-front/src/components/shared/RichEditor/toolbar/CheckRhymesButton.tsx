@@ -1,9 +1,9 @@
-import {ActionIcon, Button, useMantineTheme} from "@mantine/core";
-import {IconPencil, IconLayersLinked} from "@tabler/icons-react";
-import {useEditor} from "@tiptap/react";
-import {useState} from "react";
-import {OpenRouterApi} from "@/api/openRouterApi";
+import { useState } from "react";
+import { IconLayersLinked, IconPencil } from "@tabler/icons-react";
+import { useEditor } from "@tiptap/react";
+import { ActionIcon, Button, useMantineTheme } from "@mantine/core";
 import { RichTextEditor } from "@mantine/tiptap";
+import { OpenRouterApi } from "@/api/openRouterApi";
 
 interface CheckRhymesButtonProps {
   editor: ReturnType<typeof useEditor>;
@@ -12,10 +12,10 @@ interface CheckRhymesButtonProps {
 }
 
 export const CheckRhymesButton = ({
-                                    editor,
-                                    onLoadingChange,
-                                    onRhymesFound
-                                  }: CheckRhymesButtonProps) => {
+  editor,
+  onLoadingChange,
+  onRhymesFound,
+}: CheckRhymesButtonProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const theme = useMantineTheme();
 
@@ -42,15 +42,8 @@ export const CheckRhymesButton = ({
   };
 
   return (
-      <RichTextEditor.Control
-          onClick={handleClick}
-          title="Поиск рифм"
-          disabled={isLoading}
-      >
-        <IconPencil
-            size={20}
-            color={"gray"}
-        />
-      </RichTextEditor.Control>
+    <RichTextEditor.Control onClick={handleClick} title="Поиск рифм" disabled={isLoading}>
+      <IconPencil size={20} color={"gray"} />
+    </RichTextEditor.Control>
   );
 };

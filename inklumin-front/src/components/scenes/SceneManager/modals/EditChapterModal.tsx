@@ -1,6 +1,6 @@
-import { Modal, TextInput, Button } from "@mantine/core";
-import { useState, useEffect } from "react";
-import {IChapter} from "@/entities/BookEntities";
+import { useEffect, useState } from "react";
+import { Button, Modal, TextInput } from "@mantine/core";
+import { IChapter } from "@/entities/BookEntities";
 
 interface EditChapterModalProps {
   opened: boolean;
@@ -21,17 +21,17 @@ export const EditChapterModal = ({ opened, onClose, chapter, onUpdate }: EditCha
   };
 
   return (
-      <Modal opened={opened} onClose={onClose} title="Редактировать главу">
-        <TextInput
-            label="Название главы"
-            value={title}
-            onChange={(e) => setTitle(e.currentTarget.value)}
-            placeholder="Введите новое название главы"
-            mb="md"
-        />
-        <Button fullWidth onClick={handleSubmit}>
-          Сохранить
-        </Button>
-      </Modal>
+    <Modal opened={opened} onClose={onClose} title="Редактировать главу">
+      <TextInput
+        label="Название главы"
+        value={title}
+        onChange={(e) => setTitle(e.currentTarget.value)}
+        placeholder="Введите новое название главы"
+        mb="md"
+      />
+      <Button fullWidth onClick={handleSubmit}>
+        Сохранить
+      </Button>
+    </Modal>
   );
 };

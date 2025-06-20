@@ -1,35 +1,33 @@
 import { BookDB } from "@/entities/bookDb";
 import { IBlockInstance } from "@/entities/BookEntities";
-import { generateUUID } from "@/utils/UUIDUtils";
+import { IBlock } from "@/entities/ConstructorEntities";
 import { BlockRepository } from "@/repository/Block/BlockRepository";
-import { BlockParameterInstanceRepository } from "./BlockParameterInstanceRepository";
+import { BlockInstanceRelationRepository } from "@/repository/BlockInstance/BlockInstanceRelationRepository";
+import { BlockInstanceSceneLinkRepository } from "@/repository/BlockInstance/BlockInstanceSceneLinkRepository";
+import { updateBookLocalUpdatedAt } from "@/utils/bookSyncUtils";
+import { generateUUID } from "@/utils/UUIDUtils";
 import { updateBlockInstance } from "./BlockInstanceUpdateHelper";
-import {BlockInstanceRelationRepository} from "@/repository/BlockInstance/BlockInstanceRelationRepository";
-import {BlockInstanceSceneLinkRepository} from "@/repository/BlockInstance/BlockInstanceSceneLinkRepository";
-import {updateBookLocalUpdatedAt} from "@/utils/bookSyncUtils";
-import {IBlock} from "@/entities/ConstructorEntities";
+import { BlockParameterInstanceRepository } from "./BlockParameterInstanceRepository";
 
 export const getByUuid = async (db: BookDB, blockInstanceUuid: string) => {
-  return db.blockInstances.where('uuid').equals(blockInstanceUuid).first();
-}
+  return db.blockInstances.where("uuid").equals(blockInstanceUuid).first();
+};
 
 export const getByUuidList = async (db: BookDB, blockInstanceUuidList: string[]) => {
-  return db.blockInstances.where('uuid').anyOf(blockInstanceUuidList).toArray();
-}
+  return db.blockInstances.where("uuid").anyOf(blockInstanceUuidList).toArray();
+};
 
 export const getBlockInstances = async (db: BookDB, blockUuid: string, titleSearch?: string) => {
-  let collection = db.blockInstances
-      .where('blockUuid')
-      .equals(blockUuid);
+  let collection = db.blockInstances.where("blockUuid").equals(blockUuid);
 
-  if (titleSearch && titleSearch.trim() !== '') {
-    collection = collection.filter(instance =>
-        instance.title.toLowerCase().includes(titleSearch.trim().toLowerCase())
+  if (titleSearch && titleSearch.trim() !== "") {
+    collection = collection.filter((instance) =>
+      instance.title.toLowerCase().includes(titleSearch.trim().toLowerCase())
     );
   }
 
   return collection.toArray();
-}
+};
 
 export const create = async (db: BookDB, instance: IBlockInstance) => {
   const instanceToCreate = {
@@ -40,28 +38,35 @@ export const create = async (db: BookDB, instance: IBlockInstance) => {
   delete (instanceToCreate as any).id;
   await db.blockInstances.add(instanceToCreate);
   await updateBookLocalUpdatedAt(db);
-}
+};
 
-export const createSingleInstance = async (db: BookDB, block: IBlock): Promise<IBlockInstance | undefined> => {
+export const createSingleInstance = async (
+  db: BookDB,
+  block: IBlock
+): Promise<IBlockInstance | undefined> => {
   const newUuid = generateUUID();
   const newInstanceData: IBlockInstance = {
     uuid: newUuid,
     blockUuid: block.uuid,
-    title: block.title || 'Unnamed Instance',
+    title: block.title || "Unnamed Instance",
   };
   await create(db, newInstanceData);
   await BlockParameterInstanceRepository.appendDefaultParams(db, newInstanceData);
   const created = await getByUuid(db, newUuid);
   await updateBookLocalUpdatedAt(db);
   return created;
-}
+};
 
 export const update = async (db: BookDB, instance: IBlockInstance) => {
   await updateBlockInstance(db, instance);
   await updateBookLocalUpdatedAt(db);
-}
+};
 
-export const updateByInstanceUuid = async (db: BookDB, instanceUuid: string, newData: Partial<IBlockInstance>) => {
+export const updateByInstanceUuid = async (
+  db: BookDB,
+  instanceUuid: string,
+  newData: Partial<IBlockInstance>
+) => {
   const instanceToUpdate = await getByUuid(db, instanceUuid);
   if (!instanceToUpdate) return;
 
@@ -72,27 +77,29 @@ export const updateByInstanceUuid = async (db: BookDB, instanceUuid: string, new
   };
   await db.blockInstances.update(mergedData.id!, mergedData);
   await updateBookLocalUpdatedAt(db);
-}
+};
 
 export const remove = async (db: BookDB, instance: IBlockInstance) => {
   await Promise.all([
     BlockInstanceRelationRepository.removeAllForInstance(db, instance.uuid!),
     BlockParameterInstanceRepository.removeAllForInstance(db, instance.uuid!),
     BlockInstanceSceneLinkRepository.removeLinksForInstance(db, instance.uuid!),
-    db.blockInstances.delete(instance.id!)
+    db.blockInstances.delete(instance.id!),
   ]);
   await updateBookLocalUpdatedAt(db);
-}
+};
 
-export const getChildInstances = async (db: BookDB, parentInstanceUuid: string, childBlockUuid?: string) => {
-  const query = db.blockInstances
-      .where('parentInstanceUuid')
-      .equals(parentInstanceUuid);
+export const getChildInstances = async (
+  db: BookDB,
+  parentInstanceUuid: string,
+  childBlockUuid?: string
+) => {
+  const query = db.blockInstances.where("parentInstanceUuid").equals(parentInstanceUuid);
 
   return childBlockUuid
-      ? query.filter(i => i.blockUuid === childBlockUuid).toArray()
-      : query.toArray();
-}
+    ? query.filter((i) => i.blockUuid === childBlockUuid).toArray()
+    : query.toArray();
+};
 
 export const removeByBlock = async (db: BookDB, blockUuid: string) => {
   const instances = await getBlockInstances(db, blockUuid);
@@ -100,7 +107,7 @@ export const removeByBlock = async (db: BookDB, blockUuid: string) => {
     await remove(db, instance);
   }
   await updateBookLocalUpdatedAt(db);
-}
+};
 
 export const BlockInstanceRepository = {
   getByUuid,
@@ -113,4 +120,4 @@ export const BlockInstanceRepository = {
   remove,
   getChildInstances,
   removeByBlock,
-}
+};

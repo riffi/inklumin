@@ -3,12 +3,12 @@ import { IBlockInstance } from "@/entities/BookEntities";
 import { updateBookLocalUpdatedAt } from "@/utils/bookSyncUtils";
 
 export const updateBlockInstance = async (db: BookDB, instance: IBlockInstance) => {
-    if (instance.id === undefined) return;
+  if (instance.id === undefined) return;
 
-    const updatedInstance = {
-        ...instance,
-        updatedAt: new Date().toISOString(),
-    };
-    await db.blockInstances.update(instance.id, updatedInstance);
-    await updateBookLocalUpdatedAt(db);
-}
+  const updatedInstance = {
+    ...instance,
+    updatedAt: new Date().toISOString(),
+  };
+  await db.blockInstances.update(instance.id, updatedInstance);
+  await updateBookLocalUpdatedAt(db);
+};

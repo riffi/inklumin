@@ -1,48 +1,50 @@
-import '@mantine/core/styles.css';
+import "@mantine/core/styles.css";
 
-import { MantineProvider } from '@mantine/core';
+import { MantineProvider } from "@mantine/core";
 // import { theme } from './theme'; // Removed as it's not used in the provided App.tsx
-import { Router } from './Router';
-import '@mantine/notifications/styles.css';
-import {Notifications} from "@mantine/notifications";
-import {DialogProvider} from "@/providers/DialogProvider/DialogProvider";
-import {PageTitleProvider} from "@/providers/PageTitleProvider/PageTitleProvider";
-import React, {useEffect} from "react";
-import {MediaQueryProvider} from "@/providers/MediaQueryProvider/MediaQueryProvider";
-import { useAuth } from "@/providers/AuthProvider/AuthProvider";
-import {ReactFlowProvider} from "reactflow";
+import { Router } from "./Router";
+
+import "@mantine/notifications/styles.css";
+
+import React, { useEffect } from "react";
+import { ReactFlowProvider } from "reactflow";
+import { Notifications } from "@mantine/notifications";
 import ErrorBoundary from "@/components/ErrorBoundary/ErrorBoundary";
-import { ConnectionStatusProvider } from '@/providers/ConnectionStatusProvider/ConnectionStatusProvider';
-import { useServerSync } from '@/services/bookSyncService';
-import { initKnowledgeBasePages } from './knowledge-base/init';
+import { useAuth } from "@/providers/AuthProvider/AuthProvider";
+import { ConnectionStatusProvider } from "@/providers/ConnectionStatusProvider/ConnectionStatusProvider";
+import { DialogProvider } from "@/providers/DialogProvider/DialogProvider";
+import { MediaQueryProvider } from "@/providers/MediaQueryProvider/MediaQueryProvider";
+import { PageTitleProvider } from "@/providers/PageTitleProvider/PageTitleProvider";
+import { useServerSync } from "@/services/bookSyncService";
+import { initKnowledgeBasePages } from "./knowledge-base/init";
 
 function AppContent() {
-    const { user } = useAuth();
-    useServerSync(user?.token);
-    useEffect(() => {
-        initKnowledgeBasePages();
-    }, []);
+  const { user } = useAuth();
+  useServerSync(user?.token);
+  useEffect(() => {
+    initKnowledgeBasePages();
+  }, []);
 
-    return (
-        <MantineProvider defaultColorScheme={"light"} datesLocale="ru">
-            <Notifications />
-            <DialogProvider>
-                <PageTitleProvider>
-                    <ErrorBoundary>
-                        <ConnectionStatusProvider>
-                            <ReactFlowProvider>
-                                <MediaQueryProvider>
-                                    <Router />
-                                </MediaQueryProvider>
-                            </ReactFlowProvider>
-                        </ConnectionStatusProvider>
-                    </ErrorBoundary>
-                </PageTitleProvider>
-            </DialogProvider>
-        </MantineProvider>
-    );
+  return (
+    <MantineProvider defaultColorScheme={"light"} datesLocale="ru">
+      <Notifications />
+      <DialogProvider>
+        <PageTitleProvider>
+          <ErrorBoundary>
+            <ConnectionStatusProvider>
+              <ReactFlowProvider>
+                <MediaQueryProvider>
+                  <Router />
+                </MediaQueryProvider>
+              </ReactFlowProvider>
+            </ConnectionStatusProvider>
+          </ErrorBoundary>
+        </PageTitleProvider>
+      </DialogProvider>
+    </MantineProvider>
+  );
 }
 
 export default function App() {
-    return <AppContent />;
+  return <AppContent />;
 }

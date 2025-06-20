@@ -1,4 +1,4 @@
-import { FlowNode, FlowEdge } from "../types";
+import { FlowEdge, FlowNode } from "../types";
 
 const LEVEL_HEIGHT = 50;
 const NODE_WIDTH = 280;
@@ -7,22 +7,22 @@ const GRID_CELL_WIDTH = 150;
 const GRID_CELL_HEIGHT = 100;
 
 export const hierarchicalLayout = (nodes: FlowNode[], edges: FlowEdge[]) => {
-  const nodeMap = new Map(nodes.map(n => [n.id, { ...n, level: 0, children: [] as string[] }]));
+  const nodeMap = new Map(nodes.map((n) => [n.id, { ...n, level: 0, children: [] as string[] }]));
   const visited = new Set<string>();
   const roots: string[] = [];
   const hasIncoming = new Set<string>();
 
-  edges.forEach(edge => {
+  edges.forEach((edge) => {
     hasIncoming.add(edge.target);
     const sourceNode = nodeMap.get(edge.source);
     sourceNode?.children.push(edge.target);
   });
 
-  nodes.forEach(node => !hasIncoming.has(node.id) && roots.push(node.id));
+  nodes.forEach((node) => !hasIncoming.has(node.id) && roots.push(node.id));
   if (!roots.length && nodes.length) roots.push(nodes[0].id);
 
   const levelNodes = new Map<number, string[]>();
-  const queue = roots.map(id => ({ id, level: 0 }));
+  const queue = roots.map((id) => ({ id, level: 0 }));
 
   while (queue.length) {
     const { id, level } = queue.shift()!;
@@ -34,7 +34,9 @@ export const hierarchicalLayout = (nodes: FlowNode[], edges: FlowEdge[]) => {
 
     node.level = level;
     levelNodes.set(level, [...(levelNodes.get(level) || []), id]);
-    node.children.forEach(childId => !visited.has(childId) && queue.push({ id: childId, level: level + 1 }));
+    node.children.forEach(
+      (childId) => !visited.has(childId) && queue.push({ id: childId, level: level + 1 })
+    );
   }
 
   levelNodes.forEach((nodeIds, level) => {
@@ -59,16 +61,16 @@ export const circularLayout = (nodes: FlowNode[]) => {
     ...node,
     position: {
       x: radius * Math.cos((2 * Math.PI * index) / nodes.length),
-      y: radius * Math.sin((2 * Math.PI * index) / nodes.length)
-    }
+      y: radius * Math.sin((2 * Math.PI * index) / nodes.length),
+    },
   }));
 };
 
 export const doubleCircularLayout = (nodes: FlowNode[]) => {
   // Разделяем узлы по gravity
-  const leftNodes = nodes.filter(node => node.gravity === 'left');
-  const rightNodes = nodes.filter(node => node.gravity === 'right');
-  const centerNodes = nodes.filter(node => node.gravity === 'center' || !node.gravity);
+  const leftNodes = nodes.filter((node) => node.gravity === "left");
+  const rightNodes = nodes.filter((node) => node.gravity === "right");
+  const centerNodes = nodes.filter((node) => node.gravity === "center" || !node.gravity);
 
   const result: FlowNode[] = [];
 
@@ -80,14 +82,14 @@ export const doubleCircularLayout = (nodes: FlowNode[]) => {
   leftNodes.forEach((node, index) => {
     // Распределяем по дуге от 110 до 250 градусов
     const startAngle = (110 * Math.PI) / 180; // 110° в радианах
-    const endAngle = (250 * Math.PI) / 180;   // 250° в радианах
+    const endAngle = (250 * Math.PI) / 180; // 250° в радианах
     const angle = startAngle + ((endAngle - startAngle) * index) / (leftNodes.length - 1 || 1);
     result.push({
       ...node,
       position: {
         x: centerX + semicircleRadius * Math.cos(angle),
-        y: semicircleRadius * Math.sin(angle)
-      }
+        y: semicircleRadius * Math.sin(angle),
+      },
     });
   });
 
@@ -95,28 +97,28 @@ export const doubleCircularLayout = (nodes: FlowNode[]) => {
   rightNodes.forEach((node, index) => {
     // Распределяем по дуге от 290 до 430 градусов
     const startAngle = (290 * Math.PI) / 180; // 290° в радианах
-    const endAngle = (430 * Math.PI) / 180;   // 430° в радианах
+    const endAngle = (430 * Math.PI) / 180; // 430° в радианах
     const angle = startAngle + ((endAngle - startAngle) * index) / (rightNodes.length - 1 || 1);
     result.push({
       ...node,
       position: {
         x: centerX + semicircleRadius * Math.cos(angle),
-        y: semicircleRadius * Math.sin(angle)
-      }
+        y: semicircleRadius * Math.sin(angle),
+      },
     });
   });
 
   // Размещаем центральные узлы по середине (вертикально)
   const centerSpacing = 80;
-  const centerStartY = -(centerNodes.length - 1) * centerSpacing / 2;
+  const centerStartY = (-(centerNodes.length - 1) * centerSpacing) / 2;
 
   centerNodes.forEach((node, index) => {
     result.push({
       ...node,
       position: {
         x: centerX,
-        y: centerStartY + index * centerSpacing
-      }
+        y: centerStartY + index * centerSpacing,
+      },
     });
   });
 
@@ -129,7 +131,7 @@ export const gridLayout = (nodes: FlowNode[]) => {
     ...node,
     position: {
       x: (index % cols) * GRID_CELL_WIDTH,
-      y: Math.floor(index / cols) * GRID_CELL_HEIGHT
-    }
+      y: Math.floor(index / cols) * GRID_CELL_HEIGHT,
+    },
   }));
 };

@@ -1,18 +1,18 @@
-import React, { useState, useEffect, createContext, useContext } from 'react';
-import {
-  login as loginRequest,
-  register as registerRequest,
-  validateToken as validateTokenRequest,
-  saveConfigToServer as saveConfigRequest,
-  getConfigFromServer as getConfigRequest,
-  ServiceResult,
-} from '@/services/authService';
+import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   AuthResponse,
+  ConfigDataResponse,
   LoginRequest,
   RegisterRequest,
-  ConfigDataResponse,
-} from '@/api/inkLuminApi/generatedTypes';
+} from "@/api/inkLuminApi/generatedTypes";
+import {
+  getConfigFromServer as getConfigRequest,
+  login as loginRequest,
+  register as registerRequest,
+  saveConfigToServer as saveConfigRequest,
+  ServiceResult,
+  validateToken as validateTokenRequest,
+} from "@/services/authService";
 
 interface User {
   token: string;
@@ -40,7 +40,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
@@ -52,7 +52,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Проверка токена при загрузке приложения
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem("authToken");
     if (token) {
       validateStoredToken(token);
     } else {
@@ -71,19 +71,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           userId: response.data.userId,
         });
       } else {
-        localStorage.removeItem('authToken');
+        localStorage.removeItem("authToken");
       }
     } catch (error) {
-      console.error('Token validation failed:', error);
-      localStorage.removeItem('authToken');
+      console.error("Token validation failed:", error);
+      localStorage.removeItem("authToken");
     } finally {
       setLoading(false);
     }
   };
 
-  const login = async (
-    credentials: LoginRequest
-  ): Promise<ServiceResult<AuthResponse>> => {
+  const login = async (credentials: LoginRequest): Promise<ServiceResult<AuthResponse>> => {
     try {
       const response = await loginRequest(credentials);
       if (response.success && response.data) {
@@ -91,21 +89,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           token: response.data.token,
           username: response.data.username,
           displayName: response.data.displayName || response.data.username,
-          userId: response.data.userId
+          userId: response.data.userId,
         };
         setUser(userData);
-        localStorage.setItem('authToken', response.data.token);
+        localStorage.setItem("authToken", response.data.token);
         return { success: true };
       }
       return { success: false, message: response.message };
     } catch (error) {
-      return { success: false, message: 'Ошибка соединения с сервером' };
+      return { success: false, message: "Ошибка соединения с сервером" };
     }
   };
 
-  const register = async (
-    userData: RegisterRequest
-  ): Promise<ServiceResult<AuthResponse>> => {
+  const register = async (userData: RegisterRequest): Promise<ServiceResult<AuthResponse>> => {
     try {
       const response = await registerRequest(userData);
       if (response.success && response.data) {
@@ -113,48 +109,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           token: response.data.token,
           username: response.data.username,
           displayName: response.data.displayName || response.data.username,
-          userId: response.data.userId
+          userId: response.data.userId,
         };
         setUser(userInfo);
-        localStorage.setItem('authToken', response.data.token);
+        localStorage.setItem("authToken", response.data.token);
         return { success: true };
       }
       return { success: false, message: response.message };
     } catch (error) {
-      return { success: false, message: 'Ошибка соединения с сервером' };
+      return { success: false, message: "Ошибка соединения с сервером" };
     }
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('authToken');
+    localStorage.removeItem("authToken");
   };
 
   const saveConfigToServer = async (
     configData: Record<string, unknown>
   ): Promise<ServiceResult<ConfigDataResponse>> => {
     if (!user?.token) {
-      return { success: false, message: 'Пользователь не авторизован' };
+      return { success: false, message: "Пользователь не авторизован" };
     }
 
     try {
       return await saveConfigRequest(user.token, configData);
     } catch (error) {
-      return { success: false, message: 'Ошибка соединения с сервером' };
+      return { success: false, message: "Ошибка соединения с сервером" };
     }
   };
 
-  const getConfigFromServer = async (): Promise<
-    ServiceResult<Record<string, unknown>>
-  > => {
+  const getConfigFromServer = async (): Promise<ServiceResult<Record<string, unknown>>> => {
     if (!user?.token) {
-      return { success: false, message: 'Пользователь не авторизован' };
+      return { success: false, message: "Пользователь не авторизован" };
     }
 
     try {
       return await getConfigRequest(user.token);
     } catch (error) {
-      return { success: false, message: 'Ошибка соединения с сервером' };
+      return { success: false, message: "Ошибка соединения с сервером" };
     }
   };
 
@@ -165,12 +159,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     logout,
     loading,
     saveConfigToServer,
-    getConfigFromServer
+    getConfigFromServer,
   };
 
-  return (
-      <AuthContext.Provider value={value}>
-        {children}
-      </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

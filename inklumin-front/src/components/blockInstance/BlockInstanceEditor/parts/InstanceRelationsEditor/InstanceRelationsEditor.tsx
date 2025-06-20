@@ -1,24 +1,16 @@
-import { useState } from 'react';
-import { Table, Button, Group, Modal} from '@mantine/core';
-import { bookDb } from '@/entities/bookDb';
-import { IBlock, IBlockRelation } from '@/entities/ConstructorEntities';
-import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";
+import { useState } from "react";
+import { Button, Group, Modal, Table } from "@mantine/core";
+import { useBlockRelationsEditor } from "@/components/blockInstance/BlockInstanceEditor/parts/InstanceRelationsEditor/hook/useBlockRelationsEditor";
+import { ChildBlockModal } from "@/components/blockInstance/BlockInstanceEditor/parts/InstanceRelationsEditor/modal/ChildBlockModal";
+import { DefaultModal } from "@/components/blockInstance/BlockInstanceEditor/parts/InstanceRelationsEditor/modal/DefaultModal";
+import { RelationRow } from "@/components/blockInstance/BlockInstanceEditor/parts/InstanceRelationsEditor/RelationRow";
+import { bookDb } from "@/entities/bookDb";
 import { IBlockInstanceRelation } from "@/entities/BookEntities";
-import {
-  RelationRow
-} from "@/components/blockInstance/BlockInstanceEditor/parts/InstanceRelationsEditor/RelationRow";
-import {
-  DefaultModal
-} from "@/components/blockInstance/BlockInstanceEditor/parts/InstanceRelationsEditor/modal/DefaultModal";
-import {
-  ChildBlockModal
-} from "@/components/blockInstance/BlockInstanceEditor/parts/InstanceRelationsEditor/modal/ChildBlockModal";
-import {
-  useBlockRelationsEditor
-} from "@/components/blockInstance/BlockInstanceEditor/parts/InstanceRelationsEditor/hook/useBlockRelationsEditor";
-import {useDialog} from "@/providers/DialogProvider/DialogProvider";
-import {useMedia} from "@/providers/MediaQueryProvider/MediaQueryProvider";
-import {BlockInstanceRelationRepository} from "@/repository/BlockInstance/BlockInstanceRelationRepository";
+import { IBlock, IBlockRelation } from "@/entities/ConstructorEntities";
+import { useDialog } from "@/providers/DialogProvider/DialogProvider";
+import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
+import { BlockInstanceRelationRepository } from "@/repository/BlockInstance/BlockInstanceRelationRepository";
+import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";
 
 interface BlockRelationsEditorProps {
   blockUuid: string;
@@ -27,22 +19,20 @@ interface BlockRelationsEditorProps {
   blockRelation: IBlockRelation;
 }
 
-
 export const InstanceRelationsEditor = ({
-                                       blockInstanceUuid,
-                                       relatedBlock,
-                                       blockRelation,
-                                       blockUuid
-                                     }: BlockRelationsEditorProps) => {
+  blockInstanceUuid,
+  relatedBlock,
+  blockRelation,
+  blockUuid,
+}: BlockRelationsEditorProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [targetInstanceUuid, setTargetInstanceUuid] = useState('');
-  const [parentInstanceUuid, setParentInstanceUuid] = useState('');
+  const [targetInstanceUuid, setTargetInstanceUuid] = useState("");
+  const [parentInstanceUuid, setParentInstanceUuid] = useState("");
 
   const isRelatedBlockChild = !!relatedBlock?.parentBlockUuid;
   const isRelatedBlockTarget = blockRelation.targetBlockUuid === relatedBlock?.uuid;
-  const {isMobile} = useMedia();
-  const {showDialog} = useDialog();
-
+  const { isMobile } = useMedia();
+  const { showDialog } = useDialog();
 
   const {
     relatedParentInstances,
@@ -51,103 +41,101 @@ export const InstanceRelationsEditor = ({
     instanceRelations,
     allRelatedInstances,
     unusedRelatedInstances,
-    createBlockInstanceRelation
+    createBlockInstanceRelation,
   } = useBlockRelationsEditor(
-      blockInstanceUuid,
-      relatedBlock,
-      isRelatedBlockTarget,
-      isRelatedBlockChild,
-      parentInstanceUuid,
-      blockUuid
+    blockInstanceUuid,
+    relatedBlock,
+    isRelatedBlockTarget,
+    isRelatedBlockChild,
+    parentInstanceUuid,
+    blockUuid
   );
 
-  if (!relatedBlock) return null
+  if (!relatedBlock) return null;
 
   const handleCreateRelation = async () => {
     await createBlockInstanceRelation(targetInstanceUuid, blockRelation?.uuid);
     resetModalState();
   };
 
-  const deleteRelation = async (relation: IBlockInstanceRelation) =>{
-    const result = await showDialog('Внимание', 'Вы действительно хотите удалить связь?')
-    if (!result) return
+  const deleteRelation = async (relation: IBlockInstanceRelation) => {
+    const result = await showDialog("Внимание", "Вы действительно хотите удалить связь?");
+    if (!result) return;
     await BlockInstanceRelationRepository.removeRelation(bookDb, relation);
-  }
-
+  };
 
   const resetModalState = () => {
     setIsModalOpen(false);
-    setParentInstanceUuid('');
-    setTargetInstanceUuid('');
+    setParentInstanceUuid("");
+    setTargetInstanceUuid("");
   };
 
-
   return (
-      <div>
-        <Group justify="space-between" mb="md">
-          <Button
-              onClick={() => setIsModalOpen(true)}
-              variant="light"
-              disabled={!isRelatedBlockChild && unusedRelatedInstances.length === 0}
-          >
-            {`Добавить ${relatedBlock?.titleForms?.accusative}`}
-          </Button>
-        </Group>
-
-        <Table>
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th>{relatedBlock.title}</Table.Th>
-              {isRelatedBlockChild && <Table.Th>{relatedParentBlock?.title}</Table.Th>}
-              <Table.Th>Действия</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            {instanceRelations?.map(relation =>
-                <RelationRow
-                    key={relation.blockRelationUuid}
-                    relation={relation}
-                    relatedParentInstances={relatedParentInstances}
-                    isRelatedBlockChild={isRelatedBlockChild}
-                    isRelatedBlockTarget = {isRelatedBlockTarget}
-                    allRelatedInstances={allRelatedInstances}
-                    onDelete={deleteRelation}
-                />
-            )}
-          </Table.Tbody>
-        </Table>
-
-        <Modal
-            opened={isModalOpen}
-            fullscreen={isMobile}
-            onClose={resetModalState}
-            title={`Добавить ${relatedBlock?.titleForms?.accusative}`}
+    <div>
+      <Group justify="space-between" mb="md">
+        <Button
+          onClick={() => setIsModalOpen(true)}
+          variant="light"
+          disabled={!isRelatedBlockChild && unusedRelatedInstances.length === 0}
         >
-          <>
+          {`Добавить ${relatedBlock?.titleForms?.accusative}`}
+        </Button>
+      </Group>
+
+      <Table>
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th>{relatedBlock.title}</Table.Th>
+            {isRelatedBlockChild && <Table.Th>{relatedParentBlock?.title}</Table.Th>}
+            <Table.Th>Действия</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          {instanceRelations?.map((relation) => (
+            <RelationRow
+              key={relation.blockRelationUuid}
+              relation={relation}
+              relatedParentInstances={relatedParentInstances}
+              isRelatedBlockChild={isRelatedBlockChild}
+              isRelatedBlockTarget={isRelatedBlockTarget}
+              allRelatedInstances={allRelatedInstances}
+              onDelete={deleteRelation}
+            />
+          ))}
+        </Table.Tbody>
+      </Table>
+
+      <Modal
+        opened={isModalOpen}
+        fullscreen={isMobile}
+        onClose={resetModalState}
+        title={`Добавить ${relatedBlock?.titleForms?.accusative}`}
+      >
+        <>
           {isRelatedBlockChild ? (
-              <ChildBlockModal
-                  relatedParentBlock={relatedParentBlock}
-                  relatedParentInstances={relatedParentInstances}
-                  relatedChildInstances={relatedChildInstances}
-                  parentInstanceUuid={parentInstanceUuid}
-                  targetInstanceUuid={targetInstanceUuid}
-                  relatedBlock={relatedBlock}
-                  onParentChange={setParentInstanceUuid}
-                  onTargetChange={setTargetInstanceUuid}
-                  onCreate={handleCreateRelation}
-                  isLoading={!relatedChildInstances}
-              />
+            <ChildBlockModal
+              relatedParentBlock={relatedParentBlock}
+              relatedParentInstances={relatedParentInstances}
+              relatedChildInstances={relatedChildInstances}
+              parentInstanceUuid={parentInstanceUuid}
+              targetInstanceUuid={targetInstanceUuid}
+              relatedBlock={relatedBlock}
+              onParentChange={setParentInstanceUuid}
+              onTargetChange={setTargetInstanceUuid}
+              onCreate={handleCreateRelation}
+              isLoading={!relatedChildInstances}
+            />
           ) : (
-              <DefaultModal
-                  relatedBlock={relatedBlock}
-                  unusedRelatedInstances={unusedRelatedInstances}
-                  targetInstanceUuid={targetInstanceUuid}
-                  onTargetChange={setTargetInstanceUuid}
-                  onCreate={handleCreateRelation}
-              />
+            <DefaultModal
+              relatedBlock={relatedBlock}
+              unusedRelatedInstances={unusedRelatedInstances}
+              targetInstanceUuid={targetInstanceUuid}
+              onTargetChange={setTargetInstanceUuid}
+              onCreate={handleCreateRelation}
+            />
           )}
-          </>
-        </Modal>
-      </div>
+        </>
+      </Modal>
+    </div>
   );
 };

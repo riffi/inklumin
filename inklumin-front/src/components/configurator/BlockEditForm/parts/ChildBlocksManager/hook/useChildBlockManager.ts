@@ -1,32 +1,36 @@
-import { useLiveQuery } from 'dexie-react-hooks';
-import { IBlock } from "@/entities/ConstructorEntities";
-import { configDatabase } from "@/entities/configuratorDb";
-import { bookDb } from "@/entities/bookDb";
-import { BlockRepository } from "@/repository/Block/BlockRepository";
+import { useLiveQuery } from "dexie-react-hooks";
 import { notifications } from "@mantine/notifications";
+import { bookDb } from "@/entities/bookDb";
+import { configDatabase } from "@/entities/configuratorDb";
+import { IBlock } from "@/entities/ConstructorEntities";
+import { BlockRepository } from "@/repository/Block/BlockRepository";
 
-export const useChildBlocksManager = (blockUuid: string, bookUuid?: string, otherBlocks: IBlock[]) => {
+export const useChildBlocksManager = (
+  blockUuid: string,
+  bookUuid?: string,
+  otherBlocks: IBlock[]
+) => {
   const db = bookUuid ? bookDb : configDatabase;
 
   const childrenBlocks = useLiveQuery<IBlock[]>(() => {
     return BlockRepository.getChildren(db, blockUuid);
   }, [blockUuid]);
 
-
-  const availableBlocks = otherBlocks?.filter(
-      b => !childrenBlocks?.some(child => child.uuid === b.uuid)
-  ) || [];
+  const availableBlocks =
+    otherBlocks?.filter((b) => !childrenBlocks?.some((child) => child.uuid === b.uuid)) || [];
 
   const linkChild = async (childBlockUuid: string, displayKind: string) => {
     try {
       const childBlock = await BlockRepository.getByUuid(db, childBlockUuid);
       if (childBlock) {
-        await BlockRepository.linkChildToParent(db,
-            {
-              ...childBlock,
-              displayKind
-            },
-            blockUuid);
+        await BlockRepository.linkChildToParent(
+          db,
+          {
+            ...childBlock,
+            displayKind,
+          },
+          blockUuid
+        );
         notifications.show({
           title: "Успешно",
           message: "Дочерний блок привязан",
@@ -47,7 +51,7 @@ export const useChildBlocksManager = (blockUuid: string, bookUuid?: string, othe
       if (block) {
         await db.blocks.update(block.id!, {
           ...block,
-          displayKind
+          displayKind,
         });
         notifications.show({
           title: "Успешно",
@@ -88,6 +92,6 @@ export const useChildBlocksManager = (blockUuid: string, bookUuid?: string, othe
     availableBlocks,
     linkChild,
     updateChildDisplayKind,
-    unlinkChild
+    unlinkChild,
   };
 };

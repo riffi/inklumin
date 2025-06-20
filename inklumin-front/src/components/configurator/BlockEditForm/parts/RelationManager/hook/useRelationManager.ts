@@ -1,11 +1,11 @@
-import { useLiveQuery } from "dexie-react-hooks";
-import {BlockRelationType, IBlock, IBlockRelation} from "@/entities/ConstructorEntities";
-import { configDatabase } from "@/entities/configuratorDb";
-import { BookDB, bookDb } from "@/entities/bookDb";
-import { BlockRelationRepository } from "@/repository/Block/BlockRelationRepository";
-import { notifications } from "@mantine/notifications";
-import { generateUUID } from "@/utils/UUIDUtils";
 import { useState } from "react";
+import { useLiveQuery } from "dexie-react-hooks";
+import { notifications } from "@mantine/notifications";
+import { BookDB, bookDb } from "@/entities/bookDb";
+import { configDatabase } from "@/entities/configuratorDb";
+import { BlockRelationType, IBlock, IBlockRelation } from "@/entities/ConstructorEntities";
+import { BlockRelationRepository } from "@/repository/Block/BlockRelationRepository";
+import { generateUUID } from "@/utils/UUIDUtils";
 
 export const useRelationManager = (block: IBlock, bookUuid?: string, otherBlocks?: IBlock[]) => {
   const db = bookUuid ? bookDb : configDatabase;
@@ -19,14 +19,15 @@ export const useRelationManager = (block: IBlock, bookUuid?: string, otherBlocks
     return BlockRelationRepository.getBlockRelations(db, blockUuid);
   }, [blockUuid]);
 
-
   const handleOpenModal = (relation?: IBlockRelation) => {
-    setCurrentRelation(relation || {
-      sourceBlockUuid: blockUuid,
-      targetBlockUuid: '',
-      relationType: BlockRelationType.ONE_TO_ONE,
-      configurationUuid: block.configurationUuid || '',
-    });
+    setCurrentRelation(
+      relation || {
+        sourceBlockUuid: blockUuid,
+        targetBlockUuid: "",
+        relationType: BlockRelationType.ONE_TO_ONE,
+        configurationUuid: block.configurationUuid || "",
+      }
+    );
     setIsModalOpen(true);
   };
 
@@ -48,8 +49,7 @@ export const useRelationManager = (block: IBlock, bookUuid?: string, otherBlocks
         message: "Не удалось сохранить связь",
         color: "red",
       });
-    }
-    finally {
+    } finally {
       setIsModalOpen(false);
     }
   };

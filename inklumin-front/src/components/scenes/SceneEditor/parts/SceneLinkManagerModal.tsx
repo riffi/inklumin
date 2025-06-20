@@ -1,10 +1,10 @@
-import React from 'react';
-import {Modal, TextInput, Button, Tabs, ScrollArea, Stack, Text} from '@mantine/core';
-import {useLiveQuery} from 'dexie-react-hooks';
-import {bookDb} from '@/entities/bookDb';
-import {IBlock} from '@/entities/ConstructorEntities';
-import {IBlockInstance, IBlockInstanceGroup} from '@/entities/BookEntities';
-import {BlockInstanceGroupRepository} from '@/repository/BlockInstance/BlockInstanceGroupRepository';
+import React from "react";
+import { useLiveQuery } from "dexie-react-hooks";
+import { Button, Modal, ScrollArea, Stack, Tabs, Text, TextInput } from "@mantine/core";
+import { bookDb } from "@/entities/bookDb";
+import { IBlockInstance, IBlockInstanceGroup } from "@/entities/BookEntities";
+import { IBlock } from "@/entities/ConstructorEntities";
+import { BlockInstanceGroupRepository } from "@/repository/BlockInstance/BlockInstanceGroupRepository";
 
 interface SceneLinkManagerModalProps {
   opened: boolean;
@@ -32,7 +32,7 @@ export const SceneLinkManagerModal = ({
 
   const renderInstances = (instances: IBlockInstance[]) => (
     <Stack>
-      {instances.map(inst => (
+      {instances.map((inst) => (
         <Button key={inst.uuid} variant="light" onClick={() => onSelectInstance(inst.uuid)}>
           {inst.title}
         </Button>
@@ -44,27 +44,36 @@ export const SceneLinkManagerModal = ({
     <Tabs defaultValue="none">
       <Tabs.List>
         <Tabs.Tab value="none">Без групп</Tabs.Tab>
-        {groups?.map(g => (
-          <Tabs.Tab key={g.uuid} value={g.uuid}>{g.title}</Tabs.Tab>
+        {groups?.map((g) => (
+          <Tabs.Tab key={g.uuid} value={g.uuid}>
+            {g.title}
+          </Tabs.Tab>
         ))}
       </Tabs.List>
       <Tabs.Panel value="none" pt="xs">
-        <ScrollArea h={300}>{renderInstances(availableInstances.filter(i => !i.blockInstanceGroupUuid))}</ScrollArea>
+        <ScrollArea h={300}>
+          {renderInstances(availableInstances.filter((i) => !i.blockInstanceGroupUuid))}
+        </ScrollArea>
       </Tabs.Panel>
-      {groups?.map(g => (
+      {groups?.map((g) => (
         <Tabs.Panel key={g.uuid} value={g.uuid} pt="xs">
-          <ScrollArea h={300}>{renderInstances(availableInstances.filter(i => i.blockInstanceGroupUuid === g.uuid))}</ScrollArea>
+          <ScrollArea h={300}>
+            {renderInstances(availableInstances.filter((i) => i.blockInstanceGroupUuid === g.uuid))}
+          </ScrollArea>
         </Tabs.Panel>
       ))}
     </Tabs>
   );
 
-  const plainContent = () => (
-    <ScrollArea h={300}>{renderInstances(availableInstances)}</ScrollArea>
-  );
+  const plainContent = () => <ScrollArea h={300}>{renderInstances(availableInstances)}</ScrollArea>;
 
   return (
-    <Modal opened={opened} onClose={onClose} title={`Выберите ${block.titleForms?.accusative}`} size="lg">
+    <Modal
+      opened={opened}
+      onClose={onClose}
+      title={`Выберите ${block.titleForms?.accusative}`}
+      size="lg"
+    >
       <Stack>
         <TextInput
           label="Название связи"
@@ -73,7 +82,11 @@ export const SceneLinkManagerModal = ({
           onChange={(e) => onLinkTitleChange(e.currentTarget.value)}
         />
         {availableInstances.length > 0 ? (
-          block.useGroups === 1 ? groupedContent() : plainContent()
+          block.useGroups === 1 ? (
+            groupedContent()
+          ) : (
+            plainContent()
+          )
         ) : (
           <Text c="dimmed" ta="center" py="md">
             Все элементы уже привязаны

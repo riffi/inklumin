@@ -1,10 +1,10 @@
-import { Modal, TextInput, Button, Stack } from "@mantine/core";
+import { Button, Modal, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";
 import { bookDb } from "@/entities/bookDb";
-import {generateUUID} from "@/utils/UUIDUtils";
-import {IBlock} from "@/entities/ConstructorEntities";
-import {useMedia} from "@/providers/MediaQueryProvider/MediaQueryProvider";
+import { IBlock } from "@/entities/ConstructorEntities";
+import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
+import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";
+import { generateUUID } from "@/utils/UUIDUtils";
 
 interface CreateChildInstanceModalProps {
   opened: boolean;
@@ -15,13 +15,12 @@ interface CreateChildInstanceModalProps {
 }
 
 export const CreateChildInstanceModal = ({
-                                           opened,
-                                           onClose,
-                                           blockInstanceUuid,
-                                           relatedBlock
-                                         }: CreateChildInstanceModalProps) => {
-
-  const {isMobile} = useMedia();
+  opened,
+  onClose,
+  blockInstanceUuid,
+  relatedBlock,
+}: CreateChildInstanceModalProps) => {
+  const { isMobile } = useMedia();
   const form = useForm({
     initialValues: {
       title: "",
@@ -36,27 +35,23 @@ export const CreateChildInstanceModal = ({
       uuid: generateUUID(),
       blockUuid: relatedBlock.uuid,
       title: form.values.title.trim(),
-      parentInstanceUuid: blockInstanceUuid
+      parentInstanceUuid: blockInstanceUuid,
     });
     onClose();
     form.reset();
   };
 
   return (
-      <Modal
-          opened={opened}
-          onClose={onClose}
-          title={`Добавить ${relatedBlock?.title}`}
-          fullScreen={isMobile}
-      >
-        <Stack>
-          <TextInput
-              label="Название"
-              {...form.getInputProps("title")}
-              autoFocus
-          />
-          <Button onClick={handleCreate}>Создать</Button>
-        </Stack>
-      </Modal>
+    <Modal
+      opened={opened}
+      onClose={onClose}
+      title={`Добавить ${relatedBlock?.title}`}
+      fullScreen={isMobile}
+    >
+      <Stack>
+        <TextInput label="Название" {...form.getInputProps("title")} autoFocus />
+        <Button onClick={handleCreate}>Создать</Button>
+      </Stack>
+    </Modal>
   );
 };

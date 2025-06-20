@@ -1,9 +1,9 @@
-import {useEditor} from "@tiptap/react";
-import {useState} from "react";
-import {OpenRouterApi} from "@/api/openRouterApi";
-import {RichTextEditor} from "@mantine/tiptap";
-import {IconBulb, IconIrregularPolyhedronOff} from "@tabler/icons-react";
-import {notifications} from "@mantine/notifications";
+import { useState } from "react";
+import { IconBulb, IconIrregularPolyhedronOff } from "@tabler/icons-react";
+import { useEditor } from "@tiptap/react";
+import { notifications } from "@mantine/notifications";
+import { RichTextEditor } from "@mantine/tiptap";
+import { OpenRouterApi } from "@/api/openRouterApi";
 
 interface CheckSimplifyButtonProps {
   editor: ReturnType<typeof useEditor>;
@@ -12,21 +12,21 @@ interface CheckSimplifyButtonProps {
 }
 
 export const CheckSimplifyButton = ({
-                                      editor,
-                                      onLoadingChange,
-                                      onSimplificationsFound
-                                    }: CheckSimplifyButtonProps) => {
+  editor,
+  onLoadingChange,
+  onSimplificationsFound,
+}: CheckSimplifyButtonProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleClick = async () => {
-    const {from, to} = editor.state.selection;
+    const { from, to } = editor.state.selection;
     const selectedText = editor.state.doc.textBetween(from, to, " ");
 
     if (!selectedText.trim()) {
       notifications.show({
         message: "Выделите текст для упрощения",
-        color: 'orange',
-      })
+        color: "orange",
+      });
       return;
     }
 
@@ -38,8 +38,8 @@ export const CheckSimplifyButton = ({
     } catch (error) {
       notifications.show({
         message: error.message,
-        color: 'red',
-      })
+        color: "red",
+      });
     } finally {
       setIsLoading(false);
       onLoadingChange(false);
@@ -47,15 +47,8 @@ export const CheckSimplifyButton = ({
   };
 
   return (
-      <RichTextEditor.Control
-          onClick={handleClick}
-          title="Упростить текст"
-          disabled={isLoading}
-      >
-        <IconIrregularPolyhedronOff
-            size={20}
-            color={"gray"}
-        />
-      </RichTextEditor.Control>
+    <RichTextEditor.Control onClick={handleClick} title="Упростить текст" disabled={isLoading}>
+      <IconIrregularPolyhedronOff size={20} color={"gray"} />
+    </RichTextEditor.Control>
   );
 };

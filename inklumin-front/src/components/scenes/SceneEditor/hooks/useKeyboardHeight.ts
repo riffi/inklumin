@@ -4,7 +4,7 @@ export const useKeyboardHeight = (isMobile: boolean) => {
   const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   useEffect(() => {
-    if (!isMobile || typeof window === 'undefined') return;
+    if (!isMobile || typeof window === "undefined") return;
 
     const handler = () => {
       const viewport = window.visualViewport;
@@ -14,8 +14,8 @@ export const useKeyboardHeight = (isMobile: boolean) => {
       setKeyboardHeight(newKeyboardHeight > 50 ? newKeyboardHeight : 0);
     };
 
-    window.visualViewport?.addEventListener('resize', handler);
-    return () => window.visualViewport?.removeEventListener('resize', handler);
+    window.visualViewport?.addEventListener("resize", handler);
+    return () => window.visualViewport?.removeEventListener("resize", handler);
   }, [isMobile]);
 
   return keyboardHeight;

@@ -1,8 +1,8 @@
-import {Box, Text} from "@mantine/core";
-import {IScene} from "@/entities/BookEntities";
-import {useMedia} from "@/providers/MediaQueryProvider/MediaQueryProvider";
+import { Box, Text } from "@mantine/core";
+import { IScene } from "@/entities/BookEntities";
+import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 
-const mobileStyle={
+const mobileStyle = {
   position: "fixed",
   bottom: "0px",
   height: "30px",
@@ -13,10 +13,10 @@ const mobileStyle={
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  gap: "10px"
-}
+  gap: "10px",
+};
 
-const desktopStyle={
+const desktopStyle = {
   backgroundColor: "rgb(236,236,236)",
   height: "30px",
   color: "black",
@@ -25,18 +25,19 @@ const desktopStyle={
   justifyContent: "center",
   alignItems: "center",
   gap: "10px",
-  zIndex: "99"
-}
+  zIndex: "99",
+};
 
 export const SceneStatusPanel = (props: { scene: IScene }) => {
   const { isMobile } = useMedia();
   return (
-      <>
-        <Box
-          style={isMobile ? mobileStyle : desktopStyle}
-        >
-          <Text size="sm">Символов: {props.scene?.totalSymbolCountWoSpaces} / {props.scene?.totalSymbolCountWithSpaces}</Text>
-        </Box>
-      </>
-  )
-}
+    <>
+      <Box style={isMobile ? mobileStyle : desktopStyle}>
+        <Text size="sm">
+          Символов: {props.scene?.totalSymbolCountWoSpaces} /{" "}
+          {props.scene?.totalSymbolCountWithSpaces}
+        </Text>
+      </Box>
+    </>
+  );
+};

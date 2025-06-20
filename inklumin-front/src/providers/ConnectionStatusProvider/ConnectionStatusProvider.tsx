@@ -1,6 +1,6 @@
 // src/providers/ConnectionStatusProvider/ConnectionStatusProvider.tsx
-import React, { createContext, useContext } from 'react';
-import { useConnectionStatus } from '@/hooks/useConnectionStatus'; // Adjusted path
+import React, { createContext, useContext } from "react";
+import { useConnectionStatus } from "@/hooks/useConnectionStatus"; // Adjusted path
 
 interface ConnectionStatusContextType {
   isOnline: boolean;
@@ -21,7 +21,7 @@ export const ConnectionStatusProvider: React.FC<{ children: React.ReactNode }> =
 export const useConnection = (): ConnectionStatusContextType => {
   const context = useContext(ConnectionStatusContext);
   if (context === undefined) {
-    throw new Error('useConnection must be used within a ConnectionStatusProvider');
+    throw new Error("useConnection must be used within a ConnectionStatusProvider");
   }
   return context;
 };

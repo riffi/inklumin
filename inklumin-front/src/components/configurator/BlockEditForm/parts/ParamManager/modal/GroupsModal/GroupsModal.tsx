@@ -1,11 +1,11 @@
 // Обновленный GroupsModal.tsx
-import {Modal, Group, Button, ActionIcon, TextInput, Flex} from "@mantine/core";
-import { IconPlus, IconArrowUp, IconArrowDown, IconTrash } from "@tabler/icons-react";
-import { notifications } from "@mantine/notifications";
-import { IBlockParameterGroup } from "@/entities/ConstructorEntities";
 import { useState } from "react";
-import {InlineEdit} from "@/components/shared/InlineEdit/InlineEdit";
-import {useMedia} from "@/providers/MediaQueryProvider/MediaQueryProvider";
+import { IconArrowDown, IconArrowUp, IconPlus, IconTrash } from "@tabler/icons-react";
+import { ActionIcon, Button, Flex, Group, Modal, TextInput } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
+import { InlineEdit } from "@/components/shared/InlineEdit/InlineEdit";
+import { IBlockParameterGroup } from "@/entities/ConstructorEntities";
+import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 
 interface IGroupsModalProps {
   opened: boolean;
@@ -19,17 +19,17 @@ interface IGroupsModalProps {
 }
 
 export const GroupsModal = ({
-                              opened,
-                              onClose,
-                              paramGroupList,
-                              onSaveGroup,
-                              onMoveGroupUp,
-                              onMoveGroupDown,
-                              onDeleteGroup,
-                              onUpdateGroupTitle, // Добавлен новый проп
-                            }: IGroupsModalProps) => {
-  const [newGroupTitle, setNewGroupTitle] = useState('');
-  const {isMobile} = useMedia();
+  opened,
+  onClose,
+  paramGroupList,
+  onSaveGroup,
+  onMoveGroupUp,
+  onMoveGroupDown,
+  onDeleteGroup,
+  onUpdateGroupTitle, // Добавлен новый проп
+}: IGroupsModalProps) => {
+  const [newGroupTitle, setNewGroupTitle] = useState("");
+  const { isMobile } = useMedia();
 
   const handleSave = () => {
     if (!newGroupTitle.trim()) {
@@ -42,7 +42,7 @@ export const GroupsModal = ({
     }
 
     onSaveGroup(newGroupTitle);
-    setNewGroupTitle('');
+    setNewGroupTitle("");
   };
 
   const handleDelete = (uuid: string) => {
@@ -58,65 +58,62 @@ export const GroupsModal = ({
   };
 
   return (
-      <Modal
-          opened={opened}
-          onClose={onClose}
-          title="Управление вкладками"
-          size="lg"
-          fullScreen={isMobile}
-      >
-        <Flex justify="flex-start" align="self-end" mb="md" gap="md">
-          <TextInput
-              label="Название новой вкладки"
-              value={newGroupTitle}
-              onChange={(e) => setNewGroupTitle(e.target.value)}
-              placeholder="Введите название"
-              required
-          />
-          <Button
-              onClick={handleSave}
-              leftSection={<IconPlus size="1rem" />}
-          >
-            Добавить вкладку
-          </Button>
-        </Flex>
+    <Modal
+      opened={opened}
+      onClose={onClose}
+      title="Управление вкладками"
+      size="lg"
+      fullScreen={isMobile}
+    >
+      <Flex justify="flex-start" align="self-end" mb="md" gap="md">
+        <TextInput
+          label="Название новой вкладки"
+          value={newGroupTitle}
+          onChange={(e) => setNewGroupTitle(e.target.value)}
+          placeholder="Введите название"
+          required
+        />
+        <Button onClick={handleSave} leftSection={<IconPlus size="1rem" />}>
+          Добавить вкладку
+        </Button>
+      </Flex>
 
-        {paramGroupList?.map((group, index) => (
-            <Group key={group.uuid} mb="xs" grow>
-              <InlineEdit
-                  value={group.title}
-                  onChange={(newTitle) => onUpdateGroupTitle(group.uuid, newTitle)}
-                  placeholder="Название вкладки"
-                  inputProps={{
-                    style: { flex: 1 }
-                  }}
-              />
-              <Group gap={5}>
-                <ActionIcon
-                    variant="light"
-                    onClick={() => onMoveGroupUp(group.uuid)}
-                    disabled={index === 0}
-                >
-                  <IconArrowUp size="1rem" />
-                </ActionIcon>
-                <ActionIcon
-                    variant="light"
-                    onClick={() => onMoveGroupDown(group.uuid)}
-                    disabled={index === paramGroupList.length - 1}
-                >
-                  <IconArrowDown size="1rem" />
-                </ActionIcon>
-                <ActionIcon
-                    variant="light"
-                    color="red"
-                    onClick={() => handleDelete(group.uuid)}
-                    disabled={paramGroupList.length <= 1}
-                >
-                  <IconTrash size="1rem" />
-                </ActionIcon>
-              </Group>
-            </Group>
-        ))}
-      </Modal>
+      {paramGroupList?.map((group, index) => (
+        <Group key={group.uuid} mb="xs" grow>
+          <InlineEdit
+            value={group.title}
+            onChange={(newTitle) => onUpdateGroupTitle(group.uuid, newTitle)}
+            placeholder="Название вкладки"
+            inputProps={{
+              style: { flex: 1 },
+            }}
+          />
+          <Group gap={5}>
+            <ActionIcon
+              variant="light"
+              onClick={() => onMoveGroupUp(group.uuid)}
+              disabled={index === 0}
+            >
+              <IconArrowUp size="1rem" />
+            </ActionIcon>
+            <ActionIcon
+              variant="light"
+              onClick={() => onMoveGroupDown(group.uuid)}
+              disabled={index === paramGroupList.length - 1}
+            >
+              <IconArrowDown size="1rem" />
+            </ActionIcon>
+            <ActionIcon
+              variant="light"
+              color="red"
+              onClick={() => handleDelete(group.uuid)}
+              disabled={paramGroupList.length <= 1}
+            >
+              <IconTrash size="1rem" />
+            </ActionIcon>
+          </Group>
+        </Group>
+      ))}
+    </Modal>
   );
 };

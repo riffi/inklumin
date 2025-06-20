@@ -1,11 +1,10 @@
 // ClicheHighlighterExtension.ts
 import { PluginKey } from "prosemirror-state";
-import { BaseHighlighterExtension } from "./base/BaseHighligherExtension";
 import { IClicheWarning, IWarningGroup } from "../types";
+import { BaseHighlighterExtension } from "./base/BaseHighligherExtension";
 
 export const CLICHE_HIGHLIGHTER_NAME = "clicheHighlighter";
 export const clicheHighlighterKey = new PluginKey(CLICHE_HIGHLIGHTER_NAME);
-
 
 export const ClicheHighlighterExtension = BaseHighlighterExtension<IClicheWarning>({
   pluginKey: clicheHighlighterKey,
@@ -15,6 +14,6 @@ export const ClicheHighlighterExtension = BaseHighlighterExtension<IClicheWarnin
   createDecorAttrs: (warning) => ({
     "data-pattern": warning.pattern,
     "data-text": warning.text,
-    "data-group-index": warning.groupIndex
-  })
+    "data-group-index": warning.groupIndex,
+  }),
 });

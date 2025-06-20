@@ -2,24 +2,24 @@
 // Do not edit manually
 import {
   ApiResponse,
-  RegisterRequest,
-  LoginRequest,
   AuthResponse,
-  SaveBookRequest,
   BookResponse,
   BookShortInfo,
-  SaveConfigDataRequest,
   ConfigDataResponse,
-} from './generatedTypes';
+  LoginRequest,
+  RegisterRequest,
+  SaveBookRequest,
+  SaveConfigDataRequest,
+} from "./generatedTypes";
 
-const API_BASE = 'http://localhost:8080/api';
+const API_BASE = "http://localhost:8080/api";
 
 export const inkLuminAPI = {
   async register(userData: RegisterRequest): Promise<ApiResponse<AuthResponse>> {
     const response = await fetch(`${API_BASE}/auth/register`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(userData),
     });
@@ -28,9 +28,9 @@ export const inkLuminAPI = {
 
   async login(credentials: LoginRequest): Promise<ApiResponse<AuthResponse>> {
     const response = await fetch(`${API_BASE}/auth/login`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(credentials),
     });
@@ -54,9 +54,9 @@ export const inkLuminAPI = {
       configData: JSON.stringify(configData),
     };
     const response = await fetch(`${API_BASE}/user/config-data`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(payload),
@@ -73,14 +73,11 @@ export const inkLuminAPI = {
     return response.json();
   },
 
-  async saveBookData(
-    token: string,
-    bookData: SaveBookRequest
-  ): Promise<ApiResponse<BookResponse>> {
+  async saveBookData(token: string, bookData: SaveBookRequest): Promise<ApiResponse<BookResponse>> {
     const response = await fetch(`${API_BASE}/books`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(bookData),
@@ -97,10 +94,7 @@ export const inkLuminAPI = {
     return response.json();
   },
 
-  async getBookData(
-    token: string,
-    uuid: string
-  ): Promise<ApiResponse<BookResponse>> {
+  async getBookData(token: string, uuid: string): Promise<ApiResponse<BookResponse>> {
     const response = await fetch(`${API_BASE}/books/${uuid}`, {
       headers: {
         Authorization: `Bearer ${token}`,

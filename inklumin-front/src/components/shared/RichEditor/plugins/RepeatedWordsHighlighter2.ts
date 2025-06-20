@@ -1,8 +1,7 @@
 import { Extension } from "@tiptap/core";
+import * as morph from "morphjs";
 import { Plugin } from "prosemirror-state";
 import { Decoration, DecorationSet } from "prosemirror-view";
-import * as morph from 'morphjs';
-
 
 const RepeatWordsHighlighter = Extension.create({
   name: "repeatWordsHighlighter",
@@ -34,7 +33,7 @@ const RepeatWordsHighlighter = Extension.create({
 
       doc.descendants((node, position) => {
         if (node.isText) {
-          const text = node.text || '';
+          const text = node.text || "";
           const words = [];
 
           const wordRegex = /[\wа-яА-ЯёЁ-]+/g;
@@ -44,7 +43,7 @@ const RepeatWordsHighlighter = Extension.create({
             const wordPos = position + match.index;
 
             // Пропускаем слова из дефисов или слишком короткие
-            if (word.replace(/-/g, '').length < minWordLength) continue;
+            if (word.replace(/-/g, "").length < minWordLength) continue;
 
             const cleanWord = word.replace(/[.,!?;:()"'«»]/g, "").toLowerCase();
             if (cleanWord.length < minWordLength) continue;
@@ -54,17 +53,17 @@ const RepeatWordsHighlighter = Extension.create({
               clean: cleanWord,
               normal: checkSimilarRoots ? getNormalForm(cleanWord) : cleanWord,
               from: wordPos,
-              to: wordPos + word.length
+              to: wordPos + word.length,
             });
           }
 
-          words.forEach(({word, clean, normal, from, to}) => {
+          words.forEach(({ word, clean, normal, from, to }) => {
             wordBuffer.push({
               word: word,
               clean: clean,
               normal: normal,
               from: from,
-              to: to
+              to: to,
             });
 
             if (wordBuffer.length > windowSize) {
@@ -73,32 +72,30 @@ const RepeatWordsHighlighter = Extension.create({
 
             // Ищем слова с одинаковыми нормальными формами
             const similarWords = wordBuffer.filter(
-                (w, i) => w.normal === normal &&
-                    i !== wordBuffer.length - 1 &&
-                    w.from !== from // Исключаем текущее слово
+              (w, i) => w.normal === normal && i !== wordBuffer.length - 1 && w.from !== from // Исключаем текущее слово
             );
 
             if (similarWords.length > 0) {
               const count = similarWords.length + 1;
 
               decorations.push(
-                  Decoration.inline(from, to, {
-                    style: highlightStyle,
-                    class: "repeated-root",
-                    "data-repeated-root": normal,
-                    "title": `Повтор слова: "${normal}" (${count} раза)`
-                  })
+                Decoration.inline(from, to, {
+                  style: highlightStyle,
+                  class: "repeated-root",
+                  "data-repeated-root": normal,
+                  title: `Повтор слова: "${normal}" (${count} раза)`,
+                })
               );
 
               similarWords.forEach((w) => {
-                if (!decorations.some(d => d.from === w.from && d.to === w.to)) {
+                if (!decorations.some((d) => d.from === w.from && d.to === w.to)) {
                   decorations.push(
-                      Decoration.inline(w.from, w.to, {
-                        style: highlightStyle,
-                        class: "repeated-root",
-                        "data-repeated-root": normal,
-                        "title": `Повтор слова: "${normal}" (${count} раза)`
-                      })
+                    Decoration.inline(w.from, w.to, {
+                      style: highlightStyle,
+                      class: "repeated-root",
+                      "data-repeated-root": normal,
+                      title: `Повтор слова: "${normal}" (${count} раза)`,
+                    })
                   );
                 }
               });
@@ -115,9 +112,7 @@ const RepeatWordsHighlighter = Extension.create({
         state: {
           init: (_, { doc }) => findRepeatedWords(doc),
           apply: (transaction, oldState) => {
-            return transaction.docChanged
-                ? findRepeatedWords(transaction.doc)
-                : oldState;
+            return transaction.docChanged ? findRepeatedWords(transaction.doc) : oldState;
           },
         },
         props: {
@@ -127,7 +122,7 @@ const RepeatWordsHighlighter = Extension.create({
         },
       }),
     ];
-  }
+  },
 });
 
 export default RepeatWordsHighlighter;

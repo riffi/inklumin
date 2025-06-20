@@ -1,25 +1,25 @@
 // BlockTabRepository.ts
-import {BlockAbstractDb} from "@/entities/BlockAbstractDb";
-import {IBlockTab, IBlockTabKind, IBlock} from "@/entities/ConstructorEntities";
-import {generateUUID} from "@/utils/UUIDUtils";
+import { BlockAbstractDb } from "@/entities/BlockAbstractDb";
+import { IBlock, IBlockTab, IBlockTabKind } from "@/entities/ConstructorEntities";
+import { generateUUID } from "@/utils/UUIDUtils";
 
 const deleteTabsForBlock = async (db: BlockAbstractDb, blockUuid: string) => {
-  await db.blockTabs.where('blockUuid').equals(blockUuid).delete();
-}
+  await db.blockTabs.where("blockUuid").equals(blockUuid).delete();
+};
 
 const appendDefaultTab = async (db: BlockAbstractDb, blockData: IBlock) => {
   await db.blockTabs.add({
     uuid: generateUUID(),
     blockUuid: blockData.uuid!, // Added non-null assertion
-    title: 'Основное',
+    title: "Основное",
     orderNumber: 0,
     tabKind: IBlockTabKind.parameters,
-    isDefault: 1
-  })
-}
+    isDefault: 1,
+  });
+};
 
 const getBlockTabs = async (db: BlockAbstractDb, blockUuid: string) => {
-  return db.blockTabs.where('blockUuid').equals(blockUuid).sortBy('orderNumber');
+  return db.blockTabs.where("blockUuid").equals(blockUuid).sortBy("orderNumber");
 };
 
 const saveTab = async (db: BlockAbstractDb, tab: IBlockTab) => {
@@ -32,14 +32,19 @@ const saveTab = async (db: BlockAbstractDb, tab: IBlockTab) => {
 };
 
 const deleteTab = async (db: BlockAbstractDb, uuid: string) => {
-  await db.blockTabs.where('uuid').equals(uuid).delete();
+  await db.blockTabs.where("uuid").equals(uuid).delete();
 };
 
-const moveTab = async (db: BlockAbstractDb, blockUuid: string, uuid: string, direction: 'up' | 'down') => {
+const moveTab = async (
+  db: BlockAbstractDb,
+  blockUuid: string,
+  uuid: string,
+  direction: "up" | "down"
+) => {
   const tabs = await db.blockTabs.where("blockUuid").equals(blockUuid).sortBy("orderNumber");
-  const index = tabs.findIndex(t => t.uuid === uuid);
+  const index = tabs.findIndex((t) => t.uuid === uuid);
 
-  if (direction === 'up' && index > 0) {
+  if (direction === "up" && index > 0) {
     const [prev, current] = [tabs[index - 1], tabs[index]];
     await Promise.all([
       db.blockTabs.update(prev.id!, { orderNumber: current.orderNumber }),
@@ -47,7 +52,7 @@ const moveTab = async (db: BlockAbstractDb, blockUuid: string, uuid: string, dir
     ]);
   }
 
-  if (direction === 'down' && index < tabs.length - 1) {
+  if (direction === "down" && index < tabs.length - 1) {
     const [current, next] = [tabs[index], tabs[index + 1]];
     await Promise.all([
       db.blockTabs.update(next.id!, { orderNumber: current.orderNumber }),
@@ -62,5 +67,5 @@ export const BlockTabRepository = {
   saveTab,
   deleteTab,
   moveTab,
-  deleteTabsForBlock // Added
+  deleteTabsForBlock, // Added
 };

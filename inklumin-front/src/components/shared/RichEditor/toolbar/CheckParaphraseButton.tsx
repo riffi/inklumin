@@ -1,10 +1,10 @@
-import {ActionIcon, Button, useMantineTheme} from "@mantine/core";
-import {IconClipboardCheck, IconEyeTable, IconLayersLinked} from "@tabler/icons-react";
-import {useEditor} from "@tiptap/react";
-import {useState} from "react";
-import {OpenRouterApi} from "@/api/openRouterApi";
+import { useState } from "react";
+import { IconClipboardCheck, IconEyeTable, IconLayersLinked } from "@tabler/icons-react";
+import { useEditor } from "@tiptap/react";
+import { ActionIcon, Button, useMantineTheme } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { RichTextEditor } from "@mantine/tiptap";
-import {notifications} from "@mantine/notifications";
+import { OpenRouterApi } from "@/api/openRouterApi";
 
 interface CheckParaphraseButtonProps {
   editor: ReturnType<typeof useEditor>;
@@ -13,10 +13,10 @@ interface CheckParaphraseButtonProps {
 }
 
 export const CheckParaphraseButton = ({
-                                        editor,
-                                        onLoadingChange,
-                                        onParaphrasesFound
-                                      }: CheckParaphraseButtonProps) => {
+  editor,
+  onLoadingChange,
+  onParaphrasesFound,
+}: CheckParaphraseButtonProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const theme = useMantineTheme();
 
@@ -27,8 +27,8 @@ export const CheckParaphraseButton = ({
     if (!selectedText.trim()) {
       notifications.show({
         message: "Выделите текст для перефразирования",
-        color: 'orange',
-      })
+        color: "orange",
+      });
       return;
     }
 
@@ -40,8 +40,8 @@ export const CheckParaphraseButton = ({
     } catch (error) {
       notifications.show({
         message: error.message,
-        color: 'red',
-      })
+        color: "red",
+      });
     } finally {
       setIsLoading(false);
       onLoadingChange(false);
@@ -49,15 +49,12 @@ export const CheckParaphraseButton = ({
   };
 
   return (
-      <RichTextEditor.Control
-          onClick={handleClick}
-          title="Перефразировать текст"
-          disabled={isLoading}
-      >
-        <IconEyeTable
-            size={20}
-            color={"gray"}
-        />
-      </RichTextEditor.Control>
+    <RichTextEditor.Control
+      onClick={handleClick}
+      title="Перефразировать текст"
+      disabled={isLoading}
+    >
+      <IconEyeTable size={20} color={"gray"} />
+    </RichTextEditor.Control>
   );
 };

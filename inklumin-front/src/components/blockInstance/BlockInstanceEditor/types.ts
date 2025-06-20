@@ -1,5 +1,5 @@
-import {IBlockParameter} from "@/entities/ConstructorEntities";
-import {IBlockParameterInstance} from "@/entities/BookEntities";
+import { IBlockParameterInstance } from "@/entities/BookEntities";
+import { IBlockParameter } from "@/entities/ConstructorEntities";
 
 export type FullParam = {
   parameter?: IBlockParameter;

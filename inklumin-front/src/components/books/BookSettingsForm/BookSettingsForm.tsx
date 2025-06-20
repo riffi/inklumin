@@ -1,10 +1,10 @@
 // BookSettingsForm.tsx
-import {Button, Group, Box, Select, TextInput, Text, Space, Textarea} from "@mantine/core"; // Added Text and Space
-import { useForm } from "@mantine/form";
-import { IBookConfiguration } from "@/entities/ConstructorEntities";
-import {IBook} from "@/entities/BookEntities";
-import { genres, forms } from "@/data/bookProperties"; // Import genres and forms
 import { useEffect } from "react"; // Import useEffect
+import { Box, Button, Group, Select, Space, Text, Textarea, TextInput } from "@mantine/core"; // Added Text and Space
+import { useForm } from "@mantine/form";
+import { forms, genres } from "@/data/bookProperties"; // Import genres and forms
+import { IBook } from "@/entities/BookEntities";
+import { IBookConfiguration } from "@/entities/ConstructorEntities";
 
 interface BookSettingsFormProps {
   onSave: (data: IBook) => void;
@@ -15,12 +15,12 @@ interface BookSettingsFormProps {
 }
 
 export const BookSettingsForm = ({
-                                   onSave,
-                                   onCancel,
-                                   initialData,
-                                   configurations,
-                                   kind, // Added kind to props destructuring
-                                 }: BookSettingsFormProps) => {
+  onSave,
+  onCancel,
+  initialData,
+  configurations,
+  kind, // Added kind to props destructuring
+}: BookSettingsFormProps) => {
   const currentKind = kind || initialData?.kind; // Determine current kind
 
   const form = useForm({
@@ -32,13 +32,13 @@ export const BookSettingsForm = ({
       genre: "", // Added genre
       subGenre: "", // Added subGenre
       configurationUuid: "",
-      configurationTitle: ""
+      configurationTitle: "",
     },
     validate: {
       title: (value) => (value ? null : "Название обязательно"),
       // Conditional validation
-      form: (value) => (currentKind !== 'material' && !value ? "Форма обязательна" : null),
-      genre: (value) => (currentKind !== 'material' && !value ? "Основной жанр обязателен" : null),
+      form: (value) => (currentKind !== "material" && !value ? "Форма обязательна" : null),
+      genre: (value) => (currentKind !== "material" && !value ? "Основной жанр обязателен" : null),
     },
   });
 
@@ -46,20 +46,20 @@ export const BookSettingsForm = ({
   useEffect(() => {
     if (initialData) {
       const { genre, form: initialForm, kind: initialKind, ...restData } = initialData; // kind is part of initialData
-      let mainGenre = '';
-      let subGenre = '';
-      if (currentKind !== 'material' && genre && genre.includes('/')) {
-        const parts = genre.split('/');
+      let mainGenre = "";
+      let subGenre = "";
+      if (currentKind !== "material" && genre && genre.includes("/")) {
+        const parts = genre.split("/");
         mainGenre = parts[0];
         subGenre = parts[1];
-      } else if (currentKind !== 'material' && genre) {
+      } else if (currentKind !== "material" && genre) {
         mainGenre = genre;
       }
       form.setValues({
         ...restData,
-        form: currentKind !== 'material' ? (initialForm || "") : "", // Clear if material
-        genre: currentKind !== 'material' ? mainGenre : "", // Clear if material
-        subGenre: currentKind !== 'material' ? subGenre : "", // Clear if material
+        form: currentKind !== "material" ? initialForm || "" : "", // Clear if material
+        genre: currentKind !== "material" ? mainGenre : "", // Clear if material
+        subGenre: currentKind !== "material" ? subGenre : "", // Clear if material
         configurationUuid: initialData.configurationUuid || "",
         author: initialData.author || "",
         title: initialData.title || "",
@@ -70,11 +70,12 @@ export const BookSettingsForm = ({
     } else {
       // Reset to blank if no initialData
       form.reset();
-      form.setValues({ // Use setValues to ensure all fields, including new ones, are reset
+      form.setValues({
+        // Use setValues to ensure all fields, including new ones, are reset
         uuid: "",
         title: "",
         author: "",
-        form: currentKind !== 'material' ? "Роман" : "", // Default form if not material
+        form: currentKind !== "material" ? "Роман" : "", // Default form if not material
         genre: "",
         subGenre: "",
         configurationUuid: "",
@@ -90,20 +91,19 @@ export const BookSettingsForm = ({
     if (values.subGenre) {
       finalGenre = `${values.genre}/${values.subGenre}`;
     }
-    const bookDataToSave: Partial<IBook> & { subGenre?: string } = { // Ensure IBook compatibility
+    const bookDataToSave: Partial<IBook> & { subGenre?: string } = {
+      // Ensure IBook compatibility
       ...values,
       genre: finalGenre,
-      configurationTitle: configurations.find(
-          (config) => config.uuid === values.configurationUuid
-      )?.title || "",
+      configurationTitle:
+        configurations.find((config) => config.uuid === values.configurationUuid)?.title || "",
       kind: currentKind, // Ensure kind is included when saving
     };
 
-    if (currentKind === 'material') {
+    if (currentKind === "material") {
       bookDataToSave.form = ""; // Explicitly set to empty for materials
       bookDataToSave.genre = ""; // Explicitly set to empty for materials
     }
-
 
     // Remove subGenre before saving as it's not part of IBook
     const { subGenre, ...bookDataForSave } = bookDataToSave;
@@ -115,18 +115,21 @@ export const BookSettingsForm = ({
   const formatCharCount = (charCount: { min: number; max: number } | undefined): string => {
     if (!charCount) return "";
     // Ensure charCount.min and charCount.max are numbers before calling toLocaleString
-    const minStr = typeof charCount.min === 'number' ? charCount.min.toLocaleString() : 'N/A';
-    const maxStr = typeof charCount.max === 'number' ? charCount.max.toLocaleString() : 'N/A';
+    const minStr = typeof charCount.min === "number" ? charCount.min.toLocaleString() : "N/A";
+    const maxStr = typeof charCount.max === "number" ? charCount.max.toLocaleString() : "N/A";
     return `Рекомендуемый объем: ${minStr} - ${maxStr} знаков`;
   };
 
-  const formOptions = Object.keys(forms).map(key => ({ value: key, label: key })); // Corrected: forms is now flat
-  const genreOptions = Object.keys(genres).map(key => ({ value: key, label: key }));
+  const formOptions = Object.keys(forms).map((key) => ({ value: key, label: key })); // Corrected: forms is now flat
+  const genreOptions = Object.keys(genres).map((key) => ({ value: key, label: key }));
 
-  let subGenreOptions: { value: string; label: string; }[] = [];
+  let subGenreOptions: { value: string; label: string }[] = [];
   const mainGenreData = form.values.genre ? genres[form.values.genre] : null;
   if (mainGenreData && mainGenreData.subcategories) {
-    subGenreOptions = Object.keys(mainGenreData.subcategories).map(key => ({ value: key, label: key }));
+    subGenreOptions = Object.keys(mainGenreData.subcategories).map((key) => ({
+      value: key,
+      label: key,
+    }));
   }
 
   const configurationOptions = configurations.map((config) => ({
@@ -135,109 +138,127 @@ export const BookSettingsForm = ({
   }));
 
   return (
-      <Box>
-        <form onSubmit={form.onSubmit(handleSubmit)}>
-          <TextInput
+    <Box>
+      <form onSubmit={form.onSubmit(handleSubmit)}>
+        <TextInput
+          withAsterisk
+          label="Название книги"
+          placeholder="Введите название"
+          {...form.getInputProps("title")}
+        />
+        <TextInput
+          label="Автор"
+          placeholder="Введите автора"
+          mt="md"
+          {...form.getInputProps("author")}
+        />
+
+        {currentKind !== "material" && (
+          <>
+            <Select
               withAsterisk
-              label="Название книги"
-              placeholder="Введите название"
-              {...form.getInputProps("title")}
-          />
-          <TextInput
-              label="Автор"
-              placeholder="Введите автора"
+              label="Форма произведения"
+              placeholder="Выберите форму"
               mt="md"
-              {...form.getInputProps("author")}
-          />
-
-          {currentKind !== 'material' && (
+              data={formOptions}
+              {...form.getInputProps("form")}
+            />
+            {form.values.form && forms[form.values.form] && (
               <>
-                <Select
-                    withAsterisk
-                    label="Форма произведения"
-                    placeholder="Выберите форму"
-                    mt="md"
-                    data={formOptions}
-                    {...form.getInputProps("form")}
-                />
-                {form.values.form && forms[form.values.form] && (
-                    <>
-                      <Space h="xs" />
-                      <Text size="sm" c="dimmed">{forms[form.values.form].description}</Text>
-                      <Text size="sm" c="dimmed">{formatCharCount(forms[form.values.form].char_count)}</Text>
-                    </>
-                )}
-                <Select
-                    withAsterisk
-                    label="Основной жанр"
-                    placeholder="Выберите основной жанр"
-                    mt="md"
-                    data={genreOptions}
-                    {...form.getInputProps("genre")}
-                    onChange={(value) => {
-                      form.setFieldValue('genre', value || "");
-                      form.setFieldValue('subGenre', '');
-                    }}
-                />
-                <Select
-                    label="Поджанр"
-                    placeholder="Выберите поджанр"
-                    mt="md"
-                    data={subGenreOptions}
-                    disabled={!form.values.genre || !genres[form.values.genre]?.subcategories || Object.keys(genres[form.values.genre].subcategories!).length === 0}
-                    {...form.getInputProps("subGenre")}
-                />
-                {(() => {
-                  const mainGenreName = form.values.genre;
-                  const subGenreName = form.values.subGenre;
-                  let detailsToShow: { description: string; char_count: { min: number; max: number } } | undefined;
-
-                  if (mainGenreName && genres[mainGenreName]) {
-                    if (subGenreName && genres[mainGenreName].subcategories && genres[mainGenreName].subcategories[subGenreName]) {
-                      detailsToShow = genres[mainGenreName].subcategories[subGenreName];
-                    } else {
-                      detailsToShow = genres[mainGenreName];
-                    }
-                  }
-
-                  if (detailsToShow) {
-                    return (
-                        <>
-                          <Space h="xs" />
-                          <Text size="sm" c="dimmed" mt="xs">Описание жанра: {detailsToShow.description}</Text>
-                          <Text size="sm" c="dimmed">{formatCharCount(detailsToShow.char_count)}</Text>
-                        </>
-                    );
-                  }
-                  return null;
-                })()}
+                <Space h="xs" />
+                <Text size="sm" c="dimmed">
+                  {forms[form.values.form].description}
+                </Text>
+                <Text size="sm" c="dimmed">
+                  {formatCharCount(forms[form.values.form].char_count)}
+                </Text>
               </>
-          )}
-
-          <Select
-              label="Конфигурация"
-              placeholder="Выберите конфигурацию"
-              mt="md"
-              data={configurationOptions}
-              {...form.getInputProps("configurationUuid")}
-          />
-          <Textarea
-              label="Описание"
-              placeholder="Введите описание"
-              mt="md"
-              autosize
-              minRows={2}
-              {...form.getInputProps("description")}
-          />
-          <Group justify="flex-end" mt="xl">
-            {onCancel && (
-                <Button variant="outline" onClick={onCancel}>
-                  Отмена
-                </Button>
             )}
-            <Button type="submit">Сохранить</Button>
-          </Group>
-        </form>
-      </Box>
+            <Select
+              withAsterisk
+              label="Основной жанр"
+              placeholder="Выберите основной жанр"
+              mt="md"
+              data={genreOptions}
+              {...form.getInputProps("genre")}
+              onChange={(value) => {
+                form.setFieldValue("genre", value || "");
+                form.setFieldValue("subGenre", "");
+              }}
+            />
+            <Select
+              label="Поджанр"
+              placeholder="Выберите поджанр"
+              mt="md"
+              data={subGenreOptions}
+              disabled={
+                !form.values.genre ||
+                !genres[form.values.genre]?.subcategories ||
+                Object.keys(genres[form.values.genre].subcategories!).length === 0
+              }
+              {...form.getInputProps("subGenre")}
+            />
+            {(() => {
+              const mainGenreName = form.values.genre;
+              const subGenreName = form.values.subGenre;
+              let detailsToShow:
+                | { description: string; char_count: { min: number; max: number } }
+                | undefined;
+
+              if (mainGenreName && genres[mainGenreName]) {
+                if (
+                  subGenreName &&
+                  genres[mainGenreName].subcategories &&
+                  genres[mainGenreName].subcategories[subGenreName]
+                ) {
+                  detailsToShow = genres[mainGenreName].subcategories[subGenreName];
+                } else {
+                  detailsToShow = genres[mainGenreName];
+                }
+              }
+
+              if (detailsToShow) {
+                return (
+                  <>
+                    <Space h="xs" />
+                    <Text size="sm" c="dimmed" mt="xs">
+                      Описание жанра: {detailsToShow.description}
+                    </Text>
+                    <Text size="sm" c="dimmed">
+                      {formatCharCount(detailsToShow.char_count)}
+                    </Text>
+                  </>
+                );
+              }
+              return null;
+            })()}
+          </>
+        )}
+
+        <Select
+          label="Конфигурация"
+          placeholder="Выберите конфигурацию"
+          mt="md"
+          data={configurationOptions}
+          {...form.getInputProps("configurationUuid")}
+        />
+        <Textarea
+          label="Описание"
+          placeholder="Введите описание"
+          mt="md"
+          autosize
+          minRows={2}
+          {...form.getInputProps("description")}
+        />
+        <Group justify="flex-end" mt="xl">
+          {onCancel && (
+            <Button variant="outline" onClick={onCancel}>
+              Отмена
+            </Button>
+          )}
+          <Button type="submit">Сохранить</Button>
+        </Group>
+      </form>
+    </Box>
   );
 };

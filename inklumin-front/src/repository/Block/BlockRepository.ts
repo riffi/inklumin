@@ -1,41 +1,48 @@
-import {BlockAbstractDb} from "@/entities/BlockAbstractDb";
+import { notifications } from "@mantine/notifications";
+import { InkLuminApiError, InkLuminMlApi } from "@/api/inkLuminMlApi";
+import { BlockAbstractDb } from "@/entities/BlockAbstractDb";
+// import {useLiveQuery} from "dexie-react-hooks"; // This seems unused
+import { BookDB, bookDb } from "@/entities/bookDb";
 import {
   IBlock,
-  IBlockParameter, IBlockParameterDataType, // Restored
+  IBlockParameter, // Restored
+  IBlockParameterDataType,
   IBlockParameterPossibleValue, // Restored
-  IBlockRelation, IBlockStructureKind, /* IBlockTabKind, */ IBlockTitleForms
+  IBlockRelation /* IBlockTabKind, */,
+  IBlockStructureKind,
+  IBlockTitleForms,
 } from "@/entities/ConstructorEntities";
-import {generateUUID} from "@/utils/UUIDUtils";
-// import {useLiveQuery} from "dexie-react-hooks"; // This seems unused
-import {BookDB, bookDb} from "@/entities/bookDb";
-import {BlockRelationRepository} from "@/repository/Block/BlockRelationRepository";
-import {BlockParameterRepository} from "./BlockParameterRepository"; // Added
-import {BlockTabRepository} from "./BlockTabRepository"; // Added
-import {InkLuminMlApi, InkLuminApiError} from "@/api/inkLuminMlApi";
-import {BlockInstanceRepository} from "@/repository/BlockInstance/BlockInstanceRepository";
-import {notifications} from "@mantine/notifications";
+import { BlockRelationRepository } from "@/repository/Block/BlockRelationRepository";
+import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";
 import { updateBookLocalUpdatedAt } from "@/utils/bookSyncUtils";
+import { generateUUID } from "@/utils/UUIDUtils";
+import { BlockParameterRepository } from "./BlockParameterRepository"; // Added
+import { BlockTabRepository } from "./BlockTabRepository"; // Added
 
 const getByUuid = async (db: BlockAbstractDb, blockUuid: string) => {
-  return db.blocks.where("uuid").equals(blockUuid).first()
-}
+  return db.blocks.where("uuid").equals(blockUuid).first();
+};
 
 const getByUuidList = async (db: BlockAbstractDb, blockUuids: string[]) => {
-  return db.blocks.where("uuid").anyOf(blockUuids).toArray()
-}
-
+  return db.blocks.where("uuid").anyOf(blockUuids).toArray();
+};
 
 const getSiblings = async (db: BlockAbstractDb, block: IBlock) => {
-  return db.blocks.where(
-      {
-        configurationUuid: block.configurationUuid
-      })
-      .filter(b => b.uuid !== block.uuid)
-      .toArray()
-}
+  return db.blocks
+    .where({
+      configurationUuid: block.configurationUuid,
+    })
+    .filter((b) => b.uuid !== block.uuid)
+    .toArray();
+};
 
 // Создание блока
-const create = async (db: BlockAbstractDb, block: IBlock, isBookDb = false, titleForms?: IBlockTitleForms) => {
+const create = async (
+  db: BlockAbstractDb,
+  block: IBlock,
+  isBookDb = false,
+  titleForms?: IBlockTitleForms
+) => {
   if (titleForms) {
     block.titleForms = titleForms;
   } else {
@@ -49,30 +56,35 @@ const create = async (db: BlockAbstractDb, block: IBlock, isBookDb = false, titl
       throw new Error(`Failed to prepare title forms during block creation: ${error.message}`);
     }
   }
-  block.uuid = generateUUID()
+  block.uuid = generateUUID();
   block.showInMainMenu = 1; // Set default value for showInMainMenu
   // Persist knowledge base link if provided
   const blockToSave: IBlock = {
     ...block,
     knowledgeBasePageUuid: block.knowledgeBasePageUuid ?? undefined,
-  }
-  const blockId = await db.blocks.add(blockToSave)
-  const persistedBlockData = await db.blocks.get(blockId)
-  await BlockParameterRepository.appendDefaultParamGroup(db, persistedBlockData) // Updated call
-  await BlockTabRepository.appendDefaultTab(db, persistedBlockData) // Updated call
+  };
+  const blockId = await db.blocks.add(blockToSave);
+  const persistedBlockData = await db.blocks.get(blockId);
+  await BlockParameterRepository.appendDefaultParamGroup(db, persistedBlockData); // Updated call
+  await BlockTabRepository.appendDefaultTab(db, persistedBlockData); // Updated call
 
   // Если это книжная БД, создаем инстанс блока
-  if (isBookDb && block.structureKind === 'single'){
-    await BlockInstanceRepository.createSingleInstance(db as BookDB, block)
+  if (isBookDb && block.structureKind === "single") {
+    await BlockInstanceRepository.createSingleInstance(db as BookDB, block);
   }
   if (isBookDb) {
     await updateBookLocalUpdatedAt(db as BookDB);
   }
-  return block.uuid
-}
+  return block.uuid;
+};
 
 // Обновление данных блока
-const update = async (db: BlockAbstractDb, block: IBlock, isBookDb = false, titleForms?: IBlockTitleForms) => {
+const update = async (
+  db: BlockAbstractDb,
+  block: IBlock,
+  isBookDb = false,
+  titleForms?: IBlockTitleForms
+) => {
   const prevBlockData = await getByUuid(db, block.uuid);
 
   // Если переданы titleForms, используем их
@@ -93,37 +105,45 @@ const update = async (db: BlockAbstractDb, block: IBlock, isBookDb = false, titl
   }
 
   // Если блок стал одиночным, а был неодиночным, то создаем инстанс блока, если он не имеет инстансов
-  if (isBookDb
-      &&(prevBlockData?.structureKind !== IBlockStructureKind.single)
-      && (block.structureKind === IBlockStructureKind.single)
-  ){
-    const childInstances = await BlockInstanceRepository.getChildInstances(db as BookDB, block.uuid)
-    if (childInstances.length === 0){
-      await BlockInstanceRepository.createSingleInstance(db as BookDB, block)
+  if (
+    isBookDb &&
+    prevBlockData?.structureKind !== IBlockStructureKind.single &&
+    block.structureKind === IBlockStructureKind.single
+  ) {
+    const childInstances = await BlockInstanceRepository.getChildInstances(
+      db as BookDB,
+      block.uuid
+    );
+    if (childInstances.length === 0) {
+      await BlockInstanceRepository.createSingleInstance(db as BookDB, block);
     }
   }
   const blockToUpdate: IBlock = {
     ...block,
     knowledgeBasePageUuid: block.knowledgeBasePageUuid ?? undefined,
-  }
-  db.blocks.update(block.id, blockToUpdate)
+  };
+  db.blocks.update(block.id, blockToUpdate);
   if (isBookDb) {
     await updateBookLocalUpdatedAt(db as BookDB);
   }
-}
+};
 
 // Сохранение блока
-const save = async (db: BlockAbstractDb, block: IBlock, isBookDb = false, titleForms?: IBlockTitleForms) => {
+const save = async (
+  db: BlockAbstractDb,
+  block: IBlock,
+  isBookDb = false,
+  titleForms?: IBlockTitleForms
+) => {
   try {
     // Создание блока
     if (!block.uuid) {
-      await create(db, block, isBookDb, titleForms)
+      await create(db, block, isBookDb, titleForms);
     } else {
       // Обновление блока
-      await update(db, block, isBookDb, titleForms)
+      await update(db, block, isBookDb, titleForms);
     }
-  }
-  catch (error){
+  } catch (error) {
     if (error instanceof InkLuminApiError) {
       throw error; // Re-throw for UI to handle
     }
@@ -133,11 +153,11 @@ const save = async (db: BlockAbstractDb, block: IBlock, isBookDb = false, titleF
       color: "red",
     });
   }
-}
+};
 
 const remove = async (db: BlockAbstractDb, block: IBlock) => {
   // Получаем все группы параметров блока и удаляем их через BlockParameterRepository
-  const groups = await BlockParameterRepository.getParameterGroups(db, block.uuid)
+  const groups = await BlockParameterRepository.getParameterGroups(db, block.uuid);
   for (const group of groups) {
     if (!group.uuid) continue;
     // deleteParameterGroup handles parameters and their possible values
@@ -146,8 +166,8 @@ const remove = async (db: BlockAbstractDb, block: IBlock) => {
 
   // Удаляем связи блока
   const [sourceRelations, targetRelations] = await Promise.all([
-    db.blocksRelations.where('sourceBlockUuid').equals(block.uuid).toArray(),
-    db.blocksRelations.where('targetBlockUuid').equals(block.uuid).toArray()
+    db.blocksRelations.where("sourceBlockUuid").equals(block.uuid).toArray(),
+    db.blocksRelations.where("targetBlockUuid").equals(block.uuid).toArray(),
   ]);
   const allRelations = [...sourceRelations, ...targetRelations];
   for (const relation of allRelations) {
@@ -158,29 +178,26 @@ const remove = async (db: BlockAbstractDb, block: IBlock) => {
   await BlockTabRepository.deleteTabsForBlock(db, block.uuid); // Updated call
 
   // Удаляем сам блок
-  await db.blocks
-      .where('uuid')
-      .equals(block.uuid)
-      .delete();
+  await db.blocks.where("uuid").equals(block.uuid).delete();
   if (db instanceof BookDB) {
     await updateBookLocalUpdatedAt(db as BookDB);
   }
-}
+};
 
 const getAll = async (db: BlockAbstractDb): Promise<IBlock[]> => {
   return db.blocks.toArray();
-}
+};
 
 const unlinkChildFromParent = async (db: BlockAbstractDb, childBlock: IBlock) => {
   await db.blocks.update(childBlock.id!, {
     ...childBlock,
     parentBlockUuid: null,
-    displayKind: 'list'
+    displayKind: "list",
   });
   if (db instanceof BookDB) {
     await updateBookLocalUpdatedAt(db as BookDB);
   }
-}
+};
 
 const linkChildToParent = async (db: BlockAbstractDb, childBlock: IBlock, parentUuid: string) => {
   await db.blocks.update(childBlock.id!, {
@@ -190,11 +207,11 @@ const linkChildToParent = async (db: BlockAbstractDb, childBlock: IBlock, parent
   if (db instanceof BookDB) {
     await updateBookLocalUpdatedAt(db as BookDB);
   }
-}
+};
 
 const getChildren = async (db: BlockAbstractDb, parentBlockUuid: string) => {
-  return db.blocks.where('parentBlockUuid').equals(parentBlockUuid).toArray();
-}
+  return db.blocks.where("parentBlockUuid").equals(parentBlockUuid).toArray();
+};
 
 export const BlockRepository = {
   getAll,
@@ -216,4 +233,4 @@ export const BlockRepository = {
   unlinkChildFromParent,
   linkChildToParent,
   // getReferencingParametersFromBlock // Moved
-}
+};

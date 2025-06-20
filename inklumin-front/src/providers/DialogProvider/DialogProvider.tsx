@@ -1,6 +1,6 @@
-import { useDisclosure } from "@mantine/hooks";
-import {Modal, Button, Text, Group} from "@mantine/core";
 import React, { useState } from "react";
+import { Button, Group, Modal, Text } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 
 // Создаем контекст для модального окна
 const DialogContext = React.createContext<{
@@ -10,15 +10,11 @@ const DialogContext = React.createContext<{
 });
 
 // Провайдер для контекста
-export const DialogProvider: React.FC<{ children: React.ReactNode }> = ({
-                                                                          children,
-                                                                        }) => {
+export const DialogProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isOpen, { open, close }] = useDisclosure(false);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
-  const [resolvePromise, setResolvePromise] = useState<
-      ((value: boolean) => void) | null
-  >(null);
+  const [resolvePromise, setResolvePromise] = useState<((value: boolean) => void) | null>(null);
 
   const showDialog = (title: string, body: string): Promise<boolean> => {
     setTitle(title);
@@ -39,26 +35,20 @@ export const DialogProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   return (
-      <DialogContext.Provider value={{ showDialog }}>
-        {children}
-        <Modal
-            opened={isOpen}
-            onClose={() => handleClose(false)}
-            title={title}
-            centered
-            zIndex={250}
-        >
-          <Text mb="sm">{body}</Text>
-          <Group>
-            <Button onClick={() => handleClose(true)} color="red" mr="sm">
-              Подтвердить
-            </Button>
-            <Button onClick={() => handleClose(false)} variant={"outline"}>
-              Отмена
-            </Button>
-          </Group>
-        </Modal>
-      </DialogContext.Provider>
+    <DialogContext.Provider value={{ showDialog }}>
+      {children}
+      <Modal opened={isOpen} onClose={() => handleClose(false)} title={title} centered zIndex={250}>
+        <Text mb="sm">{body}</Text>
+        <Group>
+          <Button onClick={() => handleClose(true)} color="red" mr="sm">
+            Подтвердить
+          </Button>
+          <Button onClick={() => handleClose(false)} variant={"outline"}>
+            Отмена
+          </Button>
+        </Group>
+      </Modal>
+    </DialogContext.Provider>
   );
 };
 

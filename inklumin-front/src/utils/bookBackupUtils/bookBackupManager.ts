@@ -1,8 +1,7 @@
-import { configDatabase } from "@/entities/configuratorDb";
 import { notifications } from "@mantine/notifications";
 import { connectToBookDatabase, deleteBookDatabase } from "@/entities/bookDb";
+import { configDatabase } from "@/entities/configuratorDb";
 import { BlockInstanceSceneLinkRepository } from "@/repository/BlockInstance/BlockInstanceSceneLinkRepository";
-
 
 export interface BackupData {
   book: any;
@@ -26,8 +25,8 @@ export interface BackupData {
 
 // Вспомогательная функция для сбора данных книги
 export const collectBookBackupData = async (bookUuid: string): Promise<BackupData> => {
-  const bookData = await configDatabase.books.get({ uuid: bookUuid })
-  const db = connectToBookDatabase(bookUuid)
+  const bookData = await configDatabase.books.get({ uuid: bookUuid });
+  const db = connectToBookDatabase(bookUuid);
 
   if (!bookData) throw new Error("Книга не найдена");
 
@@ -79,17 +78,22 @@ export const importBookData = async (backupData: BackupData): Promise<void> => {
   if (chapterEntries.length > 0) {
     // Dexie's bulkAdd with allKeys: true returns an array of the generated primary keys.
     // We map to ensure we only pass properties Dexie expects for new entries.
-    addedChapterIds = await db.chapters.bulkAdd(
-        chapterEntries.map(c => ({ title: c.title, order: c.order, contentSceneId: c.contentSceneId })),
-        { allKeys: true }
-    ) as number[];
+    addedChapterIds = (await db.chapters.bulkAdd(
+      chapterEntries.map((c) => ({
+        title: c.title,
+        order: c.order,
+        contentSceneId: c.contentSceneId,
+      })),
+      { allKeys: true }
+    )) as number[];
   }
 
   // 3. Create a map from original chapter order to new database IDs
   const chapterOrderToDbIdMap = new Map<number, number>();
   if (chapterEntries.length > 0 && addedChapterIds.length === chapterEntries.length) {
     chapterEntries.forEach((chapter, index) => {
-      if (chapter.order !== undefined) { // Ensure order is present
+      if (chapter.order !== undefined) {
+        // Ensure order is present
         chapterOrderToDbIdMap.set(chapter.order, addedChapterIds[index]);
       }
     });
@@ -98,13 +102,15 @@ export const importBookData = async (backupData: BackupData): Promise<void> => {
   // 4. Update scene.chapterId to use the new database IDs
   const scenesToImport = backupData.scenes || [];
   if (scenesToImport.length > 0 && chapterOrderToDbIdMap.size > 0) {
-    scenesToImport.forEach(scene => {
+    scenesToImport.forEach((scene) => {
       const originalChapterOrder = scene.chapterId as number; // This was the chapter.order
       const dbChapterId = chapterOrderToDbIdMap.get(originalChapterOrder);
       if (dbChapterId !== undefined) {
         scene.chapterId = dbChapterId;
       } else {
-        console.warn(`Scene "${scene.title}" (original chapter order: ${originalChapterOrder}) could not be mapped to a chapter DB ID. It will become chapterless.`);
+        console.warn(
+          `Scene "${scene.title}" (original chapter order: ${originalChapterOrder}) could not be mapped to a chapter DB ID. It will become chapterless.`
+        );
         scene.chapterId = undefined; // Consistent with IScene: chapterId?: number
       }
     });
@@ -127,16 +133,15 @@ export const importBookData = async (backupData: BackupData): Promise<void> => {
   otherPromises.push(db.blocks.bulkAdd(backupData.blocks || []));
   otherPromises.push(db.blockParameterGroups.bulkAdd(backupData.blockParameterGroups || []));
   otherPromises.push(db.blockParameters.bulkAdd(backupData.blockParameters || []));
-  otherPromises.push(db.blockParameterPossibleValues.bulkAdd(backupData.blockParameterPossibleValues || []));
+  otherPromises.push(
+    db.blockParameterPossibleValues.bulkAdd(backupData.blockParameterPossibleValues || [])
+  );
   otherPromises.push(db.blocksRelations.bulkAdd(backupData.blocksRelations || []));
   otherPromises.push(db.blockTabs.bulkAdd(backupData.blockTabs || []));
   otherPromises.push(db.blockInstanceGroups.bulkAdd(backupData.blockInstanceGroups || []));
   otherPromises.push(db.knowledgeBasePages.bulkAdd(backupData.knowledgeBasePages || []));
   otherPromises.push(
-    BlockInstanceSceneLinkRepository.bulkAddLinks(
-      db,
-      backupData.blockInstanceSceneLinks || []
-    )
+    BlockInstanceSceneLinkRepository.bulkAddLinks(db, backupData.blockInstanceSceneLinks || [])
   );
 
   if (otherPromises.length > 0) {
@@ -149,7 +154,7 @@ const showErrorNotification = (message: string, error?: any) => {
   const errorMessage = error?.message ? `${message}: ${error.message}` : message;
   notifications.show({
     message: errorMessage,
-    color: "red"
+    color: "red",
   });
 };
 
@@ -172,7 +177,6 @@ export const exportBook = async (bookUuid: string) => {
   }
 };
 
-
 export const importBookBackup = async (file: File) => {
   try {
     const reader = new FileReader();
@@ -185,7 +189,7 @@ export const importBookBackup = async (file: File) => {
 
           notifications.show({
             message: "Книга успешно импортирована",
-            color: "green"
+            color: "green",
           });
           resolve(true);
         } catch (error) {

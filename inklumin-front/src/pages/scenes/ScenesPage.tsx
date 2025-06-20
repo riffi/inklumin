@@ -1,9 +1,9 @@
-import { SceneLayout } from "@/components/scenes/SceneLayout/SceneLayout";
 import { Box } from "@mantine/core";
+import { SceneLayout } from "@/components/scenes/SceneLayout/SceneLayout";
 
 export const ScenesPage = () => {
   return (
-    <Box >
+    <Box>
       <SceneLayout />
     </Box>
   );

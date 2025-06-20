@@ -1,13 +1,12 @@
-import {BookDashboard} from "@/components/books/BookDashboard/BookDashboard";
-import {useBookStore} from "@/stores/bookStore/bookStore";
+import { BookDashboard } from "@/components/books/BookDashboard/BookDashboard";
+import { useBookStore } from "@/stores/bookStore/bookStore";
 
 export const BookDashboardPage = () => {
-  const {selectedBook} = useBookStore()
+  const { selectedBook } = useBookStore();
 
   return (
-      <>
-        <BookDashboard bookUuid={selectedBook?.uuid}/>
-      </>
-  )
-
-}
+    <>
+      <BookDashboard bookUuid={selectedBook?.uuid} />
+    </>
+  );
+};

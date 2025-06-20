@@ -1,9 +1,9 @@
-import {BlockAbstractDb} from "@/entities/BlockAbstractDb";
-import {IKnowledgeBasePage} from "@/entities/KnowledgeBaseEntities";
-import {generateUUID} from "@/utils/UUIDUtils";
+import { BlockAbstractDb } from "@/entities/BlockAbstractDb";
+import { IKnowledgeBasePage } from "@/entities/KnowledgeBaseEntities";
+import { generateUUID } from "@/utils/UUIDUtils";
 
 const getByUuid = async (db: BlockAbstractDb, uuid: string) => {
-  return db.knowledgeBasePages.where('uuid').equals(uuid).first();
+  return db.knowledgeBasePages.where("uuid").equals(uuid).first();
 };
 
 const getAll = async (db: BlockAbstractDb) => {
@@ -40,7 +40,7 @@ const save = async (db: BlockAbstractDb, page: IKnowledgeBasePage) => {
 };
 
 const remove = async (db: BlockAbstractDb, uuid: string) => {
-  await db.knowledgeBasePages.where('uuid').equals(uuid).delete();
+  await db.knowledgeBasePages.where("uuid").equals(uuid).delete();
 };
 
 export const KnowledgeBaseRepository = {

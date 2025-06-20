@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface Model {
   modelName: string;
@@ -29,50 +29,51 @@ interface ApiSettingsStore {
 }
 
 export const useApiSettingsStore = create<ApiSettingsStore>()(
-    persist(
-        (set, get) => ({
-          // Initial state
-          openRouterKey: '',
-          incLuminApiKey: '',
-          currentOpenRouterModel: '',
-          openRouterModels: [],
-          isLoading: false,
+  persist(
+    (set, get) => ({
+      // Initial state
+      openRouterKey: "",
+      incLuminApiKey: "",
+      currentOpenRouterModel: "",
+      openRouterModels: [],
+      isLoading: false,
 
-          // Global settings actions
-          setOpenRouterKey: (key) => set({ openRouterKey: key }),
-          setIncLuminApiKey: (key) => set({ incLuminApiKey: key }),
-          setCurrentOpenRouterModel: (model) => set({ currentOpenRouterModel: model }),
+      // Global settings actions
+      setOpenRouterKey: (key) => set({ openRouterKey: key }),
+      setIncLuminApiKey: (key) => set({ incLuminApiKey: key }),
+      setCurrentOpenRouterModel: (model) => set({ currentOpenRouterModel: model }),
 
-          // Models actions
-          addModel: (modelName) => {
-            const { openRouterModels } = get();
-            const trimmedName = modelName.trim();
+      // Models actions
+      addModel: (modelName) => {
+        const { openRouterModels } = get();
+        const trimmedName = modelName.trim();
 
-            if (trimmedName && !openRouterModels.some(m => m.modelName === trimmedName)) {
-              set({
-                openRouterModels: [...openRouterModels, { modelName: trimmedName }]
-              });
-            }
-          },
-
-          deleteModel: (modelName) => {
-            const { openRouterModels, currentOpenRouterModel } = get();
-            const updatedModels = openRouterModels.filter(m => m.modelName !== modelName);
-
-            set({
-              openRouterModels: updatedModels,
-              // Reset current model if it was deleted
-              currentOpenRouterModel: currentOpenRouterModel === modelName ? '' : currentOpenRouterModel
-            });
-          },
-
-          // Loading state action
-          setIsLoading: (loading) => set({ isLoading: loading }),
-        }),
-        {
-          name: 'api-settings-storage',
+        if (trimmedName && !openRouterModels.some((m) => m.modelName === trimmedName)) {
+          set({
+            openRouterModels: [...openRouterModels, { modelName: trimmedName }],
+          });
         }
-    )
+      },
+
+      deleteModel: (modelName) => {
+        const { openRouterModels, currentOpenRouterModel } = get();
+        const updatedModels = openRouterModels.filter((m) => m.modelName !== modelName);
+
+        set({
+          openRouterModels: updatedModels,
+          // Reset current model if it was deleted
+          currentOpenRouterModel:
+            currentOpenRouterModel === modelName ? "" : currentOpenRouterModel,
+        });
+      },
+
+      // Loading state action
+      setIsLoading: (loading) => set({ isLoading: loading }),
+    }),
+    {
+      name: "api-settings-storage",
+    }
+  )
 );
 
 // Helper function to get API key outside of React components

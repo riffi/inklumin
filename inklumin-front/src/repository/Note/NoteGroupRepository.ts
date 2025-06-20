@@ -7,30 +7,30 @@ const getAll = async (db: typeof configDatabase) => {
 };
 
 const getByUuid = async (db: typeof configDatabase, uuid: string) => {
-  return db.notesGroups.where('uuid').equals(uuid).first();
+  return db.notesGroups.where("uuid").equals(uuid).first();
 };
 
 const getTopLevel = async (db: typeof configDatabase) => {
   return db.notesGroups
-    .filter((g) => g.parentUuid === undefined || g.parentUuid === 'topLevel')
+    .filter((g) => g.parentUuid === undefined || g.parentUuid === "topLevel")
     .toArray();
 };
 
 const getChildren = async (db: typeof configDatabase, parentUuid: string) => {
-  return db.notesGroups.where('parentUuid').equals(parentUuid).toArray();
+  return db.notesGroups.where("parentUuid").equals(parentUuid).toArray();
 };
 
 const count = async (db: typeof configDatabase) => db.notesGroups.count();
 
 const create = async (
   db: typeof configDatabase,
-  group: Omit<INoteGroup, 'id' | 'uuid'> & { uuid?: string }
+  group: Omit<INoteGroup, "id" | "uuid"> & { uuid?: string }
 ) => {
   const newGroup: INoteGroup = {
     ...group,
     uuid: group.uuid || generateUUID(),
-    parentUuid: group.parentUuid || 'topLevel',
-    kindCode: group.kindCode || 'userGroup',
+    parentUuid: group.parentUuid || "topLevel",
+    kindCode: group.kindCode || "userGroup",
     order: group.order ?? (await count(db)),
   };
   await db.notesGroups.add(newGroup);
@@ -48,7 +48,7 @@ const update = async (db: typeof configDatabase, group: INoteGroup) => {
 };
 
 const remove = async (db: typeof configDatabase, uuid: string) => {
-  await db.notesGroups.where('uuid').equals(uuid).delete();
+  await db.notesGroups.where("uuid").equals(uuid).delete();
 };
 
 const deleteById = async (db: typeof configDatabase, id: number) => {

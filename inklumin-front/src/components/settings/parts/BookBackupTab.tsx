@@ -1,19 +1,15 @@
-import { useState, useEffect } from 'react';
-import { Button, Group, LoadingOverlay, Select, Text, Stack, Divider, Box } from '@mantine/core';
-import { IconDownload, IconUpload, IconCloud, IconCloudDown } from '@tabler/icons-react';
-import { configDatabase } from '@/entities/configuratorDb';
-import {
-  exportBook,
-  handleFileImport
-} from '@/utils/bookBackupUtils/bookBackupManager';
-import {
-  saveBookToServer,
-  loadBookFromServer,
-  getServerBooksList
-} from '@/services/bookSyncService';
+import { useEffect, useState } from "react";
+import { IconCloud, IconCloudDown, IconDownload, IconUpload } from "@tabler/icons-react";
+import { Box, Button, Divider, Group, LoadingOverlay, Select, Stack, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import {useAuth} from "@/providers/AuthProvider/AuthProvider";
-
+import { configDatabase } from "@/entities/configuratorDb";
+import { useAuth } from "@/providers/AuthProvider/AuthProvider";
+import {
+  getServerBooksList,
+  loadBookFromServer,
+  saveBookToServer,
+} from "@/services/bookSyncService";
+import { exportBook, handleFileImport } from "@/utils/bookBackupUtils/bookBackupManager";
 
 export const BookBackupTab = () => {
   const [loading, setLoading] = useState(false);
@@ -28,11 +24,11 @@ export const BookBackupTab = () => {
   const loadLocalBooks = async () => {
     try {
       const books = await configDatabase.books.toArray();
-      setLocalBooks(books.map(book => ({ value: book.uuid, label: book.title })));
+      setLocalBooks(books.map((book) => ({ value: book.uuid, label: book.title })));
     } catch (error) {
       notifications.show({
         message: "Ошибка загрузки локальных книг",
-        color: 'red'
+        color: "red",
       });
     }
   };
@@ -44,14 +40,16 @@ export const BookBackupTab = () => {
     try {
       setLoading(true);
       const books = await getServerBooksList(token);
-      setServerBooks(books.map((book: any) => ({
-        value: book.uuid,
-        label: book.bookTitle
-      })));
+      setServerBooks(
+        books.map((book: any) => ({
+          value: book.uuid,
+          label: book.bookTitle,
+        }))
+      );
     } catch (error) {
       notifications.show({
         message: "Ошибка загрузки списка книг с сервера",
-        color: 'red'
+        color: "red",
       });
     } finally {
       setLoading(false);
@@ -67,7 +65,7 @@ export const BookBackupTab = () => {
 
   const handleExport = async () => {
     if (!selectedBook) {
-      notifications.show({ message: "Выберите книгу", color: 'red' });
+      notifications.show({ message: "Выберите книгу", color: "red" });
       return;
     }
     setLoading(true);
@@ -77,11 +75,11 @@ export const BookBackupTab = () => {
 
   const handleSaveToServer = async () => {
     if (!selectedBook) {
-      notifications.show({ message: "Выберите книгу", color: 'red' });
+      notifications.show({ message: "Выберите книгу", color: "red" });
       return;
     }
     if (!token) {
-      notifications.show({ message: "Токен авторизации не найден", color: 'red' });
+      notifications.show({ message: "Токен авторизации не найден", color: "red" });
       return;
     }
 
@@ -95,11 +93,11 @@ export const BookBackupTab = () => {
 
   const handleLoadFromServer = async () => {
     if (!selectedServerBook) {
-      notifications.show({ message: "Выберите книгу с сервера", color: 'red' });
+      notifications.show({ message: "Выберите книгу с сервера", color: "red" });
       return;
     }
     if (!token) {
-      notifications.show({ message: "Токен авторизации не найден", color: 'red' });
+      notifications.show({ message: "Токен авторизации не найден", color: "red" });
       return;
     }
 
@@ -121,118 +119,115 @@ export const BookBackupTab = () => {
   };
 
   return (
-      <div style={{ position: 'relative' }}>
-        <LoadingOverlay visible={loading} zIndex={1000} overlayBlur={2} />
+    <div style={{ position: "relative" }}>
+      <LoadingOverlay visible={loading} zIndex={1000} overlayBlur={2} />
 
-        <Text size="sm" mb="xl">
-          Экспорт и импорт полных данных книги. При импорте существующие данные книги будут полностью заменены.
-        </Text>
+      <Text size="sm" mb="xl">
+        Экспорт и импорт полных данных книги. При импорте существующие данные книги будут полностью
+        заменены.
+      </Text>
 
-        <Stack spacing="xl">
-          {/* Локальные операции */}
-          <Box>
-            <Text size="md" fw={500} mb="md">
-              Локальные операции
+      <Stack spacing="xl">
+        {/* Локальные операции */}
+        <Box>
+          <Text size="md" fw={500} mb="md">
+            Локальные операции
+          </Text>
+
+          <Select
+            label="Выберите книгу для экспорта"
+            data={localBooks}
+            value={selectedBook}
+            onChange={setSelectedBook}
+            mb="md"
+            placeholder="Выберите книгу..."
+          />
+
+          <Group>
+            <Button
+              leftSection={<IconDownload size={20} />}
+              onClick={handleExport}
+              variant="filled"
+              disabled={!selectedBook}
+            >
+              Экспортировать в файл
+            </Button>
+
+            <Button
+              leftSection={<IconUpload size={20} />}
+              onClick={handleFileImportWithRefresh}
+              variant="outline"
+              color="red"
+            >
+              Импортировать из файла
+            </Button>
+          </Group>
+        </Box>
+
+        <Divider />
+
+        {/* Серверные операции */}
+        <Box>
+          <Text size="md" fw={500} mb="md">
+            Серверные операции
+          </Text>
+
+          {!token ? (
+            <Text size="sm" c="dimmed">
+              Для работы с сервером необходимо войти в систему
             </Text>
-
-            <Select
-                label="Выберите книгу для экспорта"
-                data={localBooks}
-                value={selectedBook}
-                onChange={setSelectedBook}
-                mb="md"
-                placeholder="Выберите книгу..."
-            />
-
-            <Group>
-              <Button
-                  leftSection={<IconDownload size={20} />}
-                  onClick={handleExport}
-                  variant="filled"
-                  disabled={!selectedBook}
-              >
-                Экспортировать в файл
-              </Button>
-
-              <Button
-                  leftSection={<IconUpload size={20} />}
-                  onClick={handleFileImportWithRefresh}
-                  variant="outline"
-                  color="red"
-              >
-                Импортировать из файла
-              </Button>
-            </Group>
-          </Box>
-
-          <Divider />
-
-          {/* Серверные операции */}
-          <Box>
-            <Text size="md" fw={500} mb="md">
-              Серверные операции
-            </Text>
-
-            {!token ? (
-                <Text size="sm" c="dimmed">
-                  Для работы с сервером необходимо войти в систему
+          ) : (
+            <Stack spacing="md">
+              {/* Сохранение на сервер */}
+              <Box>
+                <Text size="sm" mb="sm">
+                  Сохранить локальную книгу на сервер:
                 </Text>
-            ) : (
-                <Stack spacing="md">
-                  {/* Сохранение на сервер */}
-                  <Box>
-                    <Text size="sm" mb="sm">
-                      Сохранить локальную книгу на сервер:
-                    </Text>
-                    <Group>
-                      <Button
-                          leftSection={<IconCloud size={20} />}
-                          onClick={handleSaveToServer}
-                          variant="filled"
-                          color="blue"
-                          disabled={!selectedBook}
-                      >
-                        Сохранить на сервер
-                      </Button>
-                    </Group>
-                  </Box>
+                <Group>
+                  <Button
+                    leftSection={<IconCloud size={20} />}
+                    onClick={handleSaveToServer}
+                    variant="filled"
+                    color="blue"
+                    disabled={!selectedBook}
+                  >
+                    Сохранить на сервер
+                  </Button>
+                </Group>
+              </Box>
 
-                  {/* Загрузка с сервера */}
-                  <Box>
-                    <Text size="sm" mb="sm">
-                      Загрузить книгу с сервера:
-                    </Text>
-                    <Select
-                        label="Выберите книгу на сервере"
-                        data={serverBooks}
-                        value={selectedServerBook}
-                        onChange={setSelectedServerBook}
-                        mb="sm"
-                        placeholder="Выберите книгу с сервера..."
-                    />
-                    <Group>
-                      <Button
-                          leftSection={<IconCloudDown size={20} />}
-                          onClick={handleLoadFromServer}
-                          variant="filled"
-                          color="green"
-                          disabled={!selectedServerBook}
-                      >
-                        Загрузить с сервера
-                      </Button>
-                      <Button
-                          variant="subtle"
-                          onClick={loadServerBooks}
-                          size="sm"
-                      >
-                        Обновить список
-                      </Button>
-                    </Group>
-                  </Box>
-                </Stack>
-            )}
-          </Box>
-        </Stack>
-      </div>
+              {/* Загрузка с сервера */}
+              <Box>
+                <Text size="sm" mb="sm">
+                  Загрузить книгу с сервера:
+                </Text>
+                <Select
+                  label="Выберите книгу на сервере"
+                  data={serverBooks}
+                  value={selectedServerBook}
+                  onChange={setSelectedServerBook}
+                  mb="sm"
+                  placeholder="Выберите книгу с сервера..."
+                />
+                <Group>
+                  <Button
+                    leftSection={<IconCloudDown size={20} />}
+                    onClick={handleLoadFromServer}
+                    variant="filled"
+                    color="green"
+                    disabled={!selectedServerBook}
+                  >
+                    Загрузить с сервера
+                  </Button>
+                  <Button variant="subtle" onClick={loadServerBooks} size="sm">
+                    Обновить список
+                  </Button>
+                </Group>
+              </Box>
+            </Stack>
+          )}
+        </Box>
+      </Stack>
+    </div>
   );
 };

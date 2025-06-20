@@ -1,80 +1,86 @@
 import { BookDB } from "@/entities/bookDb";
 import { IBlockInstanceRelation } from "@/entities/BookEntities";
+import { updateBookLocalUpdatedAt } from "@/utils/bookSyncUtils";
 import { BlockInstanceRepository } from "./BlockInstanceRepository";
 import { updateBlockInstance } from "./BlockInstanceUpdateHelper";
-import {updateBookLocalUpdatedAt} from "@/utils/bookSyncUtils";
 
-export const getInstanceRelations = async (db: BookDB, blockInstanceUuid: string, relatedBlockUuid?: string) => {
-    const [source, target] = await Promise.all([
-        db.blockInstanceRelations
-            .where('sourceInstanceUuid').equals(blockInstanceUuid)
-            .filter(r => !relatedBlockUuid || r.targetBlockUuid === relatedBlockUuid)
-            .toArray(),
-        db.blockInstanceRelations
-            .where('targetInstanceUuid').equals(blockInstanceUuid)
-            .filter(r => !relatedBlockUuid || r.sourceBlockUuid === relatedBlockUuid)
-            .toArray()
-    ]);
-    return [...source, ...target];
-}
+export const getInstanceRelations = async (
+  db: BookDB,
+  blockInstanceUuid: string,
+  relatedBlockUuid?: string
+) => {
+  const [source, target] = await Promise.all([
+    db.blockInstanceRelations
+      .where("sourceInstanceUuid")
+      .equals(blockInstanceUuid)
+      .filter((r) => !relatedBlockUuid || r.targetBlockUuid === relatedBlockUuid)
+      .toArray(),
+    db.blockInstanceRelations
+      .where("targetInstanceUuid")
+      .equals(blockInstanceUuid)
+      .filter((r) => !relatedBlockUuid || r.sourceBlockUuid === relatedBlockUuid)
+      .toArray(),
+  ]);
+  return [...source, ...target];
+};
 
 export const createRelation = async (
-    db: BookDB,
-    sourceInstanceUuid: string,
-    targetInstanceUuid: string,
-    sourceBlockUuid: string,
-    targetBlockUuid: string,
-    blockRelationUuid: string
+  db: BookDB,
+  sourceInstanceUuid: string,
+  targetInstanceUuid: string,
+  sourceBlockUuid: string,
+  targetBlockUuid: string,
+  blockRelationUuid: string
 ) => {
-    const relation: IBlockInstanceRelation = {
-        sourceInstanceUuid,
-        targetInstanceUuid,
-        sourceBlockUuid,
-        targetBlockUuid,
-        blockRelationUuid
-    };
+  const relation: IBlockInstanceRelation = {
+    sourceInstanceUuid,
+    targetInstanceUuid,
+    sourceBlockUuid,
+    targetBlockUuid,
+    blockRelationUuid,
+  };
 
-    const [sourceInstance, targetInstance] = await Promise.all([
-        BlockInstanceRepository.getByUuid(db, sourceInstanceUuid),
-        BlockInstanceRepository.getByUuid(db, targetInstanceUuid)
-    ]);
+  const [sourceInstance, targetInstance] = await Promise.all([
+    BlockInstanceRepository.getByUuid(db, sourceInstanceUuid),
+    BlockInstanceRepository.getByUuid(db, targetInstanceUuid),
+  ]);
 
-    await Promise.all([
-        sourceInstance ? updateBlockInstance(db, sourceInstance) : Promise.resolve(),
-        targetInstance ? updateBlockInstance(db, targetInstance) : Promise.resolve(),
-        db.blockInstanceRelations.add(relation)
-    ]);
-    await updateBookLocalUpdatedAt(db);
-}
+  await Promise.all([
+    sourceInstance ? updateBlockInstance(db, sourceInstance) : Promise.resolve(),
+    targetInstance ? updateBlockInstance(db, targetInstance) : Promise.resolve(),
+    db.blockInstanceRelations.add(relation),
+  ]);
+  await updateBookLocalUpdatedAt(db);
+};
 
 export const removeRelation = async (db: BookDB, relation: IBlockInstanceRelation) => {
-    if (!relation.id) return;
+  if (!relation.id) return;
 
-    await db.blockInstanceRelations.delete(relation.id);
+  await db.blockInstanceRelations.delete(relation.id);
 
-    const [sourceInstance, targetInstance] = await Promise.all([
-        BlockInstanceRepository.getByUuid(db, relation.sourceInstanceUuid),
-        BlockInstanceRepository.getByUuid(db, relation.targetInstanceUuid)
-    ]);
+  const [sourceInstance, targetInstance] = await Promise.all([
+    BlockInstanceRepository.getByUuid(db, relation.sourceInstanceUuid),
+    BlockInstanceRepository.getByUuid(db, relation.targetInstanceUuid),
+  ]);
 
-    await Promise.all([
-        sourceInstance ? updateBlockInstance(db, sourceInstance) : Promise.resolve(),
-        targetInstance ? updateBlockInstance(db, targetInstance) : Promise.resolve()
-    ]);
-    await updateBookLocalUpdatedAt(db);
-}
+  await Promise.all([
+    sourceInstance ? updateBlockInstance(db, sourceInstance) : Promise.resolve(),
+    targetInstance ? updateBlockInstance(db, targetInstance) : Promise.resolve(),
+  ]);
+  await updateBookLocalUpdatedAt(db);
+};
 
 export const removeAllForInstance = async (db: BookDB, instanceUuid: string) => {
-    await Promise.all([
-        db.blockInstanceRelations.where('sourceInstanceUuid').equals(instanceUuid).delete(),
-        db.blockInstanceRelations.where('targetInstanceUuid').equals(instanceUuid).delete()
-    ]);
-    await updateBookLocalUpdatedAt(db);
-}
+  await Promise.all([
+    db.blockInstanceRelations.where("sourceInstanceUuid").equals(instanceUuid).delete(),
+    db.blockInstanceRelations.where("targetInstanceUuid").equals(instanceUuid).delete(),
+  ]);
+  await updateBookLocalUpdatedAt(db);
+};
 
 export const BlockInstanceRelationRepository = {
-    getInstanceRelations,
-    createRelation,
-    removeRelation,
-    removeAllForInstance,
-}
+  getInstanceRelations,
+  createRelation,
+  removeRelation,
+  removeAllForInstance,
+};

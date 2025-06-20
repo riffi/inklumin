@@ -1,10 +1,10 @@
 // useBlockTabsManager.ts
-import { BlockTabRepository } from "@/repository/Block/BlockTabRepository";
+import { useLiveQuery } from "dexie-react-hooks";
 import { notifications } from "@mantine/notifications";
-import {IBlock, IBlockTab} from "@/entities/ConstructorEntities";
-import {bookDb} from "@/entities/bookDb";
-import {configDatabase} from "@/entities/configuratorDb";
-import {useLiveQuery} from "dexie-react-hooks";
+import { bookDb } from "@/entities/bookDb";
+import { configDatabase } from "@/entities/configuratorDb";
+import { IBlock, IBlockTab } from "@/entities/ConstructorEntities";
+import { BlockTabRepository } from "@/repository/Block/BlockTabRepository";
 
 interface UseBlockTabsManagerProps {
   bookUuid: string;
@@ -12,8 +12,7 @@ interface UseBlockTabsManagerProps {
 }
 
 export const useBlockTabsManager = ({ bookUuid, blockUuid }: UseBlockTabsManagerProps) => {
-
-  const db = bookUuid? bookDb : configDatabase;
+  const db = bookUuid ? bookDb : configDatabase;
   const isBookDb = !!bookUuid;
 
   const tabs = useLiveQuery<IBlockTab[]>(() => {
@@ -26,33 +25,26 @@ export const useBlockTabsManager = ({ bookUuid, blockUuid }: UseBlockTabsManager
 
   const referencingParams = useLiveQuery(async () => {
     // Получаем все параметры связанные с блоком
-    const params = await db.blockParameters
-      .where('relatedBlockUuid')
-      .equals(blockUuid)
-      .toArray();
+    const params = await db.blockParameters.where("relatedBlockUuid").equals(blockUuid).toArray();
 
     // Если нет параметров - сразу возвращаем пустой массив
     if (!params.length) return [];
 
     // Собираем уникальные UUID блоков для запроса
-    const blockUuids = [...new Set(params.map(p => p.blockUuid))];
+    const blockUuids = [...new Set(params.map((p) => p.blockUuid))];
 
     // Получаем все связанные блоки одним запросом
-    const blocks = await db.blocks
-      .where('uuid')
-      .anyOf(blockUuids)
-      .toArray();
+    const blocks = await db.blocks.where("uuid").anyOf(blockUuids).toArray();
 
     // Создаем карту для быстрого доступа к блокам
-    const blocksMap = new Map(blocks.map(b => [b.uuid, b]));
+    const blocksMap = new Map(blocks.map((b) => [b.uuid, b]));
 
     // Собираем результирующие данные
-    return params.map(p => ({
+    return params.map((p) => ({
       ...p,
-      blockTitle: blocksMap.get(p.blockUuid)?.title
+      blockTitle: blocksMap.get(p.blockUuid)?.title,
     }));
   }, [blockUuid]);
-
 
   const saveTab = async (tab: IBlockTab) => {
     try {
@@ -61,7 +53,7 @@ export const useBlockTabsManager = ({ bookUuid, blockUuid }: UseBlockTabsManager
       notifications.show({
         title: "Ошибка",
         message: "Не удалось сохранить вкладку",
-        color: "red"
+        color: "red",
       });
     }
   };
@@ -71,11 +63,11 @@ export const useBlockTabsManager = ({ bookUuid, blockUuid }: UseBlockTabsManager
   };
 
   const moveTabUp = async (uuid: string) => {
-    await BlockTabRepository.moveTab(db, blockUuid, uuid, 'up');
+    await BlockTabRepository.moveTab(db, blockUuid, uuid, "up");
   };
 
   const moveTabDown = async (uuid: string) => {
-    await BlockTabRepository.moveTab(db, blockUuid, uuid, 'down');
+    await BlockTabRepository.moveTab(db, blockUuid, uuid, "down");
   };
 
   return {

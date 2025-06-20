@@ -1,10 +1,10 @@
-import { IBlockTitleForms } from "@/entities/ConstructorEntities";
 import { notifications } from "@mantine/notifications";
 import { IWarningGroup, IWarningKind } from "@/components/shared/RichEditor/types";
+import { IBlockTitleForms } from "@/entities/ConstructorEntities";
+import { getIncLuminApiKey } from "@/stores/apiSettingsStore/apiSettingsStore";
 import { generateUUID } from "@/utils/UUIDUtils";
-import {getIncLuminApiKey} from "@/stores/apiSettingsStore/apiSettingsStore";
 
-const BASE_API_URL = 'https://ml.inclumin.ru';
+const BASE_API_URL = "https://ml.inclumin.ru";
 
 export class InkLuminApiError extends Error {
   constructor(message: string) {
@@ -22,12 +22,12 @@ const fetchWithAuth = async (url: string, body: object) => {
     }
 
     const response = await fetch(`${BASE_API_URL}/${url}`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
 
     if (!response.ok) throw new InkLuminApiError(`HTTP error! status: ${response.status}`);
@@ -47,16 +47,16 @@ const fetchWithAuth = async (url: string, body: object) => {
  */
 export const fetchAndPrepareTitleForms = async (phrase: string): Promise<IBlockTitleForms> => {
   try {
-    const formsData = await fetchWithAuth('get_cases', { phrase });
+    const formsData = await fetchWithAuth("get_cases", { phrase });
 
     return {
       nominative: formsData.nomn || phrase,
-      genitive: formsData.gent || '',
-      dative: formsData.datv || '',
-      accusative: formsData.accs || '',
-      instrumental: formsData.ablt || '',
-      prepositional: formsData.loct || '',
-      plural: formsData.plural_nomn || ''
+      genitive: formsData.gent || "",
+      dative: formsData.datv || "",
+      accusative: formsData.accs || "",
+      instrumental: formsData.ablt || "",
+      prepositional: formsData.loct || "",
+      plural: formsData.plural_nomn || "",
     };
   } catch (error) {
     throw new InkLuminApiError(error.message);
@@ -65,10 +65,10 @@ export const fetchAndPrepareTitleForms = async (phrase: string): Promise<IBlockT
 
 export const fetchRepeats = async (text: string): Promise<IWarningGroup[]> => {
   try {
-    const data = await fetchWithAuth('find_repeats', {
+    const data = await fetchWithAuth("find_repeats", {
       text,
       window_size: 10,
-      window_size_tech_words: 1
+      window_size_tech_words: 1,
     });
 
     const groups: IWarningGroup[] = [];
@@ -82,15 +82,15 @@ export const fetchRepeats = async (text: string): Promise<IWarningGroup[]> => {
           to: repeat.endPosition + 2,
           groupIndex: String(index),
           text: repeat.word,
-          kind: IWarningKind.REPEAT
-        }))
+          kind: IWarningKind.REPEAT,
+        })),
       };
       groups.push(group);
     });
 
     return groups;
   } catch (error) {
-    console.error('Error checking repeats:', error);
+    console.error("Error checking repeats:", error);
     notifications.show({
       title: "Ошибка запроса",
       message: error instanceof Error ? error.message : "Ошибка при проверке повторений",
@@ -102,29 +102,31 @@ export const fetchRepeats = async (text: string): Promise<IWarningGroup[]> => {
 
 export const fetchCliches = async (text: string): Promise<IWarningGroup[]> => {
   try {
-    const data = await fetchWithAuth('analyze_cliches', { text });
+    const data = await fetchWithAuth("analyze_cliches", { text });
 
     const groups: IWarningGroup[] = [];
     data.data.forEach((warning: any, index: number) => {
       const group: IWarningGroup = {
         groupIndex: String(index),
         warningKind: IWarningKind.CLICHE,
-        warnings: [{
-          id: generateUUID(),
-          from: warning.start + 1,
-          to: warning.end + 1,
-          groupIndex: String(index),
-          text: warning.text,
-          kind: IWarningKind.CLICHE,
-          active: false
-        }]
+        warnings: [
+          {
+            id: generateUUID(),
+            from: warning.start + 1,
+            to: warning.end + 1,
+            groupIndex: String(index),
+            text: warning.text,
+            kind: IWarningKind.CLICHE,
+            active: false,
+          },
+        ],
       };
       groups.push(group);
     });
 
     return groups;
   } catch (error) {
-    console.error('Error checking cliches:', error);
+    console.error("Error checking cliches:", error);
     notifications.show({
       title: "Ошибка запроса",
       message: error instanceof Error ? error.message : "Ошибка при проверке штампов",
@@ -137,5 +139,5 @@ export const fetchCliches = async (text: string): Promise<IWarningGroup[]> => {
 export const InkLuminMlApi = {
   fetchAndPrepareTitleForms,
   fetchRepeats,
-  fetchCliches
+  fetchCliches,
 };

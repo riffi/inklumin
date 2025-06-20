@@ -1,25 +1,23 @@
+import { useLiveQuery } from "dexie-react-hooks";
+import { notifications } from "@mantine/notifications";
 import { IBook } from "@/entities/BookEntities";
 import { configDatabase } from "@/entities/configuratorDb";
-import { notifications } from "@mantine/notifications";
-import { useLiveQuery } from "dexie-react-hooks";
 import { IBookConfiguration } from "@/entities/ConstructorEntities";
 import { useDialog } from "@/providers/DialogProvider/DialogProvider";
-import { useBookStore } from "@/stores/bookStore/bookStore";
-import { BookService } from "@/services/bookService";
 import { BookRepository } from "@/repository/Book/BookRepository";
+import { BookService } from "@/services/bookService";
+import { useBookStore } from "@/stores/bookStore/bookStore";
 
 export const useBookManager = () => {
-
   const { showDialog } = useDialog();
   const { clearSelectedBook } = useBookStore();
 
   // Получаем список книг и конфигураций из базы данных
   const books = useLiveQuery<IBook[]>(() => BookRepository.getAll(configDatabase), []);
   const configurations = useLiveQuery<IBookConfiguration[]>(
-      () => configDatabase.bookConfigurations.toArray(),
-      []
+    () => configDatabase.bookConfigurations.toArray(),
+    []
   );
-
 
   const saveBook = async (book: IBook) => {
     const result = await BookService.saveBook(book);
@@ -69,7 +67,6 @@ export const useBookManager = () => {
     configurations,
     saveBook,
     deleteBook,
-    refreshBooks
-  }
-}
-
+    refreshBooks,
+  };
+};

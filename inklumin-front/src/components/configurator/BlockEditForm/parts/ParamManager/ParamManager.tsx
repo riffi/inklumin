@@ -1,29 +1,29 @@
 // components/configurator/BlockEditForm/parts/ParamManager/ParamManager.tsx
-import { Tabs, ActionIcon } from "@mantine/core";
-import React, { useState, useEffect } from "react";
-import { ParamTable } from "@/components/configurator/BlockEditForm/parts/ParamManager/ParamTable/ParamTable";
+import React, { useEffect, useState } from "react";
+import { IconSettings } from "@tabler/icons-react";
+import { ActionIcon, Tabs } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { GroupsModal } from "@/components/configurator/BlockEditForm/parts/ParamManager/modal/GroupsModal/GroupsModal";
 import { ParamEditModal } from "@/components/configurator/BlockEditForm/parts/ParamManager/modal/ParamEditModal/ParamEditModal";
+import { ParamTable } from "@/components/configurator/BlockEditForm/parts/ParamManager/ParamTable/ParamTable";
 import { useBlockEditForm } from "@/components/configurator/BlockEditForm/useBlockEditForm";
-import {IBlock, IBlockParameter, IBlockRelation, IBlockParameterGroup} from "@/entities/ConstructorEntities"; // Added IBlockParameterGroup, though not directly used in this file, it's good for context with paramGroupList
-import { notifications } from "@mantine/notifications";
-import {IconSettings} from "@tabler/icons-react";
 import { bookDb } from "@/entities/bookDb";
 import { configDatabase } from "@/entities/configuratorDb";
+import {
+  IBlock,
+  IBlockParameter,
+  IBlockParameterGroup,
+  IBlockRelation,
+} from "@/entities/ConstructorEntities"; // Added IBlockParameterGroup, though not directly used in this file, it's good for context with paramGroupList
 
 interface ParamManagerProps {
   blockUuid: string;
   bookUuid?: string;
   useTabs?: number;
-  otherBlocks: IBlock[]
+  otherBlocks: IBlock[];
 }
 
-export const ParamManager = ({
-                               blockUuid,
-                               bookUuid,
-                               useTabs,
-                               otherBlocks
-                             }: ParamManagerProps) => {
+export const ParamManager = ({ blockUuid, bookUuid, useTabs, otherBlocks }: ParamManagerProps) => {
   const [currentGroupUuid, setCurrentGroupUuid] = useState<string>();
   const [isParamModalOpened, setIsParamModalOpened] = useState(false);
   const [isGroupsModalOpened, setIsGroupsModalOpened] = useState(false);
@@ -50,13 +50,15 @@ export const ParamManager = ({
   }, [paramGroupList, currentGroupUuid]);
 
   const getInitialParamData = (specificGroupUuidForTab?: string): IBlockParameter => {
-    const targetGroupUuidForNewParam = useTabs === 1 ? (specificGroupUuidForTab || currentGroupUuid) : undefined;
+    const targetGroupUuidForNewParam =
+      useTabs === 1 ? specificGroupUuidForTab || currentGroupUuid : undefined;
     // paramList from the hook is filtered by currentGroupUuid if currentGroupUuid is set AND useTabs is NOT 1.
     // When useTabs IS 1, paramList contains ALL params for the block.
     // For calculating order number for a NEW param in a specific group,
     // we need to count existing params in THAT group.
-    const paramsInTargetGroup = useTabs === 1
-        ? paramList?.filter(p => p.groupUuid === targetGroupUuidForNewParam) || []
+    const paramsInTargetGroup =
+      useTabs === 1
+        ? paramList?.filter((p) => p.groupUuid === targetGroupUuidForNewParam) || []
         : paramList || []; // In non-tab mode, paramList is already filtered or contains all if no group context
 
     return {
@@ -107,94 +109,95 @@ export const ParamManager = ({
   };
 
   const renderTabsContent = () => (
-      <Tabs
-          value={currentGroupUuid}
-          onChange={(value) => setCurrentGroupUuid(value || paramGroupList?.[0]?.uuid)}
-      >
-        <Tabs.List>
-          {paramGroupList?.map((group) => (
-              <Tabs.Tab value={group.uuid} key={group.uuid}>
-                {group.title}
-              </Tabs.Tab>
-          ))}
-          <ActionIcon
-              variant="subtle"
-              color="gray"
-              onClick={() => setIsGroupsModalOpened(true)}
-              ml="auto"
-              mr="sm"
-          >
-            <IconSettings size="1rem" />
-          </ActionIcon>
-        </Tabs.List>
+    <Tabs
+      value={currentGroupUuid}
+      onChange={(value) => setCurrentGroupUuid(value || paramGroupList?.[0]?.uuid)}
+    >
+      <Tabs.List>
         {paramGroupList?.map((group) => (
-            <Tabs.Panel value={group.uuid} key={group.uuid}>
-              <ParamTable
-                  params={paramList?.filter((p) => p.groupUuid === group.uuid) || []}
-                  otherBlocks={otherBlocks}
-                  onAddParam={() => handleParamModalOpen(getInitialParamData(group.uuid))}
-                  onEditParam={handleParamModalOpen}
-                  onDeleteParam={deleteParam}
-                  onMoveParamUp={moveParamUp}
-                  onMoveParamDown={moveParamDown}
-                  paramGroupList={paramGroupList}
-                  onMoveParam={handleMoveParamToGroup}
-                  showMoveButton={paramGroupList && paramGroupList.length > 1}
-                  currentGroupUuid={group.uuid}
-                  bookUuid={bookUuid}
-                  blockUuid={blockUuid}
-              />
-            </Tabs.Panel>
+          <Tabs.Tab value={group.uuid} key={group.uuid}>
+            {group.title}
+          </Tabs.Tab>
         ))}
-      </Tabs>
+        <ActionIcon
+          variant="subtle"
+          color="gray"
+          onClick={() => setIsGroupsModalOpened(true)}
+          ml="auto"
+          mr="sm"
+        >
+          <IconSettings size="1rem" />
+        </ActionIcon>
+      </Tabs.List>
+      {paramGroupList?.map((group) => (
+        <Tabs.Panel value={group.uuid} key={group.uuid}>
+          <ParamTable
+            params={paramList?.filter((p) => p.groupUuid === group.uuid) || []}
+            otherBlocks={otherBlocks}
+            onAddParam={() => handleParamModalOpen(getInitialParamData(group.uuid))}
+            onEditParam={handleParamModalOpen}
+            onDeleteParam={deleteParam}
+            onMoveParamUp={moveParamUp}
+            onMoveParamDown={moveParamDown}
+            paramGroupList={paramGroupList}
+            onMoveParam={handleMoveParamToGroup}
+            showMoveButton={paramGroupList && paramGroupList.length > 1}
+            currentGroupUuid={group.uuid}
+            bookUuid={bookUuid}
+            blockUuid={blockUuid}
+          />
+        </Tabs.Panel>
+      ))}
+    </Tabs>
   );
 
   return (
-      <>
-        {useTabs === 1 ? (
-            renderTabsContent()
-        ) : (
-            <ParamTable
-                params={paramList || []}
-                onAddParam={() => handleParamModalOpen(getInitialParamData())}
-                onEditParam={handleParamModalOpen}
-                onDeleteParam={deleteParam}
-                onMoveParamUp={moveParamUp}
-                onMoveParamDown={moveParamDown}
-                otherBlocks={otherBlocks}
-                bookUuid={bookUuid}
-                blockUuid={blockUuid}
-            />
-        )}
-
-        {isParamModalOpened && <ParamEditModal
-            isOpen={isParamModalOpened}
-            onClose={() => setIsParamModalOpened(false)}
-            onSave={(param) => {
-              notifications.show({
-                title: "Параметр",
-                message: `Параметр "${param.title}" сохранён`,
-              });
-              saveParam(param);
-              setIsParamModalOpened(false);
-            }}
-            initialData={currentParam}
-            blockUuid={blockUuid}
-            bookUuid={bookUuid}
-            otherBlocks={otherBlocks}
+    <>
+      {useTabs === 1 ? (
+        renderTabsContent()
+      ) : (
+        <ParamTable
+          params={paramList || []}
+          onAddParam={() => handleParamModalOpen(getInitialParamData())}
+          onEditParam={handleParamModalOpen}
+          onDeleteParam={deleteParam}
+          onMoveParamUp={moveParamUp}
+          onMoveParamDown={moveParamDown}
+          otherBlocks={otherBlocks}
+          bookUuid={bookUuid}
+          blockUuid={blockUuid}
         />
-        }
+      )}
 
-        <GroupsModal
-            opened={isGroupsModalOpened}
-            onClose={() => setIsGroupsModalOpened(false)}
-            paramGroupList={paramGroupList || []}
-            onSaveGroup={handleSaveGroup}
-            onMoveGroupUp={moveGroupUp}
-            onMoveGroupDown={moveGroupDown}
-            onDeleteGroup={deleteGroup}
-            onUpdateGroupTitle={updateGroupTitle}
+      {isParamModalOpened && (
+        <ParamEditModal
+          isOpen={isParamModalOpened}
+          onClose={() => setIsParamModalOpened(false)}
+          onSave={(param) => {
+            notifications.show({
+              title: "Параметр",
+              message: `Параметр "${param.title}" сохранён`,
+            });
+            saveParam(param);
+            setIsParamModalOpened(false);
+          }}
+          initialData={currentParam}
+          blockUuid={blockUuid}
+          bookUuid={bookUuid}
+          otherBlocks={otherBlocks}
         />
-      </>
+      )}
+
+      <GroupsModal
+        opened={isGroupsModalOpened}
+        onClose={() => setIsGroupsModalOpened(false)}
+        paramGroupList={paramGroupList || []}
+        onSaveGroup={handleSaveGroup}
+        onMoveGroupUp={moveGroupUp}
+        onMoveGroupDown={moveGroupDown}
+        onDeleteGroup={deleteGroup}
+        onUpdateGroupTitle={updateGroupTitle}
+      />
+    </>
   );
 };

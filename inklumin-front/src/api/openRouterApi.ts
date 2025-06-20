@@ -1,8 +1,7 @@
-import {notifications} from "@mantine/notifications";
-import {getOpenRouterKey, useApiSettingsStore} from "@/stores/apiSettingsStore/apiSettingsStore";
-import {IBlock} from "@/entities/ConstructorEntities";
-import {KnowledgeBaseEntity} from "@/entities/KnowledgeBaseEntities";
-
+import { notifications } from "@mantine/notifications";
+import { IBlock } from "@/entities/ConstructorEntities";
+import { KnowledgeBaseEntity } from "@/entities/KnowledgeBaseEntities";
+import { getOpenRouterKey, useApiSettingsStore } from "@/stores/apiSettingsStore/apiSettingsStore";
 
 const fetchCompletions = async (prompt: string) => {
   try {
@@ -20,14 +19,14 @@ const fetchCompletions = async (prompt: string) => {
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         model: model,
         messages: [{ role: "user", content: prompt }],
-        reasoning: { exclude: true }
-      })
+        reasoning: { exclude: true },
+      }),
     });
 
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -36,7 +35,6 @@ const fetchCompletions = async (prompt: string) => {
     throw error;
   }
 };
-
 
 const fetchSynonyms = async (word: string) => {
   const prompt = `Сгенерируй 7-15 синонимов для русского слова '${word}' в формате JSON. 
@@ -65,8 +63,7 @@ const fetchParaphrases = async (phrase: string) => {
 
     if (!jsonMatch) throw new Error("Invalid response format");
     return JSON.parse(jsonMatch[1]).paraphrases as string[];
-  }
-  catch (error){
+  } catch (error) {
     notifications.show({
       title: "Ошибка",
       message: error instanceof Error ? error.message : "Неизвестная ошибка",
@@ -132,7 +129,7 @@ const fetchRhymes = async (word: string) => {
   const prompt = `Сгенерируй 7-15 рифм для русского слова '${word}' в формате JSON. 
   Структура: { "rhymes": [...] }. 
   Пример для слова 'дом': { "rhymes": ["том", "сом", "ком", "льдом", "котом"] }. 
-  Только русские слова, включай разные типы рифм (точные, ассонансы и т.д.).`
+  Только русские слова, включай разные типы рифм (точные, ассонансы и т.д.).`;
 
   const data = await fetchCompletions(prompt);
   const content = data.choices[0].message.content;
@@ -158,12 +155,10 @@ const fetchSceneAnalysis = async (sceneContent: string) => {
   }
 };
 
-
-
-
-
-
-const fetchKnowledgeBaseEntities = async (sceneContent: string, block: IBlock): Promise<KnowledgeBaseEntity[]> => {
+const fetchKnowledgeBaseEntities = async (
+  sceneContent: string,
+  block: IBlock
+): Promise<KnowledgeBaseEntity[]> => {
   const prompt = `Проанализируй  текст сцены
 
 Найди в тексте все сущности типа "${block.title}" (описание: "${block.description}").
@@ -200,10 +195,12 @@ ${sceneContent}
       // Попытка извлечь JSON, если он не обрамлен в ```json ... ```, а просто является строкой JSON
       // Это может быть полезно, если LLM иногда возвращает "голый" JSON
       content = content.trim();
-      if (!content.startsWith('[') || !content.endsWith(']')) {
+      if (!content.startsWith("[") || !content.endsWith("]")) {
         // Если это не массив, и не было ```json ... ```, считаем формат неверным.
         // Можно добавить более сложную проверку, если ожидаются и объекты {}.
-        console.warn("Ответ API не содержит ожидаемого JSON массива в ```json ... ``` или в чистом виде. Попытка парсинга как есть.");
+        console.warn(
+          "Ответ API не содержит ожидаемого JSON массива в ```json ... ``` или в чистом виде. Попытка парсинга как есть."
+        );
       }
     }
 
@@ -221,7 +218,7 @@ ${sceneContent}
     // Дополнительная проверка структуры объектов в массиве (опционально, но рекомендуется)
     if (parsedResult.length > 0) {
       const firstItem = parsedResult[0];
-      if (typeof firstItem.title !== 'string' || typeof firstItem.description !== 'string') {
+      if (typeof firstItem.title !== "string" || typeof firstItem.description !== "string") {
         notifications.show({
           title: "Ошибка структуры данных",
           message: "Объекты в массиве от AI не имеют необходимых полей 'title' или 'description'.",
@@ -232,12 +229,13 @@ ${sceneContent}
     }
 
     return parsedResult as KnowledgeBaseEntity[];
-
   } catch (error: any) {
     console.error("Ошибка при получении или обработке сущностей базы знаний:", error);
     notifications.show({
       title: "Ошибка API",
-      message: error.message || "Не удалось получить сущности для базы знаний. Проверьте консоль для деталей.",
+      message:
+        error.message ||
+        "Не удалось получить сущности для базы знаний. Проверьте консоль для деталей.",
       color: "red",
     });
     return [];
@@ -275,5 +273,5 @@ export const OpenRouterApi = {
   fetchRhymes,
   fetchSceneAnalysis,
   fetchKnowledgeBaseEntities,
-  fetchSceneProblems
-}
+  fetchSceneProblems,
+};

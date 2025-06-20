@@ -1,144 +1,135 @@
-import {BlockAbstractDb} from "@/entities/BlockAbstractDb";
+import { BlockAbstractDb } from "@/entities/BlockAbstractDb";
+import { BookDB } from "@/entities/bookDb";
 import {
-    IBlock, // Needed for appendDefaultParamGroup
-    IBlockParameter,
-    IBlockParameterDataType,
-    IBlockParameterPossibleValue
+  IBlock, // Needed for appendDefaultParamGroup
+  IBlockParameter,
+  IBlockParameterDataType,
+  IBlockParameterPossibleValue,
 } from "@/entities/ConstructorEntities";
-import {generateUUID} from "@/utils/UUIDUtils";
 import { updateBookLocalUpdatedAt } from "@/utils/bookSyncUtils";
-import {BookDB} from "@/entities/bookDb";
+import { generateUUID } from "@/utils/UUIDUtils";
 
 const getParameterGroups = async (db: BlockAbstractDb, blockUuid: string) => {
-    return db.blockParameterGroups
-        .where('blockUuid')
-        .equals(blockUuid)
-        .sortBy('orderNumber');
-}
+  return db.blockParameterGroups.where("blockUuid").equals(blockUuid).sortBy("orderNumber");
+};
 
 const getGroupByUuid = async (db: BlockAbstractDb, groupUuid: string) => {
-    return db.blockParameterGroups.where('uuid').equals(groupUuid).first();
-}
+  return db.blockParameterGroups.where("uuid").equals(groupUuid).first();
+};
 
 const getParamPossibleValues = async (db: BlockAbstractDb, parameterUuid: string) => {
-    return db.blockParameterPossibleValues
-        .where('parameterUuid')
-        .equals(parameterUuid)
-        .sortBy('orderNumber');
+  return db.blockParameterPossibleValues
+    .where("parameterUuid")
+    .equals(parameterUuid)
+    .sortBy("orderNumber");
 };
 
 const getDisplayedParameters = async (db: BlockAbstractDb, blockUuid: string) => {
-    return db.blockParameters
-        .where('blockUuid')
-        .equals(blockUuid)
-        .and(param => param.displayInCard === 1)
-        .toArray();
-}
+  return db.blockParameters
+    .where("blockUuid")
+    .equals(blockUuid)
+    .and((param) => param.displayInCard === 1)
+    .toArray();
+};
 
 const getDefaultParameters = async (db: BlockAbstractDb, blockUuid: string) => {
-    return db
-        .blockParameters
-        .where({
-            blockUuid,
-            isDefault: 1
-        })
-        .toArray()
-}
+  return db.blockParameters
+    .where({
+      blockUuid,
+      isDefault: 1,
+    })
+    .toArray();
+};
 
 const getParamsByGroup = async (db: BlockAbstractDb, groupUuid: string) => {
-    return db.blockParameters
-        .where('groupUuid')
-        .equals(groupUuid)
-        .toArray();
-}
+  return db.blockParameters.where("groupUuid").equals(groupUuid).toArray();
+};
 
 const deleteParameterGroup = async (db: BlockAbstractDb, blockUuid: string, groupUuid: string) => {
+  // Удаляем все параметры, связанные с этой группой
+  await db.blockParameters.where("groupUuid").equals(groupUuid).delete();
 
-    // Удаляем все параметры, связанные с этой группой
-    await db.blockParameters
-        .where('groupUuid')
-        .equals(groupUuid)
-        .delete();
+  // Удаляем группу
+  await db.blockParameterGroups.where("uuid").equals(groupUuid).delete();
 
-    // Удаляем группу
-    await db.blockParameterGroups
-        .where('uuid')
-        .equals(groupUuid)
-        .delete();
+  // Обновляем порядковые номера для оставшихся групп
+  const remainingGroups = await db.blockParameterGroups
+    .where("blockUuid")
+    .equals(blockUuid)
+    .sortBy("orderNumber");
 
-    // Обновляем порядковые номера для оставшихся групп
-    const remainingGroups = await db.blockParameterGroups
-        .where('blockUuid')
-        .equals(blockUuid)
-        .sortBy('orderNumber');
+  await Promise.all(
+    remainingGroups.map((group, index) =>
+      db.blockParameterGroups.update(group.id!, {
+        orderNumber: index,
+      })
+    )
+  );
+  if (db instanceof BookDB) {
+    await updateBookLocalUpdatedAt(db as BookDB);
+  }
+};
 
-    await Promise.all(
-        remainingGroups.map((group, index) =>
-            db.blockParameterGroups.update(group.id!, {
-                orderNumber: index
-            })
-        )
-    );
-    if (db instanceof BookDB) {
-        await updateBookLocalUpdatedAt(db as BookDB);
-    }
-}
+const updateParamPossibleValues = async (
+  db: BlockAbstractDb,
+  parameterUuid: string,
+  possibleValues: string[]
+) => {
+  // Changed type to string[]
+  // Удаляем старые значения
+  await db.blockParameterPossibleValues.where("parameterUuid").equals(parameterUuid).delete();
 
-const updateParamPossibleValues = async (db: BlockAbstractDb, parameterUuid: string, possibleValues: string[]) => { // Changed type to string[]
-                                                                                                                    // Удаляем старые значения
-    await db.blockParameterPossibleValues
-        .where('parameterUuid')
-        .equals(parameterUuid)
-        .delete();
-
-    // Сохраняем новые значения
-    await Promise.all(
-        possibleValues.map((val, index) => // val is now a string
-            db.blockParameterPossibleValues.add({
-                uuid: generateUUID(),
-                parameterUuid,
-                value: val, // Use val here
-                orderNumber: index,
-            })
-        )
-    );
-    if (db instanceof BookDB) {
-        await updateBookLocalUpdatedAt(db as BookDB);
-    }
-}
+  // Сохраняем новые значения
+  await Promise.all(
+    possibleValues.map(
+      (
+        val,
+        index // val is now a string
+      ) =>
+        db.blockParameterPossibleValues.add({
+          uuid: generateUUID(),
+          parameterUuid,
+          value: val, // Use val here
+          orderNumber: index,
+        })
+    )
+  );
+  if (db instanceof BookDB) {
+    await updateBookLocalUpdatedAt(db as BookDB);
+  }
+};
 
 const appendDefaultParamGroup = async (db: BlockAbstractDb, blockData: IBlock) => {
-    await db.blockParameterGroups.add({
-        blockUuid: blockData.uuid,
-        uuid: generateUUID(),
-        orderNumber: 0,
-        description: '',
-        title: 'Основное',
-    })
-    if (db instanceof BookDB) {
-        await updateBookLocalUpdatedAt(db as BookDB);
-    }
-}
+  await db.blockParameterGroups.add({
+    blockUuid: blockData.uuid,
+    uuid: generateUUID(),
+    orderNumber: 0,
+    description: "",
+    title: "Основное",
+  });
+  if (db instanceof BookDB) {
+    await updateBookLocalUpdatedAt(db as BookDB);
+  }
+};
 
 const getReferencingParametersFromBlock = async (db: BlockAbstractDb, blockUuid: string) => {
-    return  db.blockParameters
-        .filter(param => (
-                (param.blockUuid === blockUuid)
-                && (param.dataType === IBlockParameterDataType.blockLink)
-            )
-        )
-        .toArray();
-}
+  return db.blockParameters
+    .filter(
+      (param) =>
+        param.blockUuid === blockUuid && param.dataType === IBlockParameterDataType.blockLink
+    )
+    .toArray();
+};
 
 export const BlockParameterRepository = {
-    getParameterGroups,
-    getParamsByGroup,
-    getGroupByUuid,
-    getParamPossibleValues,
-    getDisplayedParameters,
-    getDefaultParameters,
-    deleteParameterGroup,
-    updateParamPossibleValues,
-    appendDefaultParamGroup,
-    getReferencingParametersFromBlock,
-}
+  getParameterGroups,
+  getParamsByGroup,
+  getGroupByUuid,
+  getParamPossibleValues,
+  getDisplayedParameters,
+  getDefaultParameters,
+  deleteParameterGroup,
+  updateParamPossibleValues,
+  appendDefaultParamGroup,
+  getReferencingParametersFromBlock,
+};

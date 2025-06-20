@@ -1,9 +1,9 @@
-import { notifications } from "@mantine/notifications";
-import { IScene } from "@/entities/BookEntities";
 import { useLiveQuery } from "dexie-react-hooks";
+import { notifications } from "@mantine/notifications";
 import { bookDb } from "@/entities/bookDb";
-import { SceneRepository } from '@/repository/Scene/SceneRepository';
-import { SceneService } from '@/services/sceneService';
+import { IScene } from "@/entities/BookEntities";
+import { SceneRepository } from "@/repository/Scene/SceneRepository";
+import { SceneService } from "@/services/sceneService";
 
 export const useSceneEditor = (sceneIdProp?: number) => {
   const currentSceneIdFromProp = sceneIdProp;
@@ -20,14 +20,14 @@ export const useSceneEditor = (sceneIdProp?: number) => {
     if (result.success) {
       if (!silent) {
         notifications.show({
-          title: 'Успех',
-          message: currentSceneIdFromProp ? 'Сцена успешно обновлена' : 'Сцена успешно создана',
-          color: 'green',
+          title: "Успех",
+          message: currentSceneIdFromProp ? "Сцена успешно обновлена" : "Сцена успешно создана",
+          color: "green",
         });
       }
       return result.data;
     }
-    notifications.show({ title: 'Ошибка', message: 'Не удалось сохранить сцену', color: 'red' });
+    notifications.show({ title: "Ошибка", message: "Не удалось сохранить сцену", color: "red" });
     return undefined;
   };
 

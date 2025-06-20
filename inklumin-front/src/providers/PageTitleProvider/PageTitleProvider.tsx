@@ -1,6 +1,5 @@
 // src/contexts/PageTitleContext.tsx
-import {createContext, useContext, useEffect, useState} from 'react';
-import React from 'react';
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 interface PageTitleContextType {
   pageTitle: string;
@@ -10,7 +9,7 @@ interface PageTitleContextType {
 }
 
 const PageTitleContext = createContext<PageTitleContextType>({
-  pageTitle: '',
+  pageTitle: "",
   titleElement: null,
   setPageTitle: () => {},
   setTitleElement: () => {},
@@ -19,7 +18,7 @@ const PageTitleContext = createContext<PageTitleContextType>({
 export const usePageTitle = () => useContext(PageTitleContext);
 
 export const PageTitleProvider = ({ children }: { children: React.ReactNode }) => {
-  const [pageTitle, setPageTitleState] = useState('');
+  const [pageTitle, setPageTitleState] = useState("");
   const [titleElement, setTitleElementState] = useState<React.ReactNode>(null);
 
   useEffect(() => {
@@ -35,12 +34,12 @@ export const PageTitleProvider = ({ children }: { children: React.ReactNode }) =
 
   const setTitleElement = (element: React.ReactNode) => {
     setTitleElementState(element);
-    setPageTitleState('');
+    setPageTitleState("");
   };
 
   return (
-      <PageTitleContext.Provider value={{ pageTitle, titleElement, setPageTitle, setTitleElement }}>
-        {children}
-      </PageTitleContext.Provider>
+    <PageTitleContext.Provider value={{ pageTitle, titleElement, setPageTitle, setTitleElement }}>
+      {children}
+    </PageTitleContext.Provider>
   );
 };

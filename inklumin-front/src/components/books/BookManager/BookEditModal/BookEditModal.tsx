@@ -1,9 +1,9 @@
 // BookEditModal.tsx
 import { Modal } from "@mantine/core";
+import { BookSettingsForm } from "@/components/books/BookSettingsForm/BookSettingsForm";
 import { IBook } from "@/entities/BookEntities";
 import { IBookConfiguration } from "@/entities/ConstructorEntities";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
-import { BookSettingsForm } from "@/components/books/BookSettingsForm/BookSettingsForm";
 
 interface BookEditModalProps {
   isOpen: boolean;

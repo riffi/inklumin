@@ -1,7 +1,7 @@
-import { Stack, Select, Button, Group } from '@mantine/core';
-import { mapInstancesToOptions } from '../utils';
-import {IBlock} from "@/entities/ConstructorEntities";
-import {IBlockInstance} from "@/entities/BookEntities";
+import { Button, Group, Select, Stack } from "@mantine/core";
+import { IBlockInstance } from "@/entities/BookEntities";
+import { IBlock } from "@/entities/ConstructorEntities";
+import { mapInstancesToOptions } from "../utils";
 
 interface ChildBlockModalProps {
   relatedParentBlock?: IBlock;
@@ -17,49 +17,49 @@ interface ChildBlockModalProps {
 }
 
 export const ChildBlockModal = ({
-                                  relatedParentBlock,
-                                  relatedParentInstances,
-                                  relatedChildInstances,
-                                  parentInstanceUuid,
-                                  targetInstanceUuid,
-                                  relatedBlock,
-                                  onParentChange,
-                                  onTargetChange,
-                                  onCreate,
-                                  isLoading
-                                }: ChildBlockModalProps) => (
-    <Stack>
+  relatedParentBlock,
+  relatedParentInstances,
+  relatedChildInstances,
+  parentInstanceUuid,
+  targetInstanceUuid,
+  relatedBlock,
+  onParentChange,
+  onTargetChange,
+  onCreate,
+  isLoading,
+}: ChildBlockModalProps) => (
+  <Stack>
+    <Select
+      label={`${relatedParentBlock?.title}`}
+      placeholder={`Выберите ${relatedParentBlock?.titleForms?.accusative}`}
+      value={parentInstanceUuid}
+      data={mapInstancesToOptions(relatedParentInstances)}
+      onChange={(v) => onParentChange(v || "")}
+      searchable
+      clearable
+    />
+
+    {parentInstanceUuid && (
       <Select
-          label={`${relatedParentBlock?.title}`}
-          placeholder={`Выберите ${relatedParentBlock?.titleForms?.accusative}`}
-          value={parentInstanceUuid}
-          data={mapInstancesToOptions(relatedParentInstances)}
-          onChange={(v) => onParentChange(v || '')}
-          searchable
-          clearable
+        label={`${relatedBlock.title}`}
+        placeholder={
+          relatedChildInstances?.length
+            ? `Выберите ${relatedBlock.titleForms?.accusative}`
+            : "Нет доступных"
+        }
+        value={targetInstanceUuid}
+        data={mapInstancesToOptions(relatedChildInstances)}
+        onChange={(v) => onTargetChange(v || "")}
+        disabled={!relatedChildInstances?.length}
+        description={!relatedChildInstances?.length && "Нет дочерних элементов"}
+        searchable
       />
+    )}
 
-      {parentInstanceUuid && (
-          <Select
-              label={`${relatedBlock.title}`}
-              placeholder={relatedChildInstances?.length ? `Выберите ${relatedBlock.titleForms?.accusative}` : "Нет доступных"}
-              value={targetInstanceUuid}
-              data={mapInstancesToOptions(relatedChildInstances)}
-              onChange={(v) => onTargetChange(v || '')}
-              disabled={!relatedChildInstances?.length}
-              description={!relatedChildInstances?.length && "Нет дочерних элементов"}
-              searchable
-          />
-      )}
-
-      <Group justify="flex-end" mt="md">
-        <Button
-            onClick={onCreate}
-            disabled={!targetInstanceUuid}
-            loading={isLoading}
-        >
-          Создать связь
-        </Button>
-      </Group>
-    </Stack>
+    <Group justify="flex-end" mt="md">
+      <Button onClick={onCreate} disabled={!targetInstanceUuid} loading={isLoading}>
+        Создать связь
+      </Button>
+    </Group>
+  </Stack>
 );

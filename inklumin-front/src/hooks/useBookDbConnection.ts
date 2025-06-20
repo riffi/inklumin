@@ -1,7 +1,7 @@
 // hooks/useBookDbConnection.ts
 import { useEffect } from "react";
+import { bookDb, connectToBookDatabase } from "@/entities/bookDb";
 import { useBookStore } from "@/stores/bookStore/bookStore";
-import { connectToBookDatabase, bookDb } from "@/entities/bookDb";
 
 export const useBookDbConnection = () => {
   const { selectedBook } = useBookStore();

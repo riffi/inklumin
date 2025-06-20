@@ -1,11 +1,9 @@
-import { RichTextEditor } from "@mantine/tiptap";
 import { useState } from "react";
-import {
-  repeatHighlighterKey
-} from "@/components/shared/RichEditor/plugins/RepeatHighlighterExtension";
-import {IconArrowsDoubleSwNe} from "@tabler/icons-react";
-import {IWarningGroup} from "@/components/shared/RichEditor/types";
-import {InkLuminMlApi} from "@/api/inkLuminMlApi";
+import { IconArrowsDoubleSwNe } from "@tabler/icons-react";
+import { RichTextEditor } from "@mantine/tiptap";
+import { InkLuminMlApi } from "@/api/inkLuminMlApi";
+import { repeatHighlighterKey } from "@/components/shared/RichEditor/plugins/RepeatHighlighterExtension";
+import { IWarningGroup } from "@/components/shared/RichEditor/types";
 
 interface CheckRepeatsButtonProps {
   editor: any;
@@ -31,19 +29,19 @@ export const CheckRepeatsButton = ({ editor, onLoadingChange }: CheckRepeatsButt
       updateHighlights(warningGroups);
       setIsActive(true);
     } catch (error) {
-      console.error('Error checking repeats:', error);
+      console.error("Error checking repeats:", error);
     } finally {
       onLoadingChange(false);
       setIsLoading(false);
     }
   };
 
-
   const updateHighlights = (warningGroups: IWarningGroup[]) => {
     const tr = editor.state.tr;
-    tr.setMeta(repeatHighlighterKey, { // Используем pluginKey вместо строки
+    tr.setMeta(repeatHighlighterKey, {
+      // Используем pluginKey вместо строки
       action: "UPDATE_DECORATIONS",
-      warningGroups
+      warningGroups,
     });
     editor.view.dispatch(tr);
   };
@@ -53,16 +51,13 @@ export const CheckRepeatsButton = ({ editor, onLoadingChange }: CheckRepeatsButt
   };
 
   return (
-      <RichTextEditor.Control
-          onClick={handleCheckRepeats}
-          title="Проверить повторения"
-          active={isActive}
-          disabled={isLoading}
-      >
-          <IconArrowsDoubleSwNe
-              size={20}
-              color={"gray"}
-          />
-      </RichTextEditor.Control>
+    <RichTextEditor.Control
+      onClick={handleCheckRepeats}
+      title="Проверить повторения"
+      active={isActive}
+      disabled={isLoading}
+    >
+      <IconArrowsDoubleSwNe size={20} color={"gray"} />
+    </RichTextEditor.Control>
   );
 };

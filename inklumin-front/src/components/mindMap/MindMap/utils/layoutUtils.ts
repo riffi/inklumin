@@ -1,4 +1,4 @@
-import { FlowNode, FlowEdge } from "../types";
+import { FlowEdge, FlowNode } from "../types";
 
 export const getClosestHandles = (sourceNode: FlowNode, targetNode: FlowNode) => {
   const dx = targetNode.position.x - sourceNode.position.x;
@@ -6,15 +6,15 @@ export const getClosestHandles = (sourceNode: FlowNode, targetNode: FlowNode) =>
   const absDx = Math.abs(dx);
   const absDy = Math.abs(dy);
 
-  let sourceHandle = 'right';
-  let targetHandle = 'left';
+  let sourceHandle = "right";
+  let targetHandle = "left";
 
   if (absDy > absDx) {
-    sourceHandle = dy > 0 ? 'bottom' : 'top';
-    targetHandle = dy > 0 ? 'top' : 'bottom';
+    sourceHandle = dy > 0 ? "bottom" : "top";
+    targetHandle = dy > 0 ? "top" : "bottom";
   } else if (dx < 0) {
-    sourceHandle = 'left';
-    targetHandle = 'right';
+    sourceHandle = "left";
+    targetHandle = "right";
   }
 
   return { sourceHandle, targetHandle };
@@ -26,14 +26,14 @@ export const processBidirectionalEdges = (edges: FlowEdge[]): FlowEdge[] => {
   const edgeMap = new Map<string, FlowEdge>();
 
   // Создаем карту всех связей
-  edges.forEach(edge => {
+  edges.forEach((edge) => {
     const key = `${edge.source}-${edge.target}`;
     edgeMap.set(key, edge);
   });
 
   const processedPairs = new Set<string>();
 
-  edges.forEach(edge => {
+  edges.forEach((edge) => {
     const forwardKey = `${edge.source}-${edge.target}`;
     const backwardKey = `${edge.target}-${edge.source}`;
 
@@ -49,11 +49,11 @@ export const processBidirectionalEdges = (edges: FlowEdge[]): FlowEdge[] => {
       const bidirectionalEdge: FlowEdge = {
         ...edge,
         id: `bidirectional-${edge.source}-${edge.target}`,
-        type: 'bidirectional',
+        type: "bidirectional",
         data: {
           forwardEdge: edge,
-          backwardEdge: backwardEdge
-        }
+          backwardEdge: backwardEdge,
+        },
       };
 
       processedEdges.push(bidirectionalEdge);
@@ -73,9 +73,9 @@ export const updateEdgeHandles = (edges: FlowEdge[], nodes: FlowNode[]) => {
   // Сначала обрабатываем двухсторонние связи
   const processedEdges = processBidirectionalEdges(edges);
 
-  return processedEdges.map(edge => {
-    const source = nodes.find(n => n.id === edge.source);
-    const target = nodes.find(n => n.id === edge.target);
+  return processedEdges.map((edge) => {
+    const source = nodes.find((n) => n.id === edge.source);
+    const target = nodes.find((n) => n.id === edge.target);
 
     if (!source || !target) return edge;
 

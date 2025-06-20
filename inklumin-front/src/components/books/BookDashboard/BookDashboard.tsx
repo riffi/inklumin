@@ -1,17 +1,11 @@
 // src/components/book/BookDashboard.tsx
-import {
-  Container,
-  Group,
-  SimpleGrid,
-  Title,
-} from "@mantine/core";
+import { useEffect } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
+import { Container, Group, SimpleGrid, Title } from "@mantine/core";
+import { DashboardBlockCard } from "@/components/books/BookDashboard/parts/DashboardBlockCard";
 import { bookDb } from "@/entities/bookDb";
+import { usePageTitle } from "@/providers/PageTitleProvider/PageTitleProvider";
 import { BlockRepository } from "@/repository/Block/BlockRepository";
-import {DashboardBlockCard} from "@/components/books/BookDashboard/parts/DashboardBlockCard";
-import {usePageTitle} from "@/providers/PageTitleProvider/PageTitleProvider";
-import {useEffect} from "react";
-
 
 export const BookDashboard = (bookUuid: string) => {
   const { setPageTitle } = usePageTitle();
@@ -20,23 +14,21 @@ export const BookDashboard = (bookUuid: string) => {
     return BlockRepository.getAll(bookDb);
   }, [bookUuid]);
 
-  const notChildBlocks = blocks?.filter(block => block.parentBlockUuid == null)
+  const notChildBlocks = blocks?.filter((block) => block.parentBlockUuid == null);
 
-  useEffect(() =>{
+  useEffect(() => {
     setPageTitle(`Рабочий стол книги`);
-  }, [bookUuid])
+  }, [bookUuid]);
 
   return (
-      <Container fluid p="md">
-        <Group justify="space-between" mb="md" visibleFrom="sm">
-          <Title order={2}>Рабочий стол книги</Title>
-        </Group>
+    <Container fluid p="md">
+      <Group justify="space-between" mb="md" visibleFrom="sm">
+        <Title order={2}>Рабочий стол книги</Title>
+      </Group>
 
-        <SimpleGrid cols={{ base: 1, sm: 2, lg: 3, xl: 4 }} spacing="md">
-          {notChildBlocks?.map((block) => (
-              <DashboardBlockCard key={block.uuid} block={block} />
-          ))}
-        </SimpleGrid>
-      </Container>
+      <SimpleGrid cols={{ base: 1, sm: 2, lg: 3, xl: 4 }} spacing="md">
+        {notChildBlocks?.map((block) => <DashboardBlockCard key={block.uuid} block={block} />)}
+      </SimpleGrid>
+    </Container>
   );
 };

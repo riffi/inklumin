@@ -1,9 +1,9 @@
-import {BookManager} from "@/components/books/BookManager/BookManager";
+import { BookManager } from "@/components/books/BookManager/BookManager";
 
 export const BooksPage = () => {
   return (
-      <>
-        <BookManager/>
-      </>
-  )
-}
+    <>
+      <BookManager />
+    </>
+  );
+};

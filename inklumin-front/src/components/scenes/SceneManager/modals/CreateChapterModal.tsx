@@ -1,5 +1,5 @@
-import { Modal, TextInput, Button } from "@mantine/core";
 import { useState } from "react";
+import { Button, Modal, TextInput } from "@mantine/core";
 
 interface CreateChapterModalProps {
   opened: boolean;
@@ -16,17 +16,17 @@ export const CreateChapterModal = ({ opened, onClose, onCreate }: CreateChapterM
   };
 
   return (
-      <Modal opened={opened} onClose={onClose} title="Создать новую главу">
-        <TextInput
-            label="Название главы"
-            value={title}
-            onChange={(e) => setTitle(e.currentTarget.value)}
-            placeholder="Введите название главы"
-            mb="md"
-        />
-        <Button fullWidth onClick={handleSubmit}>
-          Создать
-        </Button>
-      </Modal>
+    <Modal opened={opened} onClose={onClose} title="Создать новую главу">
+      <TextInput
+        label="Название главы"
+        value={title}
+        onChange={(e) => setTitle(e.currentTarget.value)}
+        placeholder="Введите название главы"
+        mb="md"
+      />
+      <Button fullWidth onClick={handleSubmit}>
+        Создать
+      </Button>
+    </Modal>
   );
 };

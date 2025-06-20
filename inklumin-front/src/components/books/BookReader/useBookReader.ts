@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
-import { bookDb } from '@/entities/bookDb';
+import { useEffect, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
-import { SceneRepository } from "@/repository/Scene/SceneRepository";
+import { bookDb } from "@/entities/bookDb";
 import { ChapterRepository } from "@/repository/Scene/ChapterRepository";
+import { SceneRepository } from "@/repository/Scene/SceneRepository";
 import { useBookStore } from "@/stores/bookStore/bookStore";
 
 export const useBookReader = () => {
@@ -13,10 +13,11 @@ export const useBookReader = () => {
   const chapterOnlyMode = selectedBook?.chapterOnlyMode === 1;
 
   const chapters = useLiveQuery(() => ChapterRepository.getAll(bookDb), [], null);
-  const scenes = useLiveQuery(async () => {
-    if (chapterOnlyMode) {
-      const chaps = await ChapterRepository.getAll(bookDb);
-      const chapterScenes = await Promise.all(
+  const scenes = useLiveQuery(
+    async () => {
+      if (chapterOnlyMode) {
+        const chaps = await ChapterRepository.getAll(bookDb);
+        const chapterScenes = await Promise.all(
           chaps.map(async (c) => {
             if (c.contentSceneId !== undefined) {
               const sc = await SceneRepository.getById(bookDb, c.contentSceneId);
@@ -24,12 +25,16 @@ export const useBookReader = () => {
             }
             return undefined;
           })
-      );
-      return chapterScenes.filter((s): s is NonNullable<typeof s> => !!s).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-    }
-    return SceneRepository.getAll(bookDb);
-  }, [chapterOnlyMode], null);
-
+        );
+        return chapterScenes
+          .filter((s): s is NonNullable<typeof s> => !!s)
+          .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+      }
+      return SceneRepository.getAll(bookDb);
+    },
+    [chapterOnlyMode],
+    null
+  );
 
   useEffect(() => {
     if (scenes === null || chapters === null) {
@@ -37,7 +42,7 @@ export const useBookReader = () => {
       setLoading(true);
     } else if (scenes instanceof Error || chapters instanceof Error) {
       // Handle error case
-      setError('Failed to load book data');
+      setError("Failed to load book data");
       setLoading(false);
     } else {
       // Data loaded successfully

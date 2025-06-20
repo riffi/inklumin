@@ -1,13 +1,13 @@
+import { bookDb } from "@/entities/bookDb";
+import { IScene } from "@/entities/BookEntities";
+import { ChapterRepository } from "@/repository/Scene/ChapterRepository";
+import { SceneRepository } from "@/repository/Scene/SceneRepository";
+
 export interface ServiceResult<T = any> {
   success: boolean;
   message?: string;
   data?: T;
 }
-
-import { bookDb } from "@/entities/bookDb";
-import { IScene } from "@/entities/BookEntities";
-import { SceneRepository } from "@/repository/Scene/SceneRepository";
-import { ChapterRepository } from "@/repository/Scene/ChapterRepository";
 
 async function createScene(title: string, chapterId?: number): Promise<ServiceResult<number>> {
   try {
@@ -61,7 +61,10 @@ async function updateScene(sceneId: number, sceneData: Partial<IScene>): Promise
   }
 }
 
-async function recalculateGlobalOrder(params?: { id: number; newChapterId: number | null }): Promise<ServiceResult> {
+async function recalculateGlobalOrder(params?: {
+  id: number;
+  newChapterId: number | null;
+}): Promise<ServiceResult> {
   try {
     await SceneRepository.recalculateGlobalOrder(bookDb, params);
     return { success: true };
@@ -93,11 +96,7 @@ async function createChapter(
   chapterOnlyMode: boolean
 ): Promise<ServiceResult<{ chapterId: number; sceneId?: number }>> {
   try {
-    const chapterId = await ChapterRepository.create(
-      bookDb,
-      { title },
-      chapterOnlyMode
-    );
+    const chapterId = await ChapterRepository.create(bookDb, { title }, chapterOnlyMode);
     if (chapterId === undefined) throw new Error("Failed to create chapter");
 
     const createdChapter = await ChapterRepository.getById(bookDb, chapterId);
@@ -157,7 +156,10 @@ async function updateChapter(chapterId: number, title: string): Promise<ServiceR
   }
 }
 
-async function saveScene(sceneId: number | null | undefined, data: IScene): Promise<ServiceResult<number>> {
+async function saveScene(
+  sceneId: number | null | undefined,
+  data: IScene
+): Promise<ServiceResult<number>> {
   try {
     if (sceneId === null || sceneId === undefined) {
       const creationData = { ...data } as IScene;

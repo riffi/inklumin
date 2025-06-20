@@ -1,10 +1,11 @@
-import {ActionIcon, Button, useMantineTheme} from "@mantine/core";
-import {IconClipboardCheck, IconLayersLinked} from "@tabler/icons-react";
-import {useEditor} from "@tiptap/react";
-import {useState} from "react";
-import {OpenRouterApi} from "@/api/openRouterApi";
+import { useState } from "react";
+import { IconClipboardCheck, IconLayersLinked } from "@tabler/icons-react";
+import { useEditor } from "@tiptap/react";
+import { ActionIcon, Button, useMantineTheme } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { RichTextEditor } from "@mantine/tiptap";
-import {notifications} from "@mantine/notifications";
+import { OpenRouterApi } from "@/api/openRouterApi";
+
 interface CheckSynonymsButtonProps {
   editor: ReturnType<typeof useEditor>;
   onLoadingChange: (isLoading: boolean, message?: string) => void;
@@ -12,10 +13,10 @@ interface CheckSynonymsButtonProps {
 }
 
 export const CheckSynonymsButton = ({
-                                      editor,
-                                      onLoadingChange,
-                                      onSynonymsFound
-                                    }: CheckSynonymsButtonProps) => {
+  editor,
+  onLoadingChange,
+  onSynonymsFound,
+}: CheckSynonymsButtonProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const theme = useMantineTheme();
 
@@ -26,8 +27,8 @@ export const CheckSynonymsButton = ({
     if (selectedText.trim().split(/\s+/).length > 1) {
       notifications.show({
         message: "Выделите только одно слово",
-        color: 'orange',
-      })
+        color: "orange",
+      });
       return;
     }
 
@@ -40,8 +41,8 @@ export const CheckSynonymsButton = ({
       console.error("Error fetching synonyms:", error.message);
       notifications.show({
         message: error.message,
-        color: 'red',
-      })
+        color: "red",
+      });
     } finally {
       setIsLoading(false);
       onLoadingChange(false);
@@ -49,15 +50,8 @@ export const CheckSynonymsButton = ({
   };
 
   return (
-      <RichTextEditor.Control
-          onClick={handleClick}
-          title="Поиск синонимов"
-          disabled={isLoading}
-      >
-          <IconLayersLinked
-              size={20}
-              color={"gray"}
-          />
-      </RichTextEditor.Control>
+    <RichTextEditor.Control onClick={handleClick} title="Поиск синонимов" disabled={isLoading}>
+      <IconLayersLinked size={20} color={"gray"} />
+    </RichTextEditor.Control>
   );
 };
