@@ -17,12 +17,15 @@ This repository is a monorepo with several independent projects.
 ## Commit Messages
 
 Use concise commit messages and describe your changes clearly.
+Commit message must be in russian language
 
 ## Pull Requests
-
 Summaries should mention any manual steps or special considerations.
+Summary must be in russian language
 
 ## Endpoint changing in inklumin-back
 
 when adding, changing, deleting endpoints contract in inklumin-back update [openapi.yaml](openapi.yaml)
 
+## Comments
+code comments be in russian language
