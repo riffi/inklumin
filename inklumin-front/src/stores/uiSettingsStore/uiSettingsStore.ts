@@ -22,6 +22,9 @@ interface UiSettingsState {
 
   navbarLinkStates: Record<string, boolean>;
   setNavbarLinkState: (label: string, isOpen: boolean) => void;
+
+  isNavbarOpened: boolean;
+  toggleNavbarOpened: () => void;
 }
 
 export const useUiSettingsStore = create<UiSettingsState>()(
@@ -45,6 +48,10 @@ export const useUiSettingsStore = create<UiSettingsState>()(
       navbarLinkStates: {},
       setNavbarLinkState: (label, isOpen) =>
         set((state) => ({ navbarLinkStates: { ...state.navbarLinkStates, [label]: isOpen } })),
+
+      isNavbarOpened: false,
+      toggleNavbarOpened: () =>
+        set((state) => ({ isNavbarOpened: !state.isNavbarOpened })),
     }),
     {
       name: "ui-settings-storage",
