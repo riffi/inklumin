@@ -1,0 +1,146 @@
+.container {
+  position: relative;
+  padding: 16px;
+  background-color: var(--mantine-color-body);
+  border-radius: var(--mantine-radius-md);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.titleInput {
+  flex: 1;
+  font-weight: bold;
+}
+
+.tabList {
+  border-bottom: 1px solid var(--mantine-color-gray-3);
+}
+
+.tab {
+  padding: 12px 20px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+
+  &[data-active] {
+    color: var(--mantine-primary-color-filled);
+    border-bottom: 2px solid var(--mantine-primary-color-filled);
+  }
+}
+
+.panelContent {
+  padding: 6px 0;
+}
+
+.addButton {
+  @mixin hover {
+    background-color: var(--mantine-color-blue-1);
+  }
+}
+
+.overlay {
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(2px);
+  border-radius: var(--mantine-radius-md);
+}
+
+/* Параметры */
+.parametersStack {
+  border-radius: var(--mantine-radius-md);
+  background-color: var(--mantine-color-body);
+}
+
+.parameterItem {
+  background-color: white;
+  transition: background-color 0.2s ease;
+}
+
+.paramHeader {
+  position: sticky;
+  top: 0;
+  background-color: var(--mantine-color-gray-0); /* Was #f9f9f9 */
+  z-index: 90;
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm); /* Balanced padding */
+}
+
+.paramHeaderEditingMode {
+  position: sticky;
+  top: 0;
+  background: var(--mantine-color-gray-1); /* Was #f3f3f3 */
+  z-index: 90;
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm); /* Balanced padding */
+  border-bottom: 1px solid var(--mantine-color-gray-3);
+}
+
+@media (max-width: 768px) {
+  .paramHeaderEditingMode {
+    position: fixed; /* This rule seems specific for a certain layout context */
+    top: 50px;
+    background: var(--mantine-color-gray-1); /* Was #f3f3f3 */
+    z-index: 100;
+    left: 0;
+    padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm); /* Balanced padding */
+    border-bottom: 1px solid var(--mantine-color-gray-3);
+  }
+}
+
+
+.textContent {
+  width: 100%;
+  margin-top: 5px;
+}
+
+
+
+/* Rich Text Editor */
+.ql-container {
+  max-width: 100% !important;
+  border: none !important;
+  font-family: inherit !important;
+}
+
+.ql-editor {
+  max-width: 100% !important;
+  padding: 0 !important;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .container {
+    padding: 0;
+  }
+
+  .parameterItem {
+    padding: 0 !important;
+    border: none;
+  }
+
+  .paramHeader {
+    /* background-color: #f9f9f9; */ /* Already var(--mantine-color-gray-0) */
+    padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm); /* Consistent padding for mobile */
+  }
+
+  .textContent {
+    margin-top: 0px;
+  }
+
+}
+
+
+
+/* Стиль кнопки */
+.toggleButton {
+  margin-top: 4px;
+  color: var(--mantine-primary-color-filled);
+  font-size: 0.75rem;
+  padding: 2px 8px;
+}
+
+.toggleButton:hover {
+  background-color: transparent;
+  text-decoration: underline;
+}
+
