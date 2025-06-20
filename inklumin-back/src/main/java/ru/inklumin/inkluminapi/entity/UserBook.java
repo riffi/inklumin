@@ -24,6 +24,18 @@ public class UserBook {
   @Column(nullable = false, columnDefinition = "TEXT")
   private String bookData;
 
+  @Column(name = "form")
+  private String form;
+
+  @Column(name = "genre")
+  private String genre;
+
+  @Column(name = "cover", columnDefinition = "TEXT")
+  private String cover;
+
+  @Column(name = "description", columnDefinition = "TEXT")
+  private String description;
+
   @Column(name = "kind")
   private String kind;
 

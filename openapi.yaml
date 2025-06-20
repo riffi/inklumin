@@ -342,6 +342,14 @@ components:
           type: string
         kind:
           type: string
+        form:
+          type: string
+        genre:
+          type: string
+        cover:
+          type: string
+        description:
+          type: string
       required:
         - uuid
         - bookTitle
@@ -355,6 +363,14 @@ components:
           type: string
         bookData:
           type: string
+        form:
+          type: string
+        genre:
+          type: string
+        cover:
+          type: string
+        description:
+          type: string
         createdAt:
           type: string
         updatedAt:
@@ -365,6 +381,14 @@ components:
         uuid:
           type: string
         bookTitle:
+          type: string
+        form:
+          type: string
+        genre:
+          type: string
+        cover:
+          type: string
+        description:
           type: string
         kind:
           type: string

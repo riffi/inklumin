@@ -10,6 +10,10 @@ import java.time.OffsetDateTime;
 public class BookShortInfo {
   private String uuid;
   private String bookTitle;
+  private String form;
+  private String genre;
+  private String cover;
+  private String description;
   private String kind;
 
   @JsonFormat(

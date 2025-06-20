@@ -29,12 +29,20 @@ export interface SaveBookRequest {
   bookTitle: string;
   bookData: string;
   kind?: string;
+  form?: string;
+  genre?: string;
+  cover?: string;
+  description?: string;
 }
 
 export interface BookResponse {
   uuid: string;
   bookTitle: string;
   bookData: string;
+  form?: string;
+  genre?: string;
+  cover?: string;
+  description?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -42,6 +50,10 @@ export interface BookResponse {
 export interface BookShortInfo {
   uuid: string;
   bookTitle: string;
+  form?: string;
+  genre?: string;
+  cover?: string;
+  description?: string;
   kind?: string;
   updatedAt: string;
 }

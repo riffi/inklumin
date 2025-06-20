@@ -22,6 +22,10 @@ export const saveBookToServer = async (bookUuid: string, token: string) => {
       uuid: bookUuid,
       bookTitle: backupData.book.title,
       kind: backupData.book.kind,
+      form: backupData.book.form,
+      genre: backupData.book.genre,
+      cover: backupData.book.cover,
+      description: backupData.book.description,
       bookData: JSON.stringify(sanitizedBackup),
     });
 

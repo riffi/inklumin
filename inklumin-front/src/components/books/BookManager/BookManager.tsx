@@ -38,6 +38,7 @@ import {
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { inkLuminAPI } from "@/api/inkLuminApi/inkLuminApi";
+import { BookShortInfo } from "@/api/inkLuminApi/generatedTypes";
 import { useBookManager } from "@/components/books/BookManager/useBookManager";
 import { connectToBookDatabase } from "@/entities/bookDb";
 import { IBook } from "@/entities/BookEntities";
@@ -106,7 +107,7 @@ export const BookManager = () => {
   const [loading, setLoading] = useState(false);
   const [loadingBookId, setLoadingBookId] = useState<string | null>(null);
   const [isServerBooksModalOpened, setIsServerBooksModalOpened] = useState(false);
-  const [serverBooks, setServerBooks] = useState<any[]>([]);
+  const [serverBooks, setServerBooks] = useState<BookShortInfo[]>([]);
   const [loadingServerBooks, setLoadingServerBooks] = useState(false);
   const [activeTab, setActiveTab] = useState<"books" | "materials">("books");
   const [serverBooksActiveTab, setServerBooksActiveTab] = useState<"books" | "materials">("books");
@@ -807,9 +808,48 @@ export const BookManager = () => {
             <SimpleGrid cols={1} spacing="md">
               {filteredServerBooks.map((book) => (
                 <Card key={book.uuid} padding="sm" withBorder>
-                  <Group justify="space-between">
-                    <div>
+                  <Group justify="space-between" align="flex-start" wrap="nowrap">
+                    {book.cover ? (
+                      <MantineImage
+                        src={book.cover}
+                        alt="Book cover"
+                        w={60}
+                        h={80}
+                        fit="cover"
+                        radius="sm"
+                      />
+                    ) : (
+                      <Box
+                        style={{
+                          width: 60,
+                          height: 80,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          backgroundColor: "#f1f1f1",
+                          borderRadius: "4px",
+                        }}
+                      >
+                        <IconBook size={30} />
+                      </Box>
+                    )}
+                    <div style={{ flex: 1 }}>
                       <Text fw={500}>{book.bookTitle}</Text>
+                      {book.form && (
+                        <Text size="sm" c="dimmed">
+                          Форма: {book.form}
+                        </Text>
+                      )}
+                      {book.genre && (
+                        <Text size="sm" c="dimmed">
+                          Жанр: {book.genre}
+                        </Text>
+                      )}
+                      {book.description && (
+                        <Text size="sm" c="dimmed" lineClamp={2}>
+                          {book.description}
+                        </Text>
+                      )}
                     </div>
                     <Button
                       onClick={async () => {
@@ -833,9 +873,48 @@ export const BookManager = () => {
             <SimpleGrid cols={1} spacing="md">
               {filteredServerBooks.map((book) => (
                 <Card key={book.uuid} padding="sm" withBorder>
-                  <Group justify="space-between">
-                    <div>
+                  <Group justify="space-between" align="flex-start" wrap="nowrap">
+                    {book.cover ? (
+                      <MantineImage
+                        src={book.cover}
+                        alt="Book cover"
+                        w={60}
+                        h={80}
+                        fit="cover"
+                        radius="sm"
+                      />
+                    ) : (
+                      <Box
+                        style={{
+                          width: 60,
+                          height: 80,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          backgroundColor: "#f1f1f1",
+                          borderRadius: "4px",
+                        }}
+                      >
+                        <IconBook size={30} />
+                      </Box>
+                    )}
+                    <div style={{ flex: 1 }}>
                       <Text fw={500}>{book.bookTitle}</Text>
+                      {book.form && (
+                        <Text size="sm" c="dimmed">
+                          Форма: {book.form}
+                        </Text>
+                      )}
+                      {book.genre && (
+                        <Text size="sm" c="dimmed">
+                          Жанр: {book.genre}
+                        </Text>
+                      )}
+                      {book.description && (
+                        <Text size="sm" c="dimmed" lineClamp={2}>
+                          {book.description}
+                        </Text>
+                      )}
                     </div>
                     <Button
                       onClick={async () => {

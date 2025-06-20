@@ -9,4 +9,5 @@
     <include file="classpath:db/changelog/changes/create-user-config-data-table.xml"/>
     <include file="classpath:db/changelog/changes/create-user-books-table.xml"/>
     <include file="classpath:db/changelog/changes/add-kind-to-user-books-table.xml"/>
+    <include file="classpath:db/changelog/changes/add-fields-to-user-books-table.xml"/>
 </databaseChangeLog>

@@ -17,4 +17,12 @@ public class SaveBookRequest {
   private String bookData;
 
   private String kind;
+
+  private String form;
+
+  private String genre;
+
+  private String cover;
+
+  private String description;
 }

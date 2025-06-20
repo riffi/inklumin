@@ -1,0 +1,5 @@
+ALTER TABLE user_books
+  ADD COLUMN form VARCHAR(255),
+  ADD COLUMN genre VARCHAR(255),
+  ADD COLUMN cover TEXT,
+  ADD COLUMN description TEXT;

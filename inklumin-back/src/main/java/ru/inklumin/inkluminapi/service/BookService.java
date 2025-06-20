@@ -27,6 +27,10 @@ public class BookService {
     book.setUser(user);
     book.setBookData(request.getBookData());
     book.setKind(request.getKind());
+    book.setForm(request.getForm());
+    book.setGenre(request.getGenre());
+    book.setCover(request.getCover());
+    book.setDescription(request.getDescription());
     book.setCreatedAt(java.time.OffsetDateTime.now());
     book.setUpdatedAt(java.time.OffsetDateTime.now());
 
