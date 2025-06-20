@@ -6,6 +6,8 @@ This repository contains the source code for the **Inklumin** platform. It is a 
 - **`inklumin-back`** – Spring Boot REST API
 - **`inklumin-ml`** – Flask based helper service
 
+Front-back interaction uses openapi.yaml
+
 Each project can be developed and deployed separately. Below is a short overview of their purpose and how to run them.
 
 ## inklumin-front (SoulWriter)

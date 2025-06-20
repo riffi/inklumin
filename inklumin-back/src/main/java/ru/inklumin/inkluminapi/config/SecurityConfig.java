@@ -22,6 +22,7 @@ public class SecurityConfig {
   private static final String[] ALLOWED_ORIGINS = {
       "http://localhost:5173",
       "http://localhost:3000",
+      "http://localhost:63342",
       "https://soulwriter3.onrender.com"
   };
 
