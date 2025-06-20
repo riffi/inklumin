@@ -4,6 +4,10 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig(({ command }) => ({
+  server: {
+    port: 5173, // указываем нужный порт
+    strictPort: true // (необязательно) если хотите, чтобы Vite не переключался на другой порт при конфликте
+  },
   plugins: [
     react(),
     tsconfigPaths(),
