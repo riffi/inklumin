@@ -84,3 +84,28 @@ repo.monorepo.code-workspace  # VS Code workspace file
 
 Each project has its own dependencies and workflow. Refer to the directories for detailed instructions.
 
+## Установка Node.js и запуск сборки
+
+На сервере Ubuntu требуется предварительная установка Node.js. Пример для версии 22.x:
+
+```bash
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt-get install -y nodejs
+```
+
+После установки включите поддержку `corepack`, чтобы использовать локальную копию Yarn:
+
+```bash
+corepack enable
+```
+
+Сборка фронтенда выполняется с помощью файла `.yarn/releases/yarn-4.8.1.cjs`:
+
+```bash
+cd inklumin-front
+node .yarn/releases/yarn-4.8.1.cjs install
+node .yarn/releases/yarn-4.8.1.cjs build
+```
+
+Или запустите скрипт `build.sh` в корне репозитория, который использует ту же версию Yarn.
+
