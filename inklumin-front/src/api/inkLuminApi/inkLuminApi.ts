@@ -1,10 +1,21 @@
-// api/authAPI.ts
-//const API_BASE = 'https://api.inclumin.ru/api';
+// This file is generated from openapi.yaml
+// Do not edit manually
+import {
+  ApiResponse,
+  RegisterRequest,
+  LoginRequest,
+  AuthResponse,
+  SaveBookRequest,
+  BookResponse,
+  BookShortInfo,
+  SaveConfigDataRequest,
+  ConfigDataResponse,
+} from './generatedTypes';
+
 const API_BASE = 'http://localhost:8080/api';
-//const API_BASE = 'http://192.168.1.103:8080/api';
 
 export const inkLuminAPI = {
-  register: async (userData: any) => {
+  async register(userData: RegisterRequest): Promise<ApiResponse<AuthResponse>> {
     const response = await fetch(`${API_BASE}/auth/register`, {
       method: 'POST',
       headers: {
@@ -15,7 +26,7 @@ export const inkLuminAPI = {
     return response.json();
   },
 
-  login: async (credentials: any) => {
+  async login(credentials: LoginRequest): Promise<ApiResponse<AuthResponse>> {
     const response = await fetch(`${API_BASE}/auth/login`, {
       method: 'POST',
       headers: {
@@ -26,60 +37,73 @@ export const inkLuminAPI = {
     return response.json();
   },
 
-  validateToken: async (token: string) => {
+  async validateToken(token: string): Promise<ApiResponse<AuthResponse>> {
     const response = await fetch(`${API_BASE}/auth/validate`, {
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.json();
   },
 
-  saveConfigData: async (token: string, configData: any) => {
+  async saveConfigData(
+    token: string,
+    configData: Record<string, unknown>
+  ): Promise<ApiResponse<ConfigDataResponse>> {
+    const payload: SaveConfigDataRequest = {
+      configData: JSON.stringify(configData),
+    };
     const response = await fetch(`${API_BASE}/user/config-data`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ configData: JSON.stringify(configData) }),
+      body: JSON.stringify(payload),
     });
     return response.json();
   },
 
-  getConfigData: async (token: string) => {
+  async getConfigData(token: string): Promise<ApiResponse<ConfigDataResponse>> {
     const response = await fetch(`${API_BASE}/user/config-data`, {
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.json();
   },
-  saveBookData: async (token: string, bookData: any) => {
+
+  async saveBookData(
+    token: string,
+    bookData: SaveBookRequest
+  ): Promise<ApiResponse<BookResponse>> {
     const response = await fetch(`${API_BASE}/books`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(bookData),
     });
     return response.json();
   },
 
-  getBooksList: async (token: string) => {
+  async getBooksList(token: string): Promise<ApiResponse<BookShortInfo[]>> {
     const response = await fetch(`${API_BASE}/books`, {
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.json();
   },
 
-  getBookData: async (token: string, uuid: string) => {
+  async getBookData(
+    token: string,
+    uuid: string
+  ): Promise<ApiResponse<BookResponse>> {
     const response = await fetch(`${API_BASE}/books/${uuid}`, {
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.json();

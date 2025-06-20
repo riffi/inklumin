@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { notifications } from '@mantine/notifications';
 import { useEffect } from 'react';
-import { inkLuminAPI } from '@/api/inkLuminApi';
+import { inkLuminAPI } from '@/api/inkLuminApi/inkLuminApi';
 import { configDatabase } from '@/entities/configuratorDb';
 import { BookRepository } from '@/repository/Book/BookRepository';
 import { collectBookBackupData, importBookData, BackupData } from '@/utils/bookBackupUtils/bookBackupManager';

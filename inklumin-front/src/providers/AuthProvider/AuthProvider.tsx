@@ -7,6 +7,12 @@ import {
   getConfigFromServer as getConfigRequest,
   ServiceResult,
 } from '@/services/authService';
+import {
+  AuthResponse,
+  LoginRequest,
+  RegisterRequest,
+  ConfigDataResponse,
+} from '@/api/inkLuminApi/generatedTypes';
 
 interface User {
   token: string;
@@ -18,11 +24,13 @@ interface User {
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (credentials: any) => Promise<ServiceResult>;
-  register: (userData: any) => Promise<ServiceResult>;
+  login: (credentials: LoginRequest) => Promise<ServiceResult<AuthResponse>>;
+  register: (userData: RegisterRequest) => Promise<ServiceResult<AuthResponse>>;
   logout: () => void;
-  saveConfigToServer: (configData: any) => Promise<ServiceResult>;
-  getConfigFromServer: () => Promise<ServiceResult>;
+  saveConfigToServer: (
+    configData: Record<string, unknown>
+  ) => Promise<ServiceResult<ConfigDataResponse>>;
+  getConfigFromServer: () => Promise<ServiceResult<Record<string, unknown>>>;
 }
 
 // Контекст для аутентификации
@@ -73,7 +81,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const login = async (credentials: any): Promise<ServiceResult> => {
+  const login = async (
+    credentials: LoginRequest
+  ): Promise<ServiceResult<AuthResponse>> => {
     try {
       const response = await loginRequest(credentials);
       if (response.success && response.data) {
@@ -93,7 +103,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const register = async (userData: any): Promise<ServiceResult> => {
+  const register = async (
+    userData: RegisterRequest
+  ): Promise<ServiceResult<AuthResponse>> => {
     try {
       const response = await registerRequest(userData);
       if (response.success && response.data) {
@@ -118,7 +130,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem('authToken');
   };
 
-  const saveConfigToServer = async (configData: any): Promise<ServiceResult> => {
+  const saveConfigToServer = async (
+    configData: Record<string, unknown>
+  ): Promise<ServiceResult<ConfigDataResponse>> => {
     if (!user?.token) {
       return { success: false, message: 'Пользователь не авторизован' };
     }
@@ -130,7 +144,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const getConfigFromServer = async (): Promise<ServiceResult> => {
+  const getConfigFromServer = async (): Promise<
+    ServiceResult<Record<string, unknown>>
+  > => {
     if (!user?.token) {
       return { success: false, message: 'Пользователь не авторизован' };
     }

@@ -34,7 +34,7 @@ import {useBookManager} from "@/components/books/BookManager/useBookManager";
 import { useBookStore } from '@/stores/bookStore/bookStore';
 import {notifications} from "@mantine/notifications";
 import {connectToBookDatabase} from "@/entities/bookDb";
-import { inkLuminAPI } from "@/api/inkLuminApi";
+import { inkLuminAPI } from "@/api/inkLuminApi/inkLuminApi";
 import {
   exportBook,
   handleFileImport,
