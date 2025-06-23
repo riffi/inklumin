@@ -31,8 +31,8 @@ services:
     build:
       context: ./inklumin-front
       args:
-        INKLUMIN_API_URL: http://localhost:8080/api
-        INKLUMIN_ML_API_URL: http://localhost:5123
+        INKLUMIN_API_URL: https://api.inclumin.ru/api
+        INKLUMIN_ML_API_URL: https://ml.inclumin.ru
     depends_on:
       - back
     ports:
