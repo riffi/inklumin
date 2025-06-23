@@ -655,7 +655,7 @@ export const BookManager = () => {
       <Container style={{ position: "relative" }}>
         <LoadingOverlay visible={loading} zIndex={1000} overlayBlur={2} />
 
-        {!isMobile && <h1>Управление книгами2</h1>}
+        {!isMobile && <h1>Управление книгами</h1>}
         <Space h={20} />
 
         <Group mb="md" flex={1} align="center" justify="flex-start" gap={20}>
