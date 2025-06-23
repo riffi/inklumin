@@ -223,11 +223,20 @@ const tools: Record<string, Tool> = {
   },
 };
 
-export const bookAgent = async (prompt: string): Promise<string> => {
+export interface AgentMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
+export const bookAgent = async (
+  prompt: string,
+  history: AgentMessage[] = []
+): Promise<string> => {
   const defs = Object.values(tools).map((t) => t.definition);
   // Включаем краткую информацию о структуре bookDb
-  let messages: any[] = [
+  const messages: any[] = [
     { role: "system", content: bookDbInfo },
+    ...history,
     { role: "user", content: prompt },
   ];
 
