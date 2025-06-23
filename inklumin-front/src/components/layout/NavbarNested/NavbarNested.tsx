@@ -115,6 +115,7 @@ export const NavbarNested = ({
         { label: chapterOnlyMode ? "Главы" : "Сцены", icon: IconNotes, link: "/scenes" },
         { label: "Заметки книги", icon: IconGraph, link: "/book-notes" },
         { label: "Чтение", icon: IconBooks, link: "/book/reader" },
+        { label: "Помощник", icon: IconBulb, link: "/book/agent" },
         {
           label: "База знаний",
           icon: IconBrandDatabricks,

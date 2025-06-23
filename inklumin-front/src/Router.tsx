@@ -11,6 +11,7 @@ import { BlockInstancePage } from "@/pages/books/BlockInstancePage";
 import { BookDashboardPage } from "@/pages/books/BookDashboardPage";
 import { BookReaderPage } from "@/pages/books/BookReaderPage";
 import { BookSettingsPage } from "@/pages/books/BookSettingsPage";
+import { BookAgentPage } from "@/pages/books/BookAgentPage";
 import { BooksPage } from "@/pages/books/BooksPage";
 import { BlockCard } from "@/pages/configurator/BlockCard";
 import { ConfigurationCard } from "@/pages/configurator/ConfigurationCard";
@@ -96,6 +97,10 @@ const router = createBrowserRouter([
       {
         path: "/book/reader",
         element: (<BookReaderPage />) as ReactNode,
+      },
+      {
+        path: "/book/agent",
+        element: (<BookAgentPage />) as ReactNode,
       },
       {
         path: "/book/settings",

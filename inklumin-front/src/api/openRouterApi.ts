@@ -36,6 +36,48 @@ const fetchCompletions = async (prompt: string) => {
   }
 };
 
+// Запрос с использованием функций (tools) OpenRouter
+const fetchWithTools = async (
+  prompt: string,
+  functions: any[],
+  messages?: any[]
+) => {
+  try {
+    const token = getOpenRouterKey();
+    const model = useApiSettingsStore.getState().currentOpenRouterModel;
+
+    if (!token) {
+      throw new Error("Заполните OpenRouter API в настройках");
+    }
+
+    if (!model) {
+      throw new Error("Выберите модель OpenRouter API в настройках");
+    }
+
+    const response = await fetch(
+      "https://openrouter.ai/api/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: model,
+          messages: messages ?? [{ role: "user", content: prompt }],
+          tools: functions.map((fn) => ({ type: "function", function: fn })),
+          reasoning: { exclude: true },
+        }),
+      }
+    );
+
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    throw error;
+  }
+};
+
 const fetchSynonyms = async (word: string) => {
   const prompt = `Сгенерируй 7-15 синонимов для русского слова '${word}' в формате JSON. 
   Структура: { "synonyms": [...] }. 
@@ -266,6 +308,7 @@ export const fetchSceneProblems = async (sceneContent: string): Promise<string> 
 };
 
 export const OpenRouterApi = {
+  fetchWithTools,
   fetchSynonyms,
   fetchParaphrases,
   fetchSimplifications,
