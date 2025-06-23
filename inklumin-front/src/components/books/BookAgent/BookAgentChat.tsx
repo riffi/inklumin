@@ -8,6 +8,9 @@ import {
   Textarea,
   Select,
 } from "@mantine/core";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import "github-markdown-css/github-markdown.css";
 import { notifications } from "@mantine/notifications";
 import { bookAgent, AgentMessage } from "@/agents/bookAgent";
 import { useApiSettingsStore } from "@/stores/apiSettingsStore/apiSettingsStore";
@@ -47,7 +50,13 @@ export const BookAgentChat = () => {
             <Text fw={700} mb="xs">
               {m.role === "user" ? "Вы" : "Агент"}
             </Text>
-            <Text>{m.content}</Text>
+            {m.role === "assistant" ? (
+              <div className="markdown-body">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
+              </div>
+            ) : (
+              <Text>{m.content}</Text>
+            )}
           </Paper>
         ))}
         <Select
