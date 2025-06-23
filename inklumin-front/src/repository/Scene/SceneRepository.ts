@@ -273,6 +273,15 @@ export const removeSceneFromChapter = async (db: BookDB, sceneId: number): Promi
   await updateBookLocalUpdatedAt(db);
 };
 
+export const findByTitle = async (
+  db: BookDB,
+  title: string
+): Promise<IScene | undefined> => {
+  const lower = title.toLowerCase();
+  const scenes = await db.scenes.toArray();
+  return scenes.find((s) => s.title.toLowerCase().includes(lower));
+};
+
 export const SceneRepository = {
   getById,
   getAll,
@@ -286,4 +295,5 @@ export const SceneRepository = {
   recalculateGlobalOrder,
   addSceneToChapter,
   removeSceneFromChapter,
+  findByTitle,
 };

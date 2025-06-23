@@ -54,6 +54,21 @@ const tools: Record<string, Tool> = {
       return scenes.map((s) => ({ id: s.id, title: s.title, order: s.order }));
     },
   },
+  findScene: {
+    definition: {
+      name: "findScene",
+      description: "Найти сцену по названию и вернуть ее id",
+      parameters: {
+        type: "object",
+        properties: { query: { type: "string", description: "Название сцены" } },
+        required: ["query"],
+      },
+    },
+    handler: async ({ query }) => {
+      const scene = await SceneRepository.findByTitle(bookDb, query);
+      return scene ? { id: scene.id, title: scene.title } : null;
+    },
+  },
   searchBlockInstances: {
     definition: {
       name: "searchBlockInstances",
