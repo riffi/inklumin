@@ -6,14 +6,21 @@ import {
   Stack,
   Text,
   Textarea,
+  Select,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { bookAgent, AgentMessage } from "@/agents/bookAgent";
+import { useApiSettingsStore } from "@/stores/apiSettingsStore/apiSettingsStore";
 
 export const BookAgentChat = () => {
   const [question, setQuestion] = useState("");
   const [messages, setMessages] = useState<AgentMessage[]>([]);
   const [loading, setLoading] = useState(false);
+  const {
+    openRouterModels,
+    currentOpenRouterModel,
+    setCurrentOpenRouterModel,
+  } = useApiSettingsStore();
 
   const handleAsk = async () => {
     if (!question.trim()) return;
@@ -43,6 +50,13 @@ export const BookAgentChat = () => {
             <Text>{m.content}</Text>
           </Paper>
         ))}
+        <Select
+          label="Модель OpenRouter"
+          placeholder="Выберите модель"
+          value={currentOpenRouterModel}
+          data={openRouterModels.map((m) => m.modelName)}
+          onChange={(v) => setCurrentOpenRouterModel(v || "")}
+        />
         <Textarea
           placeholder="Введите сообщение"
           value={question}

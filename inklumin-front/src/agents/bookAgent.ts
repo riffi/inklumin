@@ -8,6 +8,7 @@ import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanc
 import { BlockParameterRepository } from "@/repository/Block/BlockParameterRepository";
 import { BlockParameterInstanceRepository } from "@/repository/BlockInstance/BlockParameterInstanceRepository";
 import { bookDbInfo } from "./bookDbInfo";
+import BlockInstanceSceneLinkRepository from "@/repository/BlockInstance/BlockInstanceSceneLinkRepository";
 
 interface ToolDefinition {
   name: string;
@@ -151,6 +152,26 @@ const tools: Record<string, Tool> = {
       if (!inst) return null;
       const params = await BlockParameterInstanceRepository.getInstanceParams(bookDb, instanceUuid);
       return { ...inst, params };
+    },
+  },
+  listInstanceScenes: {
+    definition: {
+      name: "listInstanceScenes",
+      description: "Получить список сцен, к которым привязан экземпляр блока",
+      parameters: {
+        type: "object",
+        properties: { instanceUuid: { type: "string" } },
+        required: ["instanceUuid"],
+      },
+    },
+    handler: async ({ instanceUuid }) => {
+      const links = await BlockInstanceSceneLinkRepository.getLinksByBlockInstance(bookDb, instanceUuid);
+      const scenes = [] as any[];
+      for (const link of links) {
+        const scene = await SceneRepository.getById(bookDb, link.sceneId);
+        if (scene) scenes.push({ id: scene.id, title: scene.title, order: scene.order });
+      }
+      return scenes;
     },
   },
   createBlock: {
