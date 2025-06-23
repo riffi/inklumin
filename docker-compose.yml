@@ -17,8 +17,10 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/inklumin
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
+      ML_SERVICE_URL: http://ml:5123
     depends_on:
       - db
+      - ml
     ports:
       - "8080:8080"
 
