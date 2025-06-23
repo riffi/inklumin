@@ -1,12 +1,9 @@
 import { notifications } from "@mantine/notifications";
 import { IWarningGroup, IWarningKind } from "@/components/shared/RichEditor/types";
 import { IBlockTitleForms } from "@/entities/ConstructorEntities";
-import { getIncLuminApiKey } from "@/stores/apiSettingsStore/apiSettingsStore";
+import { inkLuminAPI } from "@/api/inkLuminApi/inkLuminApi";
+import { ApiResponse } from "@/api/inkLuminApi/generatedTypes";
 import { generateUUID } from "@/utils/UUIDUtils";
-
-// адрес ML-сервиса задается переменной окружения
-const BASE_API_URL =
-  import.meta.env.VITE_INKLUMIN_ML_API_URL ?? 'http://localhost:5123';
 
 export class InkLuminApiError extends Error {
   constructor(message: string) {
@@ -15,30 +12,25 @@ export class InkLuminApiError extends Error {
   }
 }
 
-const fetchWithAuth = async (url: string, body: object) => {
+const fetchWithAuth = async <T>(
+  request: (token: string) => Promise<ApiResponse<T>>
+): Promise<T> => {
   try {
-    const apiKey = getIncLuminApiKey();
-
-    if (!apiKey) {
-      throw new InkLuminApiError("Lumin API key not configured");
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      throw new InkLuminApiError("User not authenticated");
     }
 
-    const response = await fetch(`${BASE_API_URL}/${url}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify(body),
-    });
-
-    if (!response.ok) throw new InkLuminApiError(`HTTP error! status: ${response.status}`);
-    return await response.json();
+    const response = await request(token);
+    if (!response.success) {
+      throw new InkLuminApiError(response.message || "Server error");
+    }
+    return response.data as T;
   } catch (error) {
     if (error instanceof InkLuminApiError) {
       throw error;
     }
-    throw new InkLuminApiError(error.message);
+    throw new InkLuminApiError((error as Error).message);
   }
 };
 
@@ -49,7 +41,9 @@ const fetchWithAuth = async (url: string, body: object) => {
  */
 export const fetchAndPrepareTitleForms = async (phrase: string): Promise<IBlockTitleForms> => {
   try {
-    const formsData = await fetchWithAuth("get_cases", { phrase });
+    const formsData = await fetchWithAuth((token) =>
+      inkLuminAPI.getTitleForms(token, phrase)
+    );
 
     return {
       nominative: formsData.nomn || phrase,
@@ -67,11 +61,9 @@ export const fetchAndPrepareTitleForms = async (phrase: string): Promise<IBlockT
 
 export const fetchRepeats = async (text: string): Promise<IWarningGroup[]> => {
   try {
-    const data = await fetchWithAuth("find_repeats", {
-      text,
-      window_size: 10,
-      window_size_tech_words: 1,
-    });
+    const data = await fetchWithAuth((token) =>
+      inkLuminAPI.getRepeats(token, text, 10, 1)
+    );
 
     const groups: IWarningGroup[] = [];
     data.repeatData.forEach((rawGroup: any, index: number) => {
@@ -104,7 +96,9 @@ export const fetchRepeats = async (text: string): Promise<IWarningGroup[]> => {
 
 export const fetchCliches = async (text: string): Promise<IWarningGroup[]> => {
   try {
-    const data = await fetchWithAuth("analyze_cliches", { text });
+    const data = await fetchWithAuth((token) =>
+      inkLuminAPI.getCliches(token, text)
+    );
 
     const groups: IWarningGroup[] = [];
     data.data.forEach((warning: any, index: number) => {

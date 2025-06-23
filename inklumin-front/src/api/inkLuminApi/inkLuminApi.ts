@@ -105,4 +105,49 @@ export const inkLuminAPI = {
     });
     return response.json();
   },
+
+  async getTitleForms(token: string, phrase: string): Promise<ApiResponse<any>> {
+    const response = await fetch(`${API_BASE}/ml/title-forms`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ phrase }),
+    });
+    return response.json();
+  },
+
+  async getRepeats(
+    token: string,
+    text: string,
+    windowSize = 10,
+    windowSizeTech = 1
+  ): Promise<ApiResponse<any>> {
+    const response = await fetch(`${API_BASE}/ml/repeats`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        text,
+        window_size: windowSize,
+        window_size_tech_words: windowSizeTech,
+      }),
+    });
+    return response.json();
+  },
+
+  async getCliches(token: string, text: string): Promise<ApiResponse<any>> {
+    const response = await fetch(`${API_BASE}/ml/cliches`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ text }),
+    });
+    return response.json();
+  },
 };

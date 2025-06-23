@@ -116,16 +116,14 @@ To run SoulWriter locally for development or contributions:
 3.  **Run the Development Server:**
     This command starts Vite's development server. Укажите адреса сервисов с помощью переменных окружения:
     ```bash
-    VITE_INKLUMIN_API_URL=http://localhost:8080/api \
-    VITE_INKLUMIN_ML_API_URL=http://localhost:5123 yarn dev
+    VITE_INKLUMIN_API_URL=http://localhost:8080/api yarn dev
     ```
     The application should typically be accessible at `http://localhost:5173` (Vite's default) or a similar address indicated in the terminal output.
 
 4.  **Build for Production:**
     To create an optimized production build. Адреса сервисов задаются аналогично:
     ```bash
-    VITE_INKLUMIN_API_URL=http://localhost:8080/api \
-    VITE_INKLUMIN_ML_API_URL=http://localhost:5123 yarn build
+    VITE_INKLUMIN_API_URL=http://localhost:8080/api yarn build
     ```
     The output will be in the `dist` folder. You can preview this build locally using `yarn preview`.
 

@@ -275,6 +275,99 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
+
+  /api/ml/title-forms:
+    post:
+      summary: Generate title forms
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TitleFormsRequest'
+      responses:
+        '200':
+          description: Forms generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Missing or invalid JWT token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Error from ML service
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /api/ml/repeats:
+    post:
+      summary: Analyze repeats
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RepeatsRequest'
+      responses:
+        '200':
+          description: Repeats analyzed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Missing or invalid JWT token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Error from ML service
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /api/ml/cliches:
+    post:
+      summary: Analyze cliches
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClichesRequest'
+      responses:
+        '200':
+          description: Cliches analyzed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Missing or invalid JWT token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '500':
+          description: Error from ML service
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
 components:
   securitySchemes:
     bearerAuth:
@@ -414,3 +507,28 @@ components:
           type: string
         updatedAt:
           type: string
+    TitleFormsRequest:
+      type: object
+      properties:
+        phrase:
+          type: string
+      required:
+        - phrase
+    RepeatsRequest:
+      type: object
+      properties:
+        text:
+          type: string
+        window_size:
+          type: integer
+        window_size_tech_words:
+          type: integer
+      required:
+        - text
+    ClichesRequest:
+      type: object
+      properties:
+        text:
+          type: string
+      required:
+        - text

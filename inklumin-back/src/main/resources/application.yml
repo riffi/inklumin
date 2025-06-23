@@ -29,3 +29,6 @@ logging:
     org:
       springframework:
         security: DEBUG
+ml:
+  service:
+    url: http://localhost:5123

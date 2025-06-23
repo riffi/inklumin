@@ -29,8 +29,7 @@ To start the client locally, укажите адреса сервисов чер
 ```bash
 cd inklumin-front
 yarn install
-VITE_INKLUMIN_API_URL=http://localhost:8080/api \
-VITE_INKLUMIN_ML_API_URL=http://localhost:5123 yarn dev
+VITE_INKLUMIN_API_URL=http://localhost:8080/api yarn dev
 ```
 
 The dev server runs on port 5173 by default.
@@ -106,12 +105,11 @@ corepack enable
 cd inklumin-front
 node .yarn/releases/yarn-4.8.1.cjs install
 VITE_INKLUMIN_API_URL=http://localhost:8080/api \
-VITE_INKLUMIN_ML_API_URL=http://localhost:5123 \
 node .yarn/releases/yarn-4.8.1.cjs build
 ```
 
-Или запустите скрипт `build.sh` в корне репозитория, предварительно задав переменные
-`VITE_INKLUMIN_API_URL` и `VITE_INKLUMIN_ML_API_URL`.
+Или запустите скрипт `build.sh` в корне репозитория, предварительно задав переменную
+`VITE_INKLUMIN_API_URL`.
 
 ## Запуск с помощью Docker
 
@@ -122,7 +120,7 @@ node .yarn/releases/yarn-4.8.1.cjs build
    docker compose up --build -d
    ```
    При необходимости можно изменить адреса сервисов,
-   задав переменные `INKLUMIN_API_URL` и `INKLUMIN_ML_API_URL` в `docker-compose.yml`.
+  задав переменную `INKLUMIN_API_URL` в `docker-compose.yml`.
 2. Фронтенд будет доступен по адресу http://localhost,
    API — на http://localhost:8080,
    сервис ML — на http://localhost:5123.

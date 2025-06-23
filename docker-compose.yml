@@ -32,7 +32,6 @@ services:
       context: ./inklumin-front
       args:
         INKLUMIN_API_URL: https://api.inclumin.ru/api
-        INKLUMIN_ML_API_URL: https://ml.inclumin.ru
     depends_on:
       - back
     ports:
