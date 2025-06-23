@@ -109,3 +109,16 @@ node .yarn/releases/yarn-4.8.1.cjs build
 
 Или запустите скрипт `build.sh` в корне репозитория, который использует ту же версию Yarn.
 
+## Запуск с помощью Docker
+
+Для запуска всех сервисов потребуется Docker и Docker Compose.
+
+1. Соберите контейнеры и запустите их:
+   ```bash
+   docker compose up --build -d
+   ```
+2. Фронтенд будет доступен по адресу http://localhost,
+   API — на http://localhost:8080,
+   сервис ML — на http://localhost:5123.
+
+Остановить сервисы можно командой `docker compose down`.

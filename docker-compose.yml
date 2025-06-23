@@ -1,0 +1,38 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: inklumin
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+  back:
+    build: ./inklumin-back
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/inklumin
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+
+  ml:
+    build: ./inklumin-ml
+    ports:
+      - "5123:5123"
+
+  front:
+    build: ./inklumin-front
+    depends_on:
+      - back
+    ports:
+      - "80:80"
+volumes:
+  db-data:
+
