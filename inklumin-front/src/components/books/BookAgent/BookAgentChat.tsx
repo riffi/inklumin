@@ -22,7 +22,7 @@ export const BookAgentChat = () => {
     setQuestion("");
     setLoading(true);
     try {
-      await bookAgent(question, newMessages, (msg) =>
+      await bookAgent(question, messages, (msg) =>
         setMessages((prev) => [...prev, { role: "assistant", content: msg }])
       );
     } catch (e: any) {
