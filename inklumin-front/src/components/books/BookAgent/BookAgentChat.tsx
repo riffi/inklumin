@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   Box,
   Button,
-  LoadingOverlay,
   Paper,
   Stack,
   Text,
@@ -23,8 +22,9 @@ export const BookAgentChat = () => {
     setQuestion("");
     setLoading(true);
     try {
-      const result = await bookAgent(question, newMessages);
-      setMessages([...newMessages, { role: "assistant", content: result }]);
+      await bookAgent(question, newMessages, (msg) =>
+        setMessages((prev) => [...prev, { role: "assistant", content: msg }])
+      );
     } catch (e: any) {
       notifications.show({ message: e.message ?? "Ошибка" });
     } finally {
@@ -34,7 +34,6 @@ export const BookAgentChat = () => {
 
   return (
     <Box pos="relative" maw={600} mx="auto">
-      <LoadingOverlay visible={loading} overlayProps={{ blur: 2 }} />
       <Stack>
         {messages.map((m, idx) => (
           <Paper key={idx} shadow="xs" p="sm" radius="md">
@@ -49,7 +48,9 @@ export const BookAgentChat = () => {
           value={question}
           onChange={(e) => setQuestion(e.currentTarget.value)}
         />
-        <Button onClick={handleAsk}>Отправить</Button>
+        <Button onClick={handleAsk} disabled={loading} loading={loading}>
+          Отправить
+        </Button>
       </Stack>
     </Box>
   );

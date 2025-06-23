@@ -147,7 +147,10 @@ const tools: Record<string, Tool> = {
         properties: {
           title: { type: "string" },
           description: { type: "string" },
-          structureKind: { type: "string" },
+          structureKind: {
+            type: "string",
+            description: 'single - сущность для блока может быть только одна(синопсис книги, идея и т.п.), multiple - сущностей может быть несколько(персонажи, сюжетные линии, города)'
+          },
         },
         required: ["title", "structureKind"],
       },
@@ -167,21 +170,23 @@ const tools: Record<string, Tool> = {
   createBlockInstance: {
     definition: {
       name: "createBlockInstance",
-      description: "Создать экземпляр блока и вернуть его данные",
+      description: "Создать экземпляр блока и вернуть его данные. Если такой блок уже есть в базе, используй его, а не создавай новый",
       parameters: {
         type: "object",
         properties: {
           blockUuid: { type: "string" },
           title: { type: "string" },
+          description: { type: "string" },
         },
         required: ["blockUuid", "title"],
       },
     },
-    handler: async ({ blockUuid, title }) => {
+    handler: async ({ blockUuid, title, description }) => {
       const instance = {
         uuid: crypto.randomUUID(),
         blockUuid,
         title,
+        description
       } as any;
       await BlockInstanceRepository.create(bookDb, instance);
       await BlockParameterInstanceRepository.appendDefaultParams(bookDb, instance);
@@ -230,7 +235,8 @@ export interface AgentMessage {
 
 export const bookAgent = async (
   prompt: string,
-  history: AgentMessage[] = []
+  history: AgentMessage[] = [],
+  onMessage?: (message: string) => void
 ): Promise<string> => {
   const defs = Object.values(tools).map((t) => t.definition);
   // Включаем краткую информацию о структуре bookDb
@@ -248,6 +254,9 @@ export const bookAgent = async (
     );
     const message = response.choices?.[0]?.message;
     if (!message) return "";
+    if (message.content) {
+      onMessage?.(message.content);
+    }
 
     const toolCalls = (message as any).tool_calls as any[] | undefined;
 
