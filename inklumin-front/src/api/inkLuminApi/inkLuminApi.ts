@@ -13,7 +13,9 @@ import {
 } from "./generatedTypes";
 
 
-const API_BASE = 'https://api.inclumin.ru/api';
+// адрес API задается переменной окружения
+const API_BASE =
+  import.meta.env.VITE_INKLUMIN_API_URL ?? 'http://localhost:8080/api';
 
 export const inkLuminAPI = {
   async register(userData: RegisterRequest): Promise<ApiResponse<AuthResponse>> {

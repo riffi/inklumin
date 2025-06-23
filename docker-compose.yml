@@ -28,7 +28,11 @@ services:
       - "5123:5123"
 
   front:
-    build: ./inklumin-front
+    build:
+      context: ./inklumin-front
+      args:
+        INKLUMIN_API_URL: http://localhost:8080/api
+        INKLUMIN_ML_API_URL: http://localhost:5123
     depends_on:
       - back
     ports:

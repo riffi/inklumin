@@ -4,7 +4,9 @@ import { IBlockTitleForms } from "@/entities/ConstructorEntities";
 import { getIncLuminApiKey } from "@/stores/apiSettingsStore/apiSettingsStore";
 import { generateUUID } from "@/utils/UUIDUtils";
 
-const BASE_API_URL = "https://ml.inclumin.ru";
+// адрес ML-сервиса задается переменной окружения
+const BASE_API_URL =
+  import.meta.env.VITE_INKLUMIN_ML_API_URL ?? 'http://localhost:5123';
 
 export class InkLuminApiError extends Error {
   constructor(message: string) {
