@@ -7,6 +7,7 @@ import { BlockRepository } from "@/repository/Block/BlockRepository";
 import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";
 import { BlockParameterRepository } from "@/repository/Block/BlockParameterRepository";
 import { BlockParameterInstanceRepository } from "@/repository/BlockInstance/BlockParameterInstanceRepository";
+import { bookDbInfo } from "./bookDbInfo";
 
 interface ToolDefinition {
   name: string;
@@ -21,27 +22,6 @@ interface Tool {
 
 // Определение доступных функций для агента
 const tools: Record<string, Tool> = {
-  findBook: {
-    definition: {
-      name: "findBook",
-      description: "Поиск книги по названию",
-      parameters: {
-        type: "object",
-        properties: {
-          title: { type: "string", description: "Название или его часть" },
-        },
-        required: ["title"],
-      },
-    },
-    handler: async ({ title }) => {
-      const books = await BookRepository.getAll(configDatabase);
-      return books
-        .filter((b) =>
-          b.title.toLowerCase().includes(String(title).toLowerCase())
-        )
-        .map((b) => ({ uuid: b.uuid, title: b.title, description: b.description }));
-    },
-  },
   getScene: {
     definition: {
       name: "getScene",
@@ -60,9 +40,23 @@ const tools: Record<string, Tool> = {
       return { id: scene.id, title: scene.title, body: scene.body };
     },
   },
-  searchInstances: {
+  listScenes: {
     definition: {
-      name: "searchInstances",
+      name: "listScenes",
+      description:
+          "Возвращает **уже отсортированный** список сцен книги. " +
+          "Сцены расположены в порядке возрастания поля `order` (порядковый номер), " +
+          "а не `id`.",
+      parameters: { type: "object", properties: {} },
+    },
+    handler: async () => {
+      const scenes = await SceneRepository.getAll(bookDb);
+      return scenes.map((s) => ({ id: s.id, title: s.title, order: s.order }));
+    },
+  },
+  searchBlockInstances: {
+    definition: {
+      name: "searchBlockInstances",
       description:
         "Поиск экземпляров блоков по названию. Можно указать uuid блока",
       parameters: {
@@ -94,18 +88,15 @@ const tools: Record<string, Tool> = {
       return results;
     },
   },
-  listScenes: {
+  listBlocks: {
     definition: {
-      name: "listScenes",
-      description:
-          "Возвращает **уже отсортированный** список сцен книги. " +
-          "Сцены расположены в порядке возрастания поля `order` (порядковый номер), " +
-          "а не `id`.",
+      name: "listBlocks",
+      description: "Получить список блоков книги",
       parameters: { type: "object", properties: {} },
     },
     handler: async () => {
-      const scenes = await SceneRepository.getAll(bookDb);
-      return scenes.map((s) => ({ id: s.id, title: s.title, order: s.order }));
+      const blocks = await BlockRepository.getAll(bookDb);
+      return blocks.map((b) => ({ uuid: b.uuid, title: b.title }));
     },
   },
   getBlockStructure: {
@@ -173,6 +164,30 @@ const tools: Record<string, Tool> = {
       return block;
     },
   },
+  createBlockInstance: {
+    definition: {
+      name: "createBlockInstance",
+      description: "Создать экземпляр блока и вернуть его данные",
+      parameters: {
+        type: "object",
+        properties: {
+          blockUuid: { type: "string" },
+          title: { type: "string" },
+        },
+        required: ["blockUuid", "title"],
+      },
+    },
+    handler: async ({ blockUuid, title }) => {
+      const instance = {
+        uuid: crypto.randomUUID(),
+        blockUuid,
+        title,
+      } as any;
+      await BlockInstanceRepository.create(bookDb, instance);
+      await BlockParameterInstanceRepository.appendDefaultParams(bookDb, instance);
+      return instance;
+    },
+  },
   saveParamInstance: {
     definition: {
       name: "saveParamInstance",
@@ -210,7 +225,11 @@ const tools: Record<string, Tool> = {
 
 export const bookAgent = async (prompt: string): Promise<string> => {
   const defs = Object.values(tools).map((t) => t.definition);
-  let messages: any[] = [{ role: "user", content: prompt }];
+  // Включаем краткую информацию о структуре bookDb
+  let messages: any[] = [
+    { role: "system", content: bookDbInfo },
+    { role: "user", content: prompt },
+  ];
 
   while (true) {
     const response = await OpenRouterApi.fetchWithTools(
