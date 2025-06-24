@@ -103,7 +103,7 @@ export const SceneRow = ({
                     <Group justify="space-between" wrap="nowrap">
                         {/* ---------- title + badges ---------- */}
                         <Stack gap={2} style={{ flex: 1 }}>
-                            <Text fz="sm" fw={500} c="dark.6">
+                            <Text fz="sm" fw={400} c="dark.6">
                                 {scene.order ? `${scene.order}. ` : ""}
                                 {scene.title}
                             </Text>
