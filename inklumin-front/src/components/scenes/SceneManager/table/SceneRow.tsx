@@ -31,16 +31,16 @@ interface SceneRowProps {
 }
 
 const SceneRowComponent = ({
-  scene,
-  scenesInChapter,
-  openScene,
-  selectedSceneId,
-  scenes,
-  chapters,
-  mode,
-}: SceneRowProps) => {
+                             scene,
+                             scenesInChapter,
+                             openScene,
+                             selectedSceneId,
+                             scenes,
+                             chapters,
+                             mode,
+                           }: SceneRowProps) => {
   const [openedDeleteModal, { open: openDeleteModal, close: closeDeleteModal }] =
-    useDisclosure(false);
+      useDisclosure(false);
   const [openedMoveModal, { open: openMoveModal, close: closeMoveModal }] = useDisclosure(false);
   const { reorderScenes, deleteScene } = useScenes(scenes);
   const currentIndex = scenesInChapter.findIndex((s) => s.id === scene.id);
@@ -95,157 +95,157 @@ const SceneRowComponent = ({
   };
 
   return (
-    <>
-      <Table.Tr
-        ref={ref}
-        // Выделяем выбранную сцену
-        bg={selectedSceneId === scene.id ? theme.colors.blue[0] : undefined}
-        onClick={handleClick}
-        style={{ cursor: "pointer" }}
-      >
-        <Table.Td colSpan={2} pl={scene.chapterId ? theme.spacing.md : theme.spacing.sm}>
-          <Group justify="space-between" wrap="nowrap">
-            {/* ---------- title + badges ---------- */}
-            <Stack gap={2} style={{ flex: 1 }}>
-              <Text fz="sm" fw={400} c="dark.6">
-                {scene.order ? `${scene.order}. ` : ""}
-                {scene.title}
-              </Text>
+      <>
+        <Table.Tr
+            ref={ref}
+            // Выделяем выбранную сцену
+            // bg={!isMobile ? selectedSceneId === scene.id  ? theme.colors.blue[0] : undefined : undefined}
+            onClick={handleClick}
+            style={{ cursor: "pointer" }}
+        >
+          <Table.Td colSpan={2} pl={scene.chapterId ? theme.spacing.md : theme.spacing.sm}>
+            <Group justify="space-between" >
+              {/* ---------- title + badges ---------- */}
+              <Stack gap={2} style={{ flex: 1 }}>
+                <Text fz="sm" fw={400} c="dark.6">
+                  {scene.order ? `${scene.order}. ` : ""}
+                  {scene.title}
+                </Text>
 
-              {mode === "manager" && (
-                <>
-                  <Stack gap={5} wrap="wrap">
-                    {scene?.blockInstances.map((sceneWithInstancesBlock) => (
-                      <>
-                        <Group
-                          gap={4}
-                          key={`block-${sceneWithInstancesBlock.block.id}`}
-                          wrap="nowrap"
-                        >
-                          <IconViewer
-                            icon={sceneWithInstancesBlock.block.icon}
-                            size={14}
-                            color={theme.colors.gray[6]}
-                            backgroundColor="transparent"
-                          />
-                          <Text fz={10} c="gray.6">
-                            {sceneWithInstancesBlock.block.titleForms?.plural}:
-                          </Text>
-                          {sceneWithInstancesBlock.instances.map((instance) => (
-                            <Text
-                              key={`instance-${instance.id}`}
-                              style={{
-                                fontSize: 10,
-                                fontWeight: 500,
-                                backgroundColor: theme.colors.gray[5],
-                                padding: "0 4px",
-                                borderRadius: theme.radius.sm,
-                                color: theme.white,
-                              }}
-                            >
-                              {instance.title.length > 15
-                                ? `${instance.title.slice(0, 12)}…`
-                                : instance.title}
-                            </Text>
-                          ))}
-                        </Group>
-                      </>
-                    ))}
-                  </Stack>
-                  <Group>
-                    <Text style={{ fontSize: 11, color: "#999" }}>
-                      Символов: {scene.totalSymbolCountWithSpaces}
-                    </Text>
-                  </Group>
-                </>
-              )}
-            </Stack>
+                {mode === "manager" && (
+                    <>
+                      <Stack gap={5} wrap="wrap">
+                        {scene?.blockInstances.map((sceneWithInstancesBlock) => (
+                            <>
+                              <Group
+                                  gap={4}
+                                  key={`block-${sceneWithInstancesBlock.block.id}`}
+                                  wrap="nowrap"
+                              >
+                                <IconViewer
+                                    icon={sceneWithInstancesBlock.block.icon}
+                                    size={14}
+                                    color={theme.colors.gray[6]}
+                                    backgroundColor="transparent"
+                                />
+                                <Text fz={10} c="gray.6">
+                                  {sceneWithInstancesBlock.block.titleForms?.plural}:
+                                </Text>
+                                {sceneWithInstancesBlock.instances.map((instance) => (
+                                    <Text
+                                        key={`instance-${instance.id}`}
+                                        style={{
+                                          fontSize: 10,
+                                          fontWeight: 500,
+                                          backgroundColor: theme.colors.gray[5],
+                                          padding: "0 4px",
+                                          borderRadius: theme.radius.sm,
+                                          color: theme.white,
+                                        }}
+                                    >
+                                      {instance.title.length > 15
+                                          ? `${instance.title.slice(0, 12)}…`
+                                          : instance.title}
+                                    </Text>
+                                ))}
+                              </Group>
+                            </>
+                        ))}
+                      </Stack>
+                      <Group>
+                        <Text style={{ fontSize: 11, color: "#999" }}>
+                          Символов: {scene.totalSymbolCountWithSpaces}
+                        </Text>
+                      </Group>
+                    </>
+                )}
+              </Stack>
 
-            {/* ---------- actions ---------- */}
-            <Menu withinPortal shadow="md" position="left-start">
-              <Menu.Target>
-                <ActionIcon
-                  variant="subtle"
-                  onClick={(e) => e.stopPropagation()}
-                  style={{
-                    opacity: hovered || isMobile ? 1 : 0,
-                    transition: "opacity .15s ease",
-                  }}
-                >
-                  <IconDotsVertical size={16} />
-                </ActionIcon>
-              </Menu.Target>
-              <Menu.Dropdown>
-                <Menu.Item
-                  icon={<IconArrowUp size={14} />}
-                  disabled={currentIndex <= 0}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleMoveUp();
-                  }}
-                >
-                  Переместить вверх
-                </Menu.Item>
-                <Menu.Item
-                  icon={<IconArrowDown size={14} />}
-                  disabled={currentIndex >= scenesInChapter.length - 1}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleMoveDown();
-                  }}
-                >
-                  Переместить вниз
-                </Menu.Item>
-                <Menu.Item
-                  icon={<IconArrowRightCircle size={14} />}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    openMoveModal();
-                  }}
-                >
-                  Переместить в главу
-                </Menu.Item>
-                <Menu.Item
-                  icon={<IconTrash size={14} />}
-                  color="red"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    openDeleteModal();
-                  }}
-                >
-                  Удалить сцену
-                </Menu.Item>
-              </Menu.Dropdown>
-            </Menu>
-          </Group>
-        </Table.Td>
-      </Table.Tr>
+              {/* ---------- actions ---------- */}
+              <Menu withinPortal shadow="md" position="left-start" >
+                <Menu.Target>
+                  <ActionIcon
+                      variant="subtle"
+                      onClick={(e) => e.stopPropagation()}
+                      style={{
+                        opacity: hovered || isMobile ? 1 : 0,
+                        transition: "opacity .15s ease",
+                      }}
+                  >
+                    <IconDotsVertical size={16} />
+                  </ActionIcon>
+                </Menu.Target>
+                <Menu.Dropdown>
+                  <Menu.Item
+                      icon={<IconArrowUp size={14} />}
+                      disabled={currentIndex <= 0}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleMoveUp();
+                      }}
+                  >
+                    Переместить вверх
+                  </Menu.Item>
+                  <Menu.Item
+                      icon={<IconArrowDown size={14} />}
+                      disabled={currentIndex >= scenesInChapter.length - 1}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleMoveDown();
+                      }}
+                  >
+                    Переместить вниз
+                  </Menu.Item>
+                  <Menu.Item
+                      icon={<IconArrowRightCircle size={14} />}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openMoveModal();
+                      }}
+                  >
+                    Переместить в главу
+                  </Menu.Item>
+                  <Menu.Item
+                      icon={<IconTrash size={14} />}
+                      color="red"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openDeleteModal();
+                      }}
+                  >
+                    Удалить сцену
+                  </Menu.Item>
+                </Menu.Dropdown>
+              </Menu>
+            </Group>
+          </Table.Td>
+        </Table.Tr>
 
-      {/* ----- MODALS ----- */}
-      <DeleteConfirmationModal
-        opened={openedDeleteModal}
-        onClose={closeDeleteModal}
-        onConfirm={handleDelete}
-        title="Удалить сцену?"
-        message="Вы уверены, что хотите удалить эту сцену?"
-      />
+        {/* ----- MODALS ----- */}
+        <DeleteConfirmationModal
+            opened={openedDeleteModal}
+            onClose={closeDeleteModal}
+            onConfirm={handleDelete}
+            title="Удалить сцену?"
+            message="Вы уверены, что хотите удалить эту сцену?"
+        />
 
-      <MoveSceneModal
-        opened={openedMoveModal}
-        onClose={closeMoveModal}
-        onMove={handleMove}
-        currentChapterId={scene.chapterId}
-      />
-    </>
+        <MoveSceneModal
+            opened={openedMoveModal}
+            onClose={closeMoveModal}
+            onMove={handleMove}
+            currentChapterId={scene.chapterId}
+        />
+      </>
   );
 };
 
 const rowEqual = (
-  prev: Readonly<SceneRowProps>,
-  next: Readonly<SceneRowProps>
+    prev: Readonly<SceneRowProps>,
+    next: Readonly<SceneRowProps>
 ) =>
-  prev.scene === next.scene &&
-  prev.selectedSceneId === next.selectedSceneId &&
-  prev.mode === next.mode;
+    prev.scene === next.scene &&
+    prev.selectedSceneId === next.selectedSceneId &&
+    prev.mode === next.mode;
 
 export const SceneRow = React.memo(SceneRowComponent, rowEqual);
