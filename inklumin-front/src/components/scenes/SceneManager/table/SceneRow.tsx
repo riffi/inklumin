@@ -48,6 +48,7 @@ export const SceneRow = ({
     }
   };
 
+
   const handleMoveDown = () => {
     const nextScene = scenesInChapter[currentIndex + 1];
     if (nextScene) {

@@ -6,28 +6,37 @@ interface BookStore {
   selectedBook: IBook | null;
   selectBook: (book: IBook) => void;
   clearSelectedBook: () => void;
-  collapsedChapters: number[];
+  collapsedChapters: Map<number, boolean>;
   toggleChapterCollapse: (chapterId: number) => void;
 }
 
 export const useBookStore = create<BookStore>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       selectedBook: null,
-      collapsedChapters: [],
+      collapsedChapters: new Map<number, boolean>(),
       selectBook: (book) => set({ selectedBook: book }),
-      clearSelectedBook: () => set({ selectedBook: null, collapsedChapters: [] }),
+      clearSelectedBook: () => set({ selectedBook: null, collapsedChapters: new Map() }),
       toggleChapterCollapse: (chapterId) => {
-        const current = get().collapsedChapters;
-        set({
-          collapsedChapters: current.includes(chapterId)
-            ? current.filter((id) => id !== chapterId)
-            : [...current, chapterId],
+        // Меняем состояние одной главы без затрагивания остальных
+        set((state) => {
+          const map = new Map(state.collapsedChapters);
+          map.set(chapterId, !map.get(chapterId));
+          return { collapsedChapters: map };
         });
       },
     }),
     {
       name: "selected-book-storage",
+      partialize: (state) => ({
+        ...state,
+        collapsedChapters: Array.from(state.collapsedChapters.entries()),
+      }),
+      merge: (persisted, current) => ({
+        ...current,
+        ...persisted,
+        collapsedChapters: new Map((persisted.collapsedChapters as [number, boolean][]) || []),
+      }),
     }
   )
 );

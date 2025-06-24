@@ -26,10 +26,10 @@ import {
   TextInput,
   Title,
   Tooltip,
+  useMantineTheme,
 } from "@mantine/core";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 import { bookDb } from "@/entities/bookDb";
-import { useMantineTheme } from "@mantine/core";
 import { IChapter, ISceneWithInstances } from "@/entities/BookEntities";
 import { IBlock } from "@/entities/ConstructorEntities";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
@@ -51,7 +51,6 @@ export interface SceneManagerProps {
   chapterOnly?: boolean;
 }
 export const SceneManager = (props: SceneManagerProps) => {
-
   const theme = useMantineTheme();
 
   const { setTitleElement } = usePageTitle();
@@ -71,7 +70,7 @@ export const SceneManager = (props: SceneManagerProps) => {
 
   const navigate = useNavigate();
   const { isMobile } = useMedia();
-  const { collapsedChapters } = useBookStore();
+  const collapsedCount = useBookStore((state) => state.collapsedChapters.size);
   const { createChapter } = useChapters(props.chapters);
 
   const { createScene } = useScenes(props.scenes);
@@ -141,28 +140,23 @@ export const SceneManager = (props: SceneManagerProps) => {
   };
 
   const collapseAllChapters = () => {
-    // Get all chapter IDs that aren't already collapsed
     const chapterIds = props.chapters?.map((chapter) => chapter.id) || [];
-    // Add all chapters to collapsed chapters
     const store = useBookStore.getState();
     const currentCollapsed = store.collapsedChapters;
 
-    // For each chapter that isn't already collapsed, add it to the collapsed list
     chapterIds.forEach((id) => {
-      if (!currentCollapsed.includes(id)) {
+      if (!currentCollapsed.get(id)) {
         store.toggleChapterCollapse(id);
       }
     });
   };
 
   const expandAllChapters = () => {
-    // Get current collapsed chapters
     const store = useBookStore.getState();
-    const currentCollapsed = [...store.collapsedChapters];
-
-    // Toggle each collapsed chapter to expand them all
-    currentCollapsed.forEach((id) => {
-      store.toggleChapterCollapse(id);
+    store.collapsedChapters.forEach((isCollapsed, id) => {
+      if (isCollapsed) {
+        store.toggleChapterCollapse(id);
+      }
     });
   };
 
@@ -251,7 +245,7 @@ export const SceneManager = (props: SceneManagerProps) => {
                   <ActionIcon
                     variant="subtle"
                     onClick={expandAllChapters}
-                    disabled={!collapsedChapters.length}
+                    disabled={!collapsedCount}
                     size={isMobile ? "sm" : "md"}
                   >
                     <IconFolderOpen size={isMobile ? 18 : 18} />

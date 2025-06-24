@@ -39,8 +39,9 @@ export const ChapterRow = ({
   chapters,
   chapterOnly,
 }: ChapterRowProps) => {
-  const { collapsedChapters, toggleChapterCollapse } = useBookStore();
-  const isExpanded = !collapsedChapters.includes(chapter.id);
+  const isCollapsed = useBookStore((state) => state.collapsedChapters.get(chapter.id) ?? false);
+  const toggleChapterCollapse = useBookStore((state) => state.toggleChapterCollapse);
+  const isExpanded = !isCollapsed;
   const [openedEditModal, { open: openEditModal, close: closeEditModal }] = useDisclosure(false);
   const [openedDeleteModal, { open: openDeleteModal, close: closeDeleteModal }] =
     useDisclosure(false);

@@ -70,11 +70,22 @@ export const SceneTable = ({
     });
   }, [chapters, filteredScenes, searchQuery, selectedInstanceUuid, chapterOnly]);
 
-  // Получение сцен для главы с учетом фильтрации
+// Мемоизированная мапа сцен по главам
+  const scenesByChapterId = React.useMemo(() => {
+    const map = new Map<number | null, ISceneWithInstances[]>();
+    for (const scene of filteredScenes) {
+      const key = scene.chapterId ?? null;
+      if (!map.has(key)) {
+        map.set(key, []);
+      }
+      map.get(key)!.push(scene);
+    }
+    return map;
+  }, [filteredScenes]);
+
+// Мемoизированная функция для получения сцен по главе
   const getScenesForChapter = (chapterId: number | null) => {
-    return filteredScenes.filter((scene) =>
-      chapterId ? scene.chapterId === chapterId : !scene.chapterId
-    );
+    return scenesByChapterId.get(chapterId) || [];
   };
 
   if (!scenes || !chapters)
