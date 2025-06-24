@@ -1,7 +1,7 @@
 // src/components/scenes/SceneManager/SceneRow.tsx
-import { IconArrowDown, IconArrowRightCircle, IconArrowUp, IconTrash } from "@tabler/icons-react";
+import { IconArrowDown, IconArrowRightCircle, IconArrowUp, IconDotsVertical, IconTrash } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
-import { ActionIcon, Box, Group, Stack, Table, Text } from "@mantine/core";
+import { ActionIcon, Box, Group, Menu, Stack, Table, Text, useMantineTheme } from "@mantine/core";
 import { useDisclosure, useHover } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconViewer } from "@/components/shared/IconViewer/IconViewer";
@@ -39,6 +39,7 @@ export const SceneRow = ({
   const currentIndex = scenesInChapter.findIndex((s) => s.id === scene.id);
   const { hovered, ref } = useHover();
   const { isMobile } = useMedia();
+  const theme = useMantineTheme();
 
   const handleMoveUp = () => {
     const prevScene = scenesInChapter[currentIndex - 1];
@@ -86,146 +87,149 @@ export const SceneRow = ({
     }
   };
 
-  return (
-    <>
-      <Table.Tr
-        key={`scene-${scene.id}`}
-        ref={ref}
-        style={{
-          backgroundColor: selectedSceneId === scene.id ? "#e6f7ff" : "white",
-        }}
-      >
-        <Table.Td
-          colSpan={2}
-          style={{
-            paddingLeft: scene.chapterId ? 30 : 10,
-            cursor: "pointer",
-          }}
-        >
-          <Box
-            style={{
-              display: "flex",
-              alignItems: "center",
-              cursor: "pointer",
-            }}
-            onClick={handleClick}
-          >
-            <Stack gap={0}>
-              <Text style={{ fontSize: 14, color: "#444" }}>
-                {scene.order ? `${scene.order}. ` : ""}
-                {scene.title}
-              </Text>
-              {mode === "manager" && (
-                <>
-                  {scene?.blockInstances.map((sceneWithInstancesBlock) => (
-                    <Group gap={5}>
-                      <IconViewer
-                        iconName={sceneWithInstancesBlock.block.icon}
-                        size={14}
-                        color={"gray"}
-                        backgroundColor={"transparent"}
-                      />
-                      <Text style={{ fontSize: 12, color: "#7a7a7a" }}>
-                        {sceneWithInstancesBlock.block.titleForms?.plural}:
-                      </Text>
-
-                      {sceneWithInstancesBlock.instances.map((instance) => (
-                        <Text
-                          key={`instance-${instance.id}`}
-                          style={{
-                            fontSize: "10px",
-                            fontWeight: "normal",
-                            backgroundColor: "#a4a4a4",
-                            padding: "0px 3px",
-                            borderRadius: "3px",
-                            margin: "0px",
-                            color: "#fff",
-                          }}
-                        >
-                          {instance.title}
-                        </Text>
-                      ))}
-                    </Group>
-                  ))}
-
-                  <Text style={{ fontSize: 11, color: "#999" }}>
-                    Символов: {scene.totalSymbolCountWithSpaces}
-                  </Text>
-                </>
-              )}
-            </Stack>
-            <Box
-              ml="auto"
-              style={{
-                display: "flex",
-                gap: "8px",
-                transition: "opacity 0.2s ease",
-                opacity: hovered ? 1 : 0.3,
-              }}
+    return (
+        <>
+            <Table.Tr
+                ref={ref}
+                // Выделяем выбранную сцену
+                bg={selectedSceneId === scene.id ? theme.colors.blue[0] : undefined}
+                onClick={handleClick}
+                style={{ cursor: "pointer" }}
             >
-              <ActionIcon
-                variant="subtle"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleMoveUp();
-                }}
-                disabled={currentIndex <= 0}
-                title="Переместить вверх"
-              >
-                <IconArrowUp size={16} />
-              </ActionIcon>
-              <ActionIcon
-                variant="subtle"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleMoveDown();
-                }}
-                disabled={currentIndex >= scenesInChapter.length - 1}
-                title="Переместить вниз"
-              >
-                <IconArrowDown size={16} />
-              </ActionIcon>
-              <ActionIcon
-                variant="subtle"
-                handleMoveDown
-                onClick={(e) => {
-                  e.stopPropagation();
-                  openMoveModal();
-                }}
-                title="Перенести в другую главу"
-              >
-                <IconArrowRightCircle size={16} />
-              </ActionIcon>
-              <ActionIcon
-                variant="subtle"
-                color="red"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  openDeleteModal();
-                }}
-                title="Удалить"
-              >
-                <IconTrash size={16} />
-              </ActionIcon>
-            </Box>
-          </Box>
-        </Table.Td>
-      </Table.Tr>
+                <Table.Td
+                    colSpan={2}
+                    pl={scene.chapterId ? theme.spacing.md : theme.spacing.sm}
+                >
+                    <Group justify="space-between" wrap="nowrap">
+                        {/* ---------- title + badges ---------- */}
+                        <Stack gap={2} style={{ flex: 1 }}>
+                            <Text fz="sm" fw={400} c="dark.6">
+                                {scene.order ? `${scene.order}. ` : ""}
+                                {scene.title}
+                            </Text>
 
-      <DeleteConfirmationModal
-        opened={openedDeleteModal}
-        onClose={closeDeleteModal}
-        onConfirm={handleDelete}
-        title="Удалить сцену?"
-        message="Вы уверены, что хотите удалить эту сцену?"
-      />
+                            {mode === "manager" && (
+                                <>
+                                <Group gap={5} wrap="wrap">
+                                    {scene?.blockInstances.map((sceneWithInstancesBlock) => (
+                                        <>
+                                            <Group gap={4} key={`block-${sceneWithInstancesBlock.block.id}`}
+                                                   wrap="nowrap">
+                                                <IconViewer
+                                                    icon={sceneWithInstancesBlock.block.icon}
+                                                    size={14}
+                                                    color={theme.colors.gray[6]}
+                                                    backgroundColor="transparent"
+                                                />
+                                                <Text fz={10} c="gray.6">
+                                                    {sceneWithInstancesBlock.block.titleForms?.plural}:
+                                                </Text>
+                                                {sceneWithInstancesBlock.instances.map((instance) => (
+                                                    <Text
+                                                        key={`instance-${instance.id}`}
+                                                        style={{
+                                                            fontSize: 10,
+                                                            fontWeight: 500,
+                                                            backgroundColor: theme.colors.gray[5],
+                                                            padding: "0 4px",
+                                                            borderRadius: theme.radius.sm,
+                                                            color: theme.white,
+                                                        }}
+                                                    >
+                                                        {instance.title.length > 15
+                                                            ? `${instance.title.slice(0, 12)}…`
+                                                            : instance.title}
+                                                    </Text>
+                                                ))}
+                                            </Group>
+                                        </>
+                                    ))}
+                                </Group>
+                                <Group>
+                                 <Text style={{ fontSize: 11, color: "#999" }}>
+                                    Символов: {scene.totalSymbolCountWithSpaces}
+                                </Text>
+                                </Group>
+                                </>
+                            )}
+                        </Stack>
 
-      <MoveSceneModal
-        opened={openedMoveModal}
-        onClose={closeMoveModal}
-        onMove={handleMove}
-        currentChapterId={scene.chapterId}
-      />
-    </>
-  );
+                        {/* ---------- actions ---------- */}
+                        <Menu withinPortal shadow="md" position="left-start">
+                            <Menu.Target>
+                                <ActionIcon
+                                    variant="subtle"
+                                    onClick={(e) => e.stopPropagation()}
+                                    style={{
+                                        opacity: hovered || isMobile ? 1 : 0,
+                                        transition: "opacity .15s ease",
+                                    }}
+                                >
+                                    <IconDotsVertical size={16} />
+                                </ActionIcon>
+                            </Menu.Target>
+                            <Menu.Dropdown>
+                                <Menu.Item
+                                    icon={<IconArrowUp size={14} />}
+                                    disabled={currentIndex <= 0}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleMoveUp();
+                                    }}
+                                >
+                                    Переместить вверх
+                                </Menu.Item>
+                                <Menu.Item
+                                    icon={<IconArrowDown size={14} />}
+                                    disabled={currentIndex >= scenesInChapter.length - 1}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleMoveDown();
+                                    }}
+                                >
+                                    Переместить вниз
+                                </Menu.Item>
+                                <Menu.Item
+                                    icon={<IconArrowRightCircle size={14} />}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        openMoveModal();
+                                    }}
+                                >
+                                    Переместить в главу
+                                </Menu.Item>
+                                <Menu.Item
+                                    icon={<IconTrash size={14} />}
+                                    color="red"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        openDeleteModal();
+                                    }}
+                                >
+                                    Удалить сцену
+                                </Menu.Item>
+                            </Menu.Dropdown>
+                        </Menu>
+                    </Group>
+                </Table.Td>
+            </Table.Tr>
+
+            {/* ----- MODALS ----- */}
+            <DeleteConfirmationModal
+                opened={openedDeleteModal}
+                onClose={closeDeleteModal}
+                onConfirm={handleDelete}
+                title="Удалить сцену?"
+                message="Вы уверены, что хотите удалить эту сцену?"
+            />
+
+            <MoveSceneModal
+                opened={openedMoveModal}
+                onClose={closeMoveModal}
+                onMove={handleMove}
+                currentChapterId={scene.chapterId}
+            />
+        </>
+    );
+
 };
