@@ -3,12 +3,14 @@ import {
   ActionIcon,
   Box,
   Button,
+  Modal,
   Group,
   Paper,
   Stack,
   Text,
   Textarea,
   Select,
+  TextInput,
 } from "@mantine/core";
 import { IconNote } from "@tabler/icons-react";
 import moment from "moment";
@@ -21,6 +23,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import "github-markdown-css/github-markdown.css";
 import { notifications } from "@mantine/notifications";
+import MarkdownIt from "markdown-it";
 import { bookAgent, AgentMessage } from "@/agents/bookAgent";
 import {
   createBlock,
@@ -33,6 +36,9 @@ export const BookAgentChat = () => {
   const [question, setQuestion] = useState("");
   const [messages, setMessages] = useState<AgentMessage[]>([]);
   const [loading, setLoading] = useState(false);
+  const [noteModalOpen, setNoteModalOpen] = useState(false);
+  const [noteTitle, setNoteTitle] = useState("");
+  const [noteContent, setNoteContent] = useState("");
   const {
     openRouterModels,
     currentOpenRouterModel,
@@ -139,7 +145,9 @@ export const BookAgentChat = () => {
 
   const { selectedBook } = useBookStore();
 
-  const handleCreateNote = async (content: string) => {
+  const md = new MarkdownIt();
+
+  const handleCreateNote = async (title: string, content: string) => {
     if (!selectedBook) {
       notifications.show({ message: "Книга не выбрана", color: "orange" });
       return;
@@ -164,9 +172,9 @@ export const BookAgentChat = () => {
 
       const note = {
         uuid: generateUUID(),
-        title: content.slice(0, 30) || "Заметка",
+        title: title || content.slice(0, 30) || "Заметка",
         tags: "",
-        body: content,
+        body: md.render(content),
         noteGroupUuid: group.uuid,
         bookUuid: selectedBook.uuid,
         updatedAt: moment().toISOString(true),
@@ -210,7 +218,11 @@ export const BookAgentChat = () => {
               {m.role === "assistant" && (
                 <ActionIcon
                   variant="subtle"
-                  onClick={() => handleCreateNote(m.content)}
+                  onClick={() => {
+                    setNoteContent(m.content);
+                    setNoteTitle(m.content.slice(0, 30) || "Заметка");
+                    setNoteModalOpen(true);
+                  }}
                   title="Создать заметку"
                 >
                   <IconNote size={18} />
@@ -252,6 +264,24 @@ export const BookAgentChat = () => {
           Отправить
         </Button>
       </Stack>
+      <Modal
+        opened={noteModalOpen}
+        onClose={() => setNoteModalOpen(false)}
+        title="Новая заметка"
+      >
+        <TextInput
+          label="Название"
+          value={noteTitle}
+          onChange={(e) => setNoteTitle(e.currentTarget.value)}
+          mb="md"
+        />
+        <Button fullWidth onClick={() => {
+          handleCreateNote(noteTitle, noteContent);
+          setNoteModalOpen(false);
+        }}>
+          Сохранить
+        </Button>
+      </Modal>
     </Box>
   );
 };
