@@ -90,7 +90,7 @@ export const SceneManager = (props: SceneManagerProps) => {
 
   const navigate = useNavigate();
   const { isMobile } = useMedia();
-  const collapsedCount = 0;// useBookStore((state) => state.collapsedChapters.size);
+  const collapsedCount =  useBookStore((state) => state.collapsedChapters.size);
   const { createChapter } = useChapters(props.chapters);
 
   const { createScene } = useScenes(props.scenes);
