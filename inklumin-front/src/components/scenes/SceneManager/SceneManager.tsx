@@ -29,6 +29,7 @@ import {
 } from "@mantine/core";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 import { bookDb } from "@/entities/bookDb";
+import { useMantineTheme } from "@mantine/core";
 import { IChapter, ISceneWithInstances } from "@/entities/BookEntities";
 import { IBlock } from "@/entities/ConstructorEntities";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
@@ -50,6 +51,9 @@ export interface SceneManagerProps {
   chapterOnly?: boolean;
 }
 export const SceneManager = (props: SceneManagerProps) => {
+
+  const theme = useMantineTheme();
+
   const { setTitleElement } = usePageTitle();
   const [openedCreateModal, { open: openCreateModal, close: closeCreateModal }] =
     useDisclosure(false);
