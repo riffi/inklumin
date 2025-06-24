@@ -1,7 +1,6 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { notifications } from "@mantine/notifications";
-import { bookDb } from "@/entities/bookDb";
-import { configDatabase } from "@/entities/configuratorDb";
+import { useDb } from "@/hooks/useDb";
 import {
   IBlockParameter,
   IBlockParameterGroup,
@@ -19,7 +18,7 @@ export const useBlockParams = (
   bookUuid?: string,
   currentGroupUuid?: string,
 ) => {
-  const db = bookUuid ? bookDb : configDatabase;
+  const db = useDb(bookUuid);
   const isBookDb = !!bookUuid;
 
   const paramGroupList = useLiveQuery<IBlockParameterGroup[]>(() => {

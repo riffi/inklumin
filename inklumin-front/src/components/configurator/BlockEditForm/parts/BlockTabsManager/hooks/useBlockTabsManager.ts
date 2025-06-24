@@ -1,8 +1,7 @@
 // useBlockTabsManager.ts
 import { useLiveQuery } from "dexie-react-hooks";
 import { notifications } from "@mantine/notifications";
-import { bookDb } from "@/entities/bookDb";
-import { configDatabase } from "@/entities/configuratorDb";
+import { useDb } from "@/hooks/useDb";
 import { IBlock, IBlockTab } from "@/entities/ConstructorEntities";
 import { BlockTabRepository } from "@/repository/Block/BlockTabRepository";
 
@@ -12,7 +11,7 @@ interface UseBlockTabsManagerProps {
 }
 
 export const useBlockTabsManager = ({ bookUuid, blockUuid }: UseBlockTabsManagerProps) => {
-  const db = bookUuid ? bookDb : configDatabase;
+  const db = useDb(bookUuid);
   const isBookDb = !!bookUuid;
 
   const tabs = useLiveQuery<IBlockTab[]>(() => {

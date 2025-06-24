@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { notifications } from "@mantine/notifications";
-import { BookDB, bookDb } from "@/entities/bookDb";
-import { configDatabase } from "@/entities/configuratorDb";
+import { useDb } from "@/hooks/useDb";
 import { BlockRelationType, IBlock, IBlockRelation } from "@/entities/ConstructorEntities";
 import { BlockRelationRepository } from "@/repository/Block/BlockRelationRepository";
 import { generateUUID } from "@/utils/UUIDUtils";
 
 export const useRelationManager = (block: IBlock, bookUuid?: string, otherBlocks?: IBlock[]) => {
-  const db = bookUuid ? bookDb : configDatabase;
+  const db = useDb(bookUuid);
   const isBookDb = !!bookUuid;
   const blockUuid = block.uuid;
 

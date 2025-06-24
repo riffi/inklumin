@@ -1,7 +1,6 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { InkLuminApiError } from "@/api/inkLuminMlApi";
-import { bookDb } from "@/entities/bookDb";
-import { configDatabase } from "@/entities/configuratorDb";
+import { useDb } from "@/hooks/useDb";
 import {
   IBlock,
   IBlockParameterGroup,
@@ -20,7 +19,7 @@ export const useBookConfigurationEditForm = (
 ) => {
   const { showDialog } = useDialog();
 
-  const db = bookUuid ? bookDb : configDatabase;
+  const db = useDb(bookUuid);
   const isBookDb = !!bookUuid;
 
   // Данные конфигурации

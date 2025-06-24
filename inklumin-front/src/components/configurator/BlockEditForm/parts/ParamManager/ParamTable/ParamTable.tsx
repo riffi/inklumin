@@ -10,8 +10,7 @@ import {
 } from "@tabler/icons-react";
 import { ActionIcon, Badge, Box, Button, Group, Menu, Space, Table, Text } from "@mantine/core";
 import { KnowledgeBasePageEditor } from "@/components/knowledgeBase/KnowledgeBasePageEditor";
-import { bookDb } from "@/entities/bookDb";
-import { configDatabase } from "@/entities/configuratorDb";
+import { useDb } from "@/hooks/useDb";
 import {
   IBlock,
   IBlockParameter,
@@ -61,7 +60,7 @@ export const ParamTable = ({
   const [configurationUuid, setConfigurationUuid] = useState<string>();
 
   useEffect(() => {
-    const db = bookUuid ? bookDb : configDatabase;
+    const db = useDb(bookUuid);
     db.blocks
       .where("uuid")
       .equals(blockUuid)
@@ -72,7 +71,7 @@ export const ParamTable = ({
   }, [bookUuid, blockUuid]);
 
   const handleSavePage = async (page: IKnowledgeBasePage) => {
-    const db = bookUuid ? bookDb : configDatabase;
+    const db = useDb(bookUuid);
     if (kbParam?.id) {
       await db.blockParameters.update(kbParam.id, { knowledgeBasePageUuid: page.uuid });
     }

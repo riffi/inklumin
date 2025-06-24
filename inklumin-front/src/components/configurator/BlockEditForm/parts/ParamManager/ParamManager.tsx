@@ -7,8 +7,7 @@ import { GroupsModal } from "@/components/configurator/BlockEditForm/parts/Param
 import { ParamEditModal } from "@/components/configurator/BlockEditForm/parts/ParamManager/modal/ParamEditModal/ParamEditModal";
 import { ParamTable } from "@/components/configurator/BlockEditForm/parts/ParamManager/ParamTable/ParamTable";
 import { useBlockParams } from "@/components/configurator/BlockEditForm/useBlockParams";
-import { bookDb } from "@/entities/bookDb";
-import { configDatabase } from "@/entities/configuratorDb";
+import { useDb } from "@/hooks/useDb";
 import {
   IBlock,
   IBlockParameter,
@@ -81,7 +80,7 @@ export const ParamManager = ({ blockUuid, bookUuid, useTabs, otherBlocks }: Para
 
   const handleMoveParamToGroup = useCallback(
     async (paramUuid: string, targetGroupUuid: string) => {
-      const db = bookUuid ? bookDb : configDatabase;
+      const db = useDb(bookUuid);
       const paramToMove = await db.blockParameters.get({ uuid: paramUuid });
 
       if (paramToMove) {

@@ -1,8 +1,7 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { notifications } from "@mantine/notifications";
 import { InkLuminApiError } from "@/api/inkLuminMlApi";
-import { bookDb } from "@/entities/bookDb";
-import { configDatabase } from "@/entities/configuratorDb";
+import { useDb } from "@/hooks/useDb";
 import {
   IBlock,
   IBlockRelation,
@@ -18,7 +17,7 @@ export const useBlockEditForm = (
   bookUuid?: string,
   currentGroupUuid?: string
 ) => {
-  const db = bookUuid ? bookDb : configDatabase;
+  const db = useDb(bookUuid);
   const isBookDb = !!bookUuid;
 
   const block = useLiveQuery<IBlock>(() => {

@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import MDEditor from "@uiw/react-md-editor";
 import { Button, Modal, Stack, TextInput } from "@mantine/core";
-import { bookDb } from "@/entities/bookDb";
-import { configDatabase } from "@/entities/configuratorDb";
+import { useDb } from "@/hooks/useDb";
 import { IKnowledgeBasePage } from "@/entities/KnowledgeBaseEntities";
 import { KnowledgeBaseRepository } from "@/repository/KnowledgeBaseRepository";
 import { generateUUID } from "@/utils/UUIDUtils";
@@ -24,7 +23,7 @@ export const KnowledgeBasePageEditor = ({
   bookUuid,
   onSave,
 }: KnowledgeBasePageEditorProps) => {
-  const db = bookUuid ? bookDb : configDatabase;
+  const db = useDb(bookUuid);
   const [title, setTitle] = useState("");
   const [markdown, setMarkdown] = useState("");
 

@@ -1,7 +1,6 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { notifications } from "@mantine/notifications";
-import { bookDb } from "@/entities/bookDb";
-import { configDatabase } from "@/entities/configuratorDb";
+import { useDb } from "@/hooks/useDb";
 import { IBlock } from "@/entities/ConstructorEntities";
 import { BlockRepository } from "@/repository/Block/BlockRepository";
 
@@ -10,7 +9,7 @@ export const useChildBlocksManager = (
   bookUuid?: string,
   otherBlocks: IBlock[]
 ) => {
-  const db = bookUuid ? bookDb : configDatabase;
+  const db = useDb(bookUuid);
 
   const childrenBlocks = useLiveQuery<IBlock[]>(() => {
     return BlockRepository.getChildren(db, blockUuid);
