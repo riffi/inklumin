@@ -1,5 +1,5 @@
 // BlockEditForm.tsx
-import React, {useEffect, useState} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Anchor,
   Breadcrumbs,
@@ -15,10 +15,11 @@ import { MainTabContent } from "@/components/configurator/BlockEditForm/parts/Ma
 import { ParamManager } from "@/components/configurator/BlockEditForm/parts/ParamManager/ParamManager";
 import { RelationManager } from "@/components/configurator/BlockEditForm/parts/RelationManager/RelationManager";
 import { useBlockEditForm } from "@/components/configurator/BlockEditForm/useBlockEditForm";
+import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
+import { usePageTitle } from "@/providers/PageTitleProvider/PageTitleProvider";
+import { getBlockTitle } from "@/utils/configUtils";
+import { BlockEditTab, blockEditTabOptions } from "./BlockEditTabs";
 import classes from "./BlockEditForm.module.css";
-import {useMedia} from "@/providers/MediaQueryProvider/MediaQueryProvider";
-import {usePageTitle} from "@/providers/PageTitleProvider/PageTitleProvider";
-import {getBlockTitle} from "@/utils/configUtils";
 
 interface IBlockEditFormProps {
   blockUuid: string;
@@ -26,11 +27,10 @@ interface IBlockEditFormProps {
 }
 
 export const BlockEditForm = ({ blockUuid, bookUuid }: IBlockEditFormProps) => {
-  const {isMobile} = useMedia()
+  const { isMobile } = useMedia();
   const { setPageTitle } = usePageTitle();
-  const [activeTab, setActiveTab] = useState<
-    "main" | "parameters" | "relations" | "children" | "tabs"
-  >("main");
+  const [activeTab, setActiveTab] = useState<BlockEditTab>(BlockEditTab.main);
+  const handleTabChange = useCallback((value: string) => setActiveTab(value as BlockEditTab), []);
 
   const {
     saveBlock,
@@ -42,22 +42,26 @@ export const BlockEditForm = ({ blockUuid, bookUuid }: IBlockEditFormProps) => {
     blockRelations,
   } = useBlockEditForm(blockUuid, bookUuid);
 
-    useEffect(() => {
-        setPageTitle(getBlockTitle(block))
-    }, [blockUuid, block]);
+  useEffect(() => {
+    setPageTitle(getBlockTitle(block));
+  }, [blockUuid, block]);
 
-  const breadCrumbs = [
-    { title: "Конфигуратор", href: "/configurator" },
-    {
-      title: configuration?.title,
-      href: `/configuration/edit?uuid=${configuration?.uuid}`,
-    },
-    { title: block?.title, href: "#" },
-  ].map((item, index) => (
-    <Anchor href={item.href} key={index}>
-      {item.title}
-    </Anchor>
-  ));
+  const breadCrumbs = useMemo(
+    () =>
+      [
+        { title: "Конфигуратор", href: "/configurator" },
+        {
+          title: configuration?.title,
+          href: `/configuration/edit?uuid=${configuration?.uuid}`,
+        },
+        { title: block?.title, href: "#" },
+      ].map((item, index) => (
+        <Anchor href={item.href} key={index}>
+          {item.title}
+        </Anchor>
+      )),
+    [configuration?.title, configuration?.uuid, block?.title]
+  );
 
   if (!block) {
     return (
@@ -69,16 +73,15 @@ export const BlockEditForm = ({ blockUuid, bookUuid }: IBlockEditFormProps) => {
 
   return (
     <Container size="lg" py="md" className={classes.container}>
-      {!isMobile &&
-      <>
+      {!isMobile && (
+        <>
           <h1>Блок: {block?.title}</h1>
           <Breadcrumbs separator="→" separatorMargin="md" mt="xs">
             {breadCrumbs}
           </Breadcrumbs>
           <Space h="md" />
-      </>
-      }
-
+        </>
+      )}
 
       <Group mb="md" pos="relative" style={{ overflow: "visible" }}>
         <ScrollArea
@@ -91,14 +94,8 @@ export const BlockEditForm = ({ blockUuid, bookUuid }: IBlockEditFormProps) => {
         >
           <SegmentedControl
             value={activeTab}
-            onChange={(value) => setActiveTab(value)}
-            data={[
-              { value: "main", label: "Основное" },
-              { value: "parameters", label: "Параметры" },
-              { value: "relations", label: "Связи" },
-              { value: "children", label: "Дочерние" },
-              { value: "tabs", label: "Вкладки" },
-            ]}
+            onChange={handleTabChange}
+            data={blockEditTabOptions}
             styles={{
               root: {
                 minWidth: 380,
@@ -108,11 +105,11 @@ export const BlockEditForm = ({ blockUuid, bookUuid }: IBlockEditFormProps) => {
         </ScrollArea>
       </Group>
 
-      {activeTab === "main" && (
+      {activeTab === BlockEditTab.main && (
         <MainTabContent block={block} onSave={saveBlock} bookUuid={bookUuid} />
       )}
 
-      {activeTab === "parameters" && (
+      {activeTab === BlockEditTab.parameters && (
         <ParamManager
           blockUuid={blockUuid}
           bookUuid={bookUuid}
@@ -123,11 +120,11 @@ export const BlockEditForm = ({ blockUuid, bookUuid }: IBlockEditFormProps) => {
         />
       )}
 
-      {activeTab === "relations" && (
+      {activeTab === BlockEditTab.relations && (
         <RelationManager otherBlocks={otherBlocks || []} block={block} bookUuid={bookUuid} />
       )}
 
-      {activeTab === "children" && (
+      {activeTab === BlockEditTab.children && (
         <ChildBlocksManager
           otherBlocks={otherBlocks || []}
           blockUuid={blockUuid}
@@ -135,7 +132,7 @@ export const BlockEditForm = ({ blockUuid, bookUuid }: IBlockEditFormProps) => {
         />
       )}
 
-      {activeTab === "tabs" && (
+      {activeTab === BlockEditTab.tabs && (
         <BlockTabsManager
           otherRelations={blockRelations || []}
           currentBlockUuid={blockUuid}

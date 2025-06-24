@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { IconEdit, IconPlus, IconTrash } from "@tabler/icons-react";
 import { ActionIcon, Button, Group, Table, Text } from "@mantine/core";
 import { useChildBlocksManager } from "@/components/configurator/BlockEditForm/parts/ChildBlocksManager/hook/useChildBlockManager";
@@ -22,14 +22,17 @@ export const ChildBlocksManager = ({
   const { childrenBlocks, availableBlocks, linkChild, updateChildDisplayKind, unlinkChild } =
     useChildBlocksManager(blockUuid, bookUuid, otherBlocks);
 
-  const handleSave = async (blockUuid: string, displayKind: string) => {
-    if (editingBlock) {
-      await updateChildDisplayKind(editingBlock.uuid!, displayKind);
-    } else {
-      await linkChild(blockUuid, displayKind);
-    }
-    setEditingBlock(null);
-  };
+  const handleSave = useCallback(
+    async (blockUuid: string, displayKind: string) => {
+      if (editingBlock) {
+        await updateChildDisplayKind(editingBlock.uuid!, displayKind);
+      } else {
+        await linkChild(blockUuid, displayKind);
+      }
+      setEditingBlock(null);
+    },
+    [editingBlock, updateChildDisplayKind, linkChild]
+  );
 
   return (
     <div>

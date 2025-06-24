@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { IconArrowDown, IconArrowUp, IconEdit, IconPlus, IconTrash } from "@tabler/icons-react";
 import { ActionIcon, Button, Group, Table, Text } from "@mantine/core";
 import { useBlockTabsManager } from "@/components/configurator/BlockEditForm/parts/BlockTabsManager/hooks/useBlockTabsManager";
@@ -20,6 +20,10 @@ export const BlockTabsManager = ({
 }: BlockTabsManagerProps) => {
   const [editingTab, setEditingTab] = useState<IBlockTab | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = useCallback((tab?: IBlockTab) => {
+    setEditingTab(tab || null);
+    setIsModalOpen(true);
+  }, []);
 
   const { tabs, childBlocks, referencingParams, saveTab, deleteTab, moveTabUp, moveTabDown } =
     useBlockTabsManager({
@@ -36,27 +40,30 @@ export const BlockTabsManager = ({
     return otherBlocks.find((b) => b.uuid === relatedBlockUuid)?.title || "Неизвестный блок";
   };
 
-  const handleSave = async (tabData: Omit<IBlockTab, "id">) => {
-    if (editingTab) {
-      await saveTab({ ...editingTab, ...tabData });
-    } else {
-      await saveTab({
-        ...tabData,
-        blockUuid: currentBlockUuid,
-        uuid: "",
-        orderNumber: tabs.length,
-      });
-    }
-    setIsModalOpen(false);
-    setEditingTab(null);
-  };
+  const handleSave = useCallback(
+    async (tabData: Omit<IBlockTab, "id">) => {
+      if (editingTab) {
+        await saveTab({ ...editingTab, ...tabData });
+      } else {
+        await saveTab({
+          ...tabData,
+          blockUuid: currentBlockUuid,
+          uuid: "",
+          orderNumber: tabs.length,
+        });
+      }
+      setIsModalOpen(false);
+      setEditingTab(null);
+    },
+    [editingTab, saveTab, currentBlockUuid, tabs?.length]
+  );
 
   return (
     <div>
       <Group justify="flex-start" mb="md">
         <Button
           leftSection={<IconPlus size="1rem" />}
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => openModal()}
           size="sm"
           variant="light"
         >
@@ -87,13 +94,7 @@ export const BlockTabsManager = ({
               </Table.Td>
               <Table.Td>
                 <Group gap="xs">
-                  <ActionIcon
-                    variant="subtle"
-                    onClick={() => {
-                      setEditingTab(tab);
-                      setIsModalOpen(true);
-                    }}
-                  >
+                  <ActionIcon variant="subtle" onClick={() => openModal(tab)}>
                     <IconEdit size="1rem" />
                   </ActionIcon>
                   <ActionIcon variant="subtle" color="red" onClick={() => deleteTab(tab.uuid!)}>

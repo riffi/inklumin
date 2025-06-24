@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { IconEdit, IconPlus, IconTrash } from "@tabler/icons-react";
 import { ActionIcon, Button, Group, Table } from "@mantine/core";
 import { useRelationManager } from "@/components/configurator/BlockEditForm/parts/RelationManager/hook/useRelationManager";
@@ -25,24 +26,32 @@ export const RelationManager = ({ otherBlocks, block, bookUuid }: RelationManage
     return relation.targetBlockUuid === block.uuid || relation.sourceBlockUuid === block.uuid;
   };
 
-  const rows = blockRelations?.map((relation) => (
-    <Table.Tr key={relation.uuid}>
-      <Table.Td>
-        {otherBlocks?.find((b) => blockCorrespondsToRelation(b, relation))?.title}
-      </Table.Td>
-      <Table.Td>{relation.relationType}</Table.Td>
-      <Table.Td>
-        <Group gap={4}>
-          <ActionIcon variant="subtle" onClick={() => handleOpenModal(relation)}>
-            <IconEdit size="1rem" />
-          </ActionIcon>
-          <ActionIcon variant="subtle" color="red" onClick={() => deleteRelation(relation.uuid!)}>
-            <IconTrash size="1rem" />
-          </ActionIcon>
-        </Group>
-      </Table.Td>
-    </Table.Tr>
-  ));
+  const rows = useMemo(
+    () =>
+      blockRelations?.map((relation) => (
+        <Table.Tr key={relation.uuid}>
+          <Table.Td>
+            {otherBlocks?.find((b) => blockCorrespondsToRelation(b, relation))?.title}
+          </Table.Td>
+          <Table.Td>{relation.relationType}</Table.Td>
+          <Table.Td>
+            <Group gap={4}>
+              <ActionIcon variant="subtle" onClick={() => handleOpenModal(relation)}>
+                <IconEdit size="1rem" />
+              </ActionIcon>
+              <ActionIcon
+                variant="subtle"
+                color="red"
+                onClick={() => deleteRelation(relation.uuid!)}
+              >
+                <IconTrash size="1rem" />
+              </ActionIcon>
+            </Group>
+          </Table.Td>
+        </Table.Tr>
+      )),
+    [blockRelations, otherBlocks, deleteRelation, handleOpenModal]
+  );
 
   return (
     <div>
