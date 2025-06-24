@@ -12,7 +12,7 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useBlockEditForm } from "@/components/configurator/BlockEditForm/useBlockEditForm";
+import { useBlockParams } from "@/components/configurator/BlockEditForm/useBlockParams";
 import {
   IBlock,
   IBlockParameter,
@@ -39,7 +39,7 @@ interface IBlockEditModalProps {
 export const ParamEditModal = (props: IBlockEditModalProps) => {
   const [possibleValues, setPossibleValues] = useState<string[]>([]);
   const [newValue, setNewValue] = useState("");
-  const { loadPossibleValues, savePossibleValues } = useBlockEditForm(
+  const { loadPossibleValues, savePossibleValues } = useBlockParams(
     props.blockUuid,
     props.bookUuid
   );

@@ -6,7 +6,7 @@ import { notifications } from "@mantine/notifications";
 import { GroupsModal } from "@/components/configurator/BlockEditForm/parts/ParamManager/modal/GroupsModal/GroupsModal";
 import { ParamEditModal } from "@/components/configurator/BlockEditForm/parts/ParamManager/modal/ParamEditModal/ParamEditModal";
 import { ParamTable } from "@/components/configurator/BlockEditForm/parts/ParamManager/ParamTable/ParamTable";
-import { useBlockEditForm } from "@/components/configurator/BlockEditForm/useBlockEditForm";
+import { useBlockParams } from "@/components/configurator/BlockEditForm/useBlockParams";
 import { bookDb } from "@/entities/bookDb";
 import { configDatabase } from "@/entities/configuratorDb";
 import {
@@ -43,7 +43,7 @@ export const ParamManager = ({ blockUuid, bookUuid, useTabs, otherBlocks }: Para
     deleteGroup,
     moveParamUp,
     moveParamDown,
-  } = useBlockEditForm(blockUuid, bookUuid, currentGroupUuid);
+  } = useBlockParams(blockUuid, bookUuid, currentGroupUuid);
 
   useEffect(() => {
     if (paramGroupList?.length > 0 && !currentGroupUuid) {
@@ -84,7 +84,7 @@ export const ParamManager = ({ blockUuid, bookUuid, useTabs, otherBlocks }: Para
 
       if (paramToMove) {
         const updatedParam = { ...paramToMove, groupUuid: targetGroupUuid };
-        await saveParam(updatedParam); // saveParam is from useBlockEditForm
+        await saveParam(updatedParam); // saveParam из useBlockParams
         notifications.show({
           title: "Параметр перемещен",
           message: `Параметр "${paramToMove.title}" успешно перемещен.`,
