@@ -1,13 +1,22 @@
 import { useState } from "react";
 import {
+  ActionIcon,
   Box,
   Button,
+  Group,
   Paper,
   Stack,
   Text,
   Textarea,
   Select,
 } from "@mantine/core";
+import { IconNote } from "@tabler/icons-react";
+import moment from "moment";
+import { useBookStore } from "@/stores/bookStore/bookStore";
+import { configDatabase } from "@/entities/configuratorDb";
+import { NoteGroupRepository } from "@/repository/Note/NoteGroupRepository";
+import { NoteRepository } from "@/repository/Note/NoteRepository";
+import { generateUUID } from "@/utils/UUIDUtils";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import "github-markdown-css/github-markdown.css";
@@ -128,6 +137,50 @@ export const BookAgentChat = () => {
     return parts;
   };
 
+  const { selectedBook } = useBookStore();
+
+  const handleCreateNote = async (content: string) => {
+    if (!selectedBook) {
+      notifications.show({ message: "Книга не выбрана", color: "orange" });
+      return;
+    }
+
+    try {
+      let group = await configDatabase.notesGroups
+        .where("title")
+        .equals(selectedBook.title)
+        .first();
+
+      if (!group) {
+        group = await NoteGroupRepository.create(configDatabase, {
+          title: selectedBook.title,
+          parentUuid: "topLevel",
+        });
+      }
+
+      if (!group || !group.uuid) {
+        throw new Error("Не удалось создать папку для заметок");
+      }
+
+      const note = {
+        uuid: generateUUID(),
+        title: content.slice(0, 30) || "Заметка",
+        tags: "",
+        body: content,
+        noteGroupUuid: group.uuid,
+        bookUuid: selectedBook.uuid,
+        updatedAt: moment().toISOString(true),
+      };
+
+      await NoteRepository.save(configDatabase, note as any);
+      notifications.show({ message: "Заметка создана", color: "green" });
+    } catch (e: any) {
+      notifications.show({
+        message: e.message || "Ошибка создания заметки",
+        color: "red",
+      });
+    }
+  };
 
   const handleAction = async (act: string, params: any) => {
     console.log('handleAction', act, params)
@@ -152,9 +205,18 @@ export const BookAgentChat = () => {
       <Stack>
         {messages.map((m, idx) => (
           <Paper key={idx} shadow="xs" p="sm" radius="md">
-            <Text fw={700} mb="xs">
-              {m.role === "user" ? "Вы" : "Агент"}
-            </Text>
+            <Group justify="space-between" mb="xs">
+              <Text fw={700}>{m.role === "user" ? "Вы" : "Агент"}</Text>
+              {m.role === "assistant" && (
+                <ActionIcon
+                  variant="subtle"
+                  onClick={() => handleCreateNote(m.content)}
+                  title="Создать заметку"
+                >
+                  <IconNote size={18} />
+                </ActionIcon>
+              )}
+            </Group>
             {m.role === "assistant" ? (
               <div className="markdown-body">
                 {parseParts(m.content).map((p, i) =>
