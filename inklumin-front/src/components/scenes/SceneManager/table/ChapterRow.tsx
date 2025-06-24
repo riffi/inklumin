@@ -1,3 +1,6 @@
+import React, {
+  useCallback,
+} from "react";
 import {
   IconChevronDown,
   IconChevronRight,
@@ -29,7 +32,7 @@ interface ChapterRowProps {
   chapterOnly?: boolean;
 }
 
-export const ChapterRow = ({
+const ChapterRowComponent = ({
   chapter,
   scenes,
   onAddScene,
@@ -48,31 +51,27 @@ export const ChapterRow = ({
   const { deleteChapter, updateChapter } = useChapters(chapters);
   const { deleteScene } = useScenes(scenes);
 
-  const handleDeleteChapter = async () => {
+  const handleDeleteChapter = useCallback(async () => {
     try {
       await deleteChapter(chapter.id);
       closeDeleteModal();
     } catch (error) {
       console.error("Failed to delete chapter:", error);
     }
-  };
+  }, [chapter.id, deleteChapter, closeDeleteModal]);
 
-  const handleUpdateChapter = async (newTitle: string) => {
-    try {
-      await updateChapter(chapter.id, newTitle);
-      closeEditModal();
-    } catch (error) {
-      console.error("Failed to update chapter:", error);
-    }
-  };
+  const handleUpdateChapter = useCallback(
+    async (newTitle: string) => {
+      try {
+        await updateChapter(chapter.id, newTitle);
+        closeEditModal();
+      } catch (error) {
+        console.error("Failed to update chapter:", error);
+      }
+    },
+    [chapter.id, updateChapter, closeEditModal]
+  );
 
-  const handleDeleteScene = async (sceneId: number) => {
-    try {
-      await deleteScene(sceneId);
-    } catch (error) {
-      console.error("Failed to delete scene:", error);
-    }
-  };
 
   return (
     <>
@@ -150,15 +149,14 @@ export const ChapterRow = ({
               <Table highlightOnHover>
                 <Table.Tbody>
                   {scenes.map((scene, index, array) => (
-                    <SceneRow
-                      key={`scene-${scene.id}`}
-                      scene={scene}
-                      scenesInChapter={array}
-                      onUpdateChapter={handleDeleteScene}
-                      openScene={openScene}
-                      selectedSceneId={selectedSceneId}
-                      mode={mode}
-                      chapters={chapters}
+                  <SceneRow
+                    key={`scene-${scene.id}`}
+                    scene={scene}
+                    scenesInChapter={array}
+                    openScene={openScene}
+                    selectedSceneId={selectedSceneId}
+                    mode={mode}
+                    chapters={chapters}
                       scenes={scenes}
                     />
                   ))}
@@ -186,3 +184,15 @@ export const ChapterRow = ({
     </>
   );
 };
+
+const areEqual = (
+  prev: Readonly<ChapterRowProps>,
+  next: Readonly<ChapterRowProps>
+) =>
+  prev.chapter === next.chapter &&
+  prev.scenes === next.scenes &&
+  prev.selectedSceneId === next.selectedSceneId &&
+  prev.mode === next.mode &&
+  prev.chapterOnly === next.chapterOnly;
+
+export const ChapterRow = React.memo(ChapterRowComponent, areEqual);

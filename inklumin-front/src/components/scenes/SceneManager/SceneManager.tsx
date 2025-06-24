@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   IconChevronLeft,
   IconFilter,
@@ -68,9 +68,29 @@ export const SceneManager = (props: SceneManagerProps) => {
   const [availableBlocks, setAvailableBlocks] = useState<IBlock[]>([]);
   const [availableInstances, setAvailableInstances] = useState<any[]>([]);
 
+  const handleOpenCreateModal = useCallback(
+    (chapterId: number | null) => {
+      setChapterForNewScene(chapterId);
+      openCreateModal();
+    },
+    [openCreateModal]
+  );
+
+  const handleOpenScene = useCallback(
+    (sceneId: number, chapter?: IChapter) => {
+      props.openScene(sceneId, chapter);
+    },
+    [props.openScene]
+  );
+
+  const handleCloseCreateModal = useCallback(() => {
+    closeCreateModal();
+    setChapterForNewScene(null);
+  }, [closeCreateModal]);
+
   const navigate = useNavigate();
   const { isMobile } = useMedia();
-  const collapsedCount = useBookStore((state) => state.collapsedChapters.size);
+  const collapsedCount = 0;// useBookStore((state) => state.collapsedChapters.size);
   const { createChapter } = useChapters(props.chapters);
 
   const { createScene } = useScenes(props.scenes);
@@ -221,12 +241,7 @@ export const SceneManager = (props: SceneManagerProps) => {
             {!props.chapterOnly && (
               <>
                 <Tooltip label="Добавить сцену">
-                  <ActionIcon
-                    onClick={() => {
-                      setChapterForNewScene(null);
-                      openCreateModal();
-                    }}
-                  >
+                  <ActionIcon onClick={() => handleOpenCreateModal(null)}>
                     <IconNote size={16} />
                   </ActionIcon>
                 </Tooltip>
@@ -282,11 +297,8 @@ export const SceneManager = (props: SceneManagerProps) => {
       </Box>
 
       <SceneTable
-        openCreateModal={(chapterId) => {
-          setChapterForNewScene(chapterId);
-          openCreateModal();
-        }}
-        openScene={props.openScene}
+        openCreateModal={handleOpenCreateModal}
+        openScene={handleOpenScene}
         selectedSceneId={props.selectedSceneId}
         mode={props.mode}
         scenes={props.scenes}
@@ -298,10 +310,7 @@ export const SceneManager = (props: SceneManagerProps) => {
 
       <CreateSceneModal
         opened={openedCreateModal}
-        onClose={() => {
-          closeCreateModal();
-          setChapterForNewScene(null);
-        }}
+        onClose={handleCloseCreateModal}
         onCreate={handleCreateScene}
       />
 

@@ -17,7 +17,7 @@ interface SceneTableProps {
   chapterOnly?: boolean;
 }
 
-export const SceneTable = ({
+const SceneTableComponent = ({
   openCreateModal,
   openScene,
   selectedSceneId,
@@ -28,6 +28,8 @@ export const SceneTable = ({
   selectedInstanceUuid,
   chapterOnly,
 }: SceneTableProps) => {
+
+
   // Отфильтрованные сцены мемоизируются, чтобы избежать лишних вычислений
   const filteredScenes = React.useMemo(() => {
     if (!scenes) return [] as ISceneWithInstances[];
@@ -70,7 +72,7 @@ export const SceneTable = ({
     });
   }, [chapters, filteredScenes, searchQuery, selectedInstanceUuid, chapterOnly]);
 
-// Мемоизированная мапа сцен по главам
+  // Мемоизированная мапа сцен по главам
   const scenesByChapterId = React.useMemo(() => {
     const map = new Map<number | null, ISceneWithInstances[]>();
     for (const scene of filteredScenes) {
@@ -83,7 +85,7 @@ export const SceneTable = ({
     return map;
   }, [filteredScenes]);
 
-// Мемoизированная функция для получения сцен по главе
+  // Мемoизированная функция для получения сцен по главе
   const getScenesForChapter = (chapterId: number | null) => {
     return scenesByChapterId.get(chapterId) || [];
   };
@@ -146,3 +148,17 @@ export const SceneTable = ({
     </Table>
   );
 };
+
+const tableEqual = (
+  prev: Readonly<SceneTableProps>,
+  next: Readonly<SceneTableProps>
+) =>
+  prev.scenes === next.scenes &&
+  prev.chapters === next.chapters &&
+  prev.searchQuery === next.searchQuery &&
+  prev.selectedInstanceUuid === next.selectedInstanceUuid &&
+  prev.selectedSceneId === next.selectedSceneId &&
+  prev.mode === next.mode &&
+  prev.chapterOnly === next.chapterOnly;
+
+export const SceneTable = React.memo(SceneTableComponent, tableEqual);
