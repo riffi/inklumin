@@ -1,23 +1,19 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { notifications } from "@mantine/notifications";
-import { useDb } from "@/hooks/useDb";
+import type { BookDB } from "@/entities/bookDb";
 import {
   IBlockParameter,
   IBlockParameterGroup,
   IBlockStructureKind,
 } from "@/entities/ConstructorEntities";
+import { useDb } from "@/hooks/useDb";
 import { BlockParameterRepository } from "@/repository/Block/BlockParameterRepository";
 import { BlockRepository } from "@/repository/Block/BlockRepository";
 import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";
 import { BlockParameterInstanceRepository } from "@/repository/BlockInstance/BlockParameterInstanceRepository";
 import { generateUUID } from "@/utils/UUIDUtils";
-import type { BookDB } from "@/entities/bookDb";
 
-export const useBlockParams = (
-  blockUuid: string,
-  bookUuid?: string,
-  currentGroupUuid?: string,
-) => {
+export const useBlockParams = (blockUuid: string, bookUuid?: string, currentGroupUuid?: string) => {
   const db = useDb(bookUuid);
   const isBookDb = !!bookUuid;
 
@@ -25,10 +21,7 @@ export const useBlockParams = (
     if (!blockUuid || !db) {
       return;
     }
-    return db.blockParameterGroups
-      .where("blockUuid")
-      .equals(blockUuid)
-      .sortBy("orderNumber");
+    return db.blockParameterGroups.where("blockUuid").equals(blockUuid).sortBy("orderNumber");
   }, [blockUuid, db]);
 
   const paramList = useLiveQuery<IBlockParameter[]>(() => {
@@ -37,71 +30,33 @@ export const useBlockParams = (
         .where({ groupUuid: currentGroupUuid, blockUuid })
         .sortBy("orderNumber");
     }
-    return db.blockParameters
-      .where({ blockUuid })
-      .sortBy("orderNumber");
+    return db.blockParameters.where({ blockUuid }).sortBy("orderNumber");
   }, [blockUuid, currentGroupUuid]);
 
   const saveParam = async (param: IBlockParameter) => {
-    if (!param.id) {
-      param.uuid = generateUUID();
-      param.groupUuid = currentGroupUuid;
-      param.orderNumber = paramList?.length;
-      param.blockUuid = blockUuid;
-      const paramToSave: IBlockParameter = {
-        ...param,
-        knowledgeBasePageUuid: param.knowledgeBasePageUuid ?? undefined,
-      };
-      db.blockParameters.add(paramToSave);
-    } else {
-      const prevData = await db.blockParameters.get(param.id);
-      const paramToUpdate: IBlockParameter = {
-        ...param,
-        knowledgeBasePageUuid: param.knowledgeBasePageUuid ?? undefined,
-      };
-      db.blockParameters.update(param.id, paramToUpdate);
-
-      if (isBookDb && prevData && prevData.isDefault === 0 && param.isDefault === 1) {
-        const block = await BlockRepository.getByUuid(db, blockUuid);
-        if (block?.structureKind === IBlockStructureKind.single) {
-          const instances = await BlockInstanceRepository.getBlockInstances(
-            db as BookDB,
-            blockUuid,
-          );
-          for (const instance of instances) {
-            await BlockParameterInstanceRepository.appendDefaultParam(
-              db as BookDB,
-              instance,
-              param,
-            );
-          }
-        }
+    try {
+      if (!param.id) {
+        param.uuid = generateUUID();
+        param.groupUuid = currentGroupUuid;
+        param.orderNumber = paramList?.length;
+        param.blockUuid = blockUuid;
       }
+
+      await BlockParameterRepository.saveParam(db, blockUuid, param);
+      notifications.show({ title: "Успешно", message: "Параметр сохранён" });
+    } catch {
+      notifications.show({
+        title: "Ошибка",
+        message: "Не удалось сохранить параметр",
+        color: "red",
+      });
     }
   };
 
   const deleteParam = async (paramId: number) => {
     try {
-      await db.blockParameters.delete(paramId);
-      notifications.show({
-        title: "Успешно",
-        message: "Параметр удалён",
-      });
-
-      if (currentGroupUuid) {
-        const remainingParams = await db.blockParameters
-          .where("groupUuid")
-          .equals(currentGroupUuid)
-          .sortBy("orderNumber");
-
-        await Promise.all(
-          remainingParams.map((param, index) =>
-            db.blockParameters.update(param.id!, {
-              orderNumber: index,
-            }),
-          ),
-        );
-      }
+      await BlockParameterRepository.deleteParam(db, paramId);
+      notifications.show({ title: "Успешно", message: "Параметр удалён" });
     } catch {
       notifications.show({
         title: "Ошибка",
@@ -118,7 +73,7 @@ export const useBlockParams = (
     let siblings = paramList;
     if (targetParam.groupUuid) {
       siblings = paramList?.filter(
-        (p) => p.groupUuid === targetParam.groupUuid && p.blockUuid === targetParam.blockUuid,
+        (p) => p.groupUuid === targetParam.groupUuid && p.blockUuid === targetParam.blockUuid
       );
     } else {
       siblings = paramList?.filter((p) => !p.groupUuid && p.blockUuid === targetParam.blockUuid);
@@ -136,18 +91,9 @@ export const useBlockParams = (
       return;
     }
 
-    const precedingParam = siblings[currentIndex - 1];
-
-    const currentOrder = targetParam.orderNumber;
-    targetParam.orderNumber = precedingParam.orderNumber;
-    precedingParam.orderNumber = currentOrder;
-
     try {
-      await db.blockParameters.bulkPut([targetParam, precedingParam]);
-      notifications.show({
-        title: "Успешно",
-        message: "Параметр перемещен вверх.",
-      });
+      await BlockParameterRepository.moveParamUp(db, paramId);
+      notifications.show({ title: "Успешно", message: "Параметр перемещен вверх." });
     } catch {
       notifications.show({
         title: "Ошибка",
@@ -164,7 +110,7 @@ export const useBlockParams = (
     let siblings = paramList;
     if (targetParam.groupUuid) {
       siblings = paramList?.filter(
-        (p) => p.groupUuid === targetParam.groupUuid && p.blockUuid === targetParam.blockUuid,
+        (p) => p.groupUuid === targetParam.groupUuid && p.blockUuid === targetParam.blockUuid
       );
     } else {
       siblings = paramList?.filter((p) => !p.groupUuid && p.blockUuid === targetParam.blockUuid);
@@ -184,16 +130,9 @@ export const useBlockParams = (
 
     const succeedingParam = siblings[currentIndex + 1];
 
-    const currentOrder = targetParam.orderNumber;
-    targetParam.orderNumber = succeedingParam.orderNumber;
-    succeedingParam.orderNumber = currentOrder;
-
     try {
-      await db.blockParameters.bulkPut([targetParam, succeedingParam]);
-      notifications.show({
-        title: "Успешно",
-        message: "Параметр перемещен вниз.",
-      });
+      await BlockParameterRepository.moveParamDown(db, paramId);
+      notifications.show({ title: "Успешно", message: "Параметр перемещен вниз." });
     } catch {
       notifications.show({
         title: "Ошибка",
@@ -229,40 +168,11 @@ export const useBlockParams = (
   };
 
   const moveGroupUp = async (groupUuid: string) => {
-    const groups = await BlockParameterRepository.getParameterGroups(db, blockUuid);
-
-    const currentIndex = groups.findIndex((g) => g.uuid === groupUuid);
-    if (currentIndex <= 0) return;
-
-    const previousGroup = groups[currentIndex - 1];
-    const currentGroup = groups[currentIndex];
-
-    await db.blockParameterGroups.update(previousGroup.id!, {
-      orderNumber: currentGroup.orderNumber,
-    });
-    await db.blockParameterGroups.update(currentGroup.id!, {
-      orderNumber: previousGroup.orderNumber,
-    });
+    await BlockParameterRepository.moveGroupUp(db, blockUuid, groupUuid);
   };
 
   const moveGroupDown = async (groupUuid: string) => {
-    const groups = await db.blockParameterGroups
-      .where("blockUuid")
-      .equals(blockUuid)
-      .sortBy("orderNumber");
-
-    const currentIndex = groups.findIndex((g) => g.uuid === groupUuid);
-    if (currentIndex === -1 || currentIndex >= groups.length - 1) return;
-
-    const nextGroup = groups[currentIndex + 1];
-    const currentGroup = groups[currentIndex];
-
-    await db.blockParameterGroups.update(nextGroup.id!, {
-      orderNumber: currentGroup.orderNumber,
-    });
-    await db.blockParameterGroups.update(currentGroup.id!, {
-      orderNumber: nextGroup.orderNumber,
-    });
+    await BlockParameterRepository.moveGroupDown(db, blockUuid, groupUuid);
   };
 
   const updateGroupTitle = async (groupUuid: string, newTitle: string) => {

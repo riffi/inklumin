@@ -121,6 +121,181 @@ const getReferencingParametersFromBlock = async (db: BlockAbstractDb, blockUuid:
     .toArray();
 };
 
+const moveGroupUp = async (db: BlockAbstractDb, blockUuid: string, groupUuid: string) => {
+  const groups = await getParameterGroups(db, blockUuid);
+  const index = groups.findIndex((g) => g.uuid === groupUuid);
+  if (index > 0) {
+    const prev = groups[index - 1];
+    const curr = groups[index];
+    await Promise.all([
+      db.blockParameterGroups.update(prev.id!, { orderNumber: curr.orderNumber }),
+      db.blockParameterGroups.update(curr.id!, { orderNumber: prev.orderNumber }),
+    ]);
+    if (db instanceof BookDB) {
+      await updateBookLocalUpdatedAt(db as BookDB);
+    }
+  }
+};
+
+const moveGroupDown = async (db: BlockAbstractDb, blockUuid: string, groupUuid: string) => {
+  const groups = await getParameterGroups(db, blockUuid);
+  const index = groups.findIndex((g) => g.uuid === groupUuid);
+  if (index >= 0 && index < groups.length - 1) {
+    const curr = groups[index];
+    const next = groups[index + 1];
+    await Promise.all([
+      db.blockParameterGroups.update(next.id!, { orderNumber: curr.orderNumber }),
+      db.blockParameterGroups.update(curr.id!, { orderNumber: next.orderNumber }),
+    ]);
+    if (db instanceof BookDB) {
+      await updateBookLocalUpdatedAt(db as BookDB);
+    }
+  }
+};
+
+const moveParamUp = async (db: BlockAbstractDb, paramId: number) => {
+  const targetParam = await db.blockParameters.get(paramId);
+  if (!targetParam) return;
+
+  let siblings: IBlockParameter[] = [];
+  if (targetParam.groupUuid) {
+    siblings = await db.blockParameters
+      .where("groupUuid")
+      .equals(targetParam.groupUuid)
+      .sortBy("orderNumber");
+  } else {
+    siblings = await db.blockParameters
+      .where("blockUuid")
+      .equals(targetParam.blockUuid)
+      .filter((p) => !p.groupUuid)
+      .toArray();
+    siblings.sort((a, b) => a.orderNumber - b.orderNumber);
+  }
+
+  const index = siblings.findIndex((p) => p.id === paramId);
+  if (index > 0) {
+    const prev = siblings[index - 1];
+    const curr = siblings[index];
+    await db.blockParameters.bulkPut([
+      { ...prev, orderNumber: curr.orderNumber },
+      { ...curr, orderNumber: prev.orderNumber },
+    ]);
+    if (db instanceof BookDB) {
+      await updateBookLocalUpdatedAt(db as BookDB);
+    }
+  }
+};
+
+const moveParamDown = async (db: BlockAbstractDb, paramId: number) => {
+  const targetParam = await db.blockParameters.get(paramId);
+  if (!targetParam) return;
+
+  let siblings: IBlockParameter[] = [];
+  if (targetParam.groupUuid) {
+    siblings = await db.blockParameters
+      .where("groupUuid")
+      .equals(targetParam.groupUuid)
+      .sortBy("orderNumber");
+  } else {
+    siblings = await db.blockParameters
+      .where("blockUuid")
+      .equals(targetParam.blockUuid)
+      .filter((p) => !p.groupUuid)
+      .toArray();
+    siblings.sort((a, b) => a.orderNumber - b.orderNumber);
+  }
+
+  const index = siblings.findIndex((p) => p.id === paramId);
+  if (index >= 0 && index < siblings.length - 1) {
+    const curr = siblings[index];
+    const next = siblings[index + 1];
+    await db.blockParameters.bulkPut([
+      { ...next, orderNumber: curr.orderNumber },
+      { ...curr, orderNumber: next.orderNumber },
+    ]);
+    if (db instanceof BookDB) {
+      await updateBookLocalUpdatedAt(db as BookDB);
+    }
+  }
+};
+
+const saveParam = async (db: BlockAbstractDb, blockUuid: string, param: IBlockParameter) => {
+  if (!param.id) {
+    const newParam: IBlockParameter = {
+      ...param,
+      uuid: param.uuid || generateUUID(),
+      blockUuid,
+      knowledgeBasePageUuid: param.knowledgeBasePageUuid ?? undefined,
+    };
+    await db.blockParameters.add(newParam);
+  } else {
+    const prevData = await db.blockParameters.get(param.id);
+    const updated: IBlockParameter = {
+      ...param,
+      knowledgeBasePageUuid: param.knowledgeBasePageUuid ?? undefined,
+    };
+    await db.blockParameters.update(param.id, updated);
+
+    if (db instanceof BookDB && prevData && prevData.isDefault === 0 && param.isDefault === 1) {
+      const block = await db.blocks.where("uuid").equals(blockUuid).first();
+      if (block?.structureKind === "single") {
+        const instances = await (db as BookDB).blockInstances
+          .where("blockUuid")
+          .equals(blockUuid)
+          .toArray();
+        for (const inst of instances) {
+          await (db as BookDB).blockParameterInstances.add({
+            uuid: generateUUID(),
+            blockInstanceUuid: inst.uuid!,
+            blockParameterUuid: param.uuid!,
+            blockParameterGroupUuid: param.groupUuid,
+            value: "",
+            linkedBlockUuid: param.dataType === IBlockParameterDataType.blockLink ? "" : undefined,
+          });
+          await (db as BookDB).blockInstances.update(inst.id!, {
+            ...inst,
+            updatedAt: new Date().toISOString(),
+          });
+        }
+      }
+    }
+  }
+
+  if (db instanceof BookDB) {
+    await updateBookLocalUpdatedAt(db as BookDB);
+  }
+};
+
+const deleteParam = async (db: BlockAbstractDb, paramId: number) => {
+  const param = await db.blockParameters.get(paramId);
+  if (!param) return;
+
+  await db.blockParameters.delete(paramId);
+
+  let remaining: IBlockParameter[] = [];
+  if (param.groupUuid) {
+    remaining = await db.blockParameters
+      .where("groupUuid")
+      .equals(param.groupUuid)
+      .sortBy("orderNumber");
+  } else {
+    remaining = await db.blockParameters
+      .where("blockUuid")
+      .equals(param.blockUuid)
+      .filter((p) => !p.groupUuid)
+      .toArray();
+    remaining.sort((a, b) => a.orderNumber - b.orderNumber);
+  }
+
+  await Promise.all(
+    remaining.map((p, index) => db.blockParameters.update(p.id!, { orderNumber: index }))
+  );
+
+  if (db instanceof BookDB) {
+    await updateBookLocalUpdatedAt(db as BookDB);
+  }
+};
+
 export const BlockParameterRepository = {
   getParameterGroups,
   getParamsByGroup,
@@ -132,4 +307,10 @@ export const BlockParameterRepository = {
   updateParamPossibleValues,
   appendDefaultParamGroup,
   getReferencingParametersFromBlock,
+  moveGroupUp,
+  moveGroupDown,
+  moveParamUp,
+  moveParamDown,
+  saveParam,
+  deleteParam,
 };
