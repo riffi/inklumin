@@ -164,8 +164,7 @@ export const BookReader: React.FC = () => {
         id: chapter.id!,
         order: chapter.order,
         title: chapter.title,
-        children: scenes
-          .filter((s) => s.chapterId === chapter.id)
+        children: scenes?.filter((s) => s.chapterId === chapter.id)
           .map((scene) => ({
             type: "scene" as const,
             id: scene.id!,

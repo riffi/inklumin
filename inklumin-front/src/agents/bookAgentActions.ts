@@ -16,6 +16,7 @@ export const createBlock = async ({ title, description, structureKind }: { title
 };
 
 export const createBlockInstance = async ({ blockUuid, title, description }: { blockUuid: string; title: string; description?: string; }) => {
+  console.log('createBlockInstance', blockUuid, title, description)
   const instance = {
     uuid: crypto.randomUUID(),
     blockUuid,

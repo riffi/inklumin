@@ -154,7 +154,7 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
         blockUuid: props.blockUuid,
         uuid,
         title: newInstanceName.trim(),
-        shortDescription: newShortDescription.trim() ? newShortDescription.trim() : undefined,
+        description: newShortDescription.trim() ? newShortDescription.trim() : undefined,
         blockInstanceGroupUuid:
           block?.useGroups === 1 && currentGroupUuid !== "none" ? currentGroupUuid : undefined,
       };

@@ -48,28 +48,89 @@ export const BookAgentChat = () => {
   };
 
   const parseParts = (content: string) => {
-    const regex = /\[\[(.+?)\|(.*?)\]\]/g;
-    const parts: (string | { action: string; params: any })[] = [];
-    let lastIndex = 0;
-    let match;
-    while ((match = regex.exec(content)) !== null) {
-      if (match.index > lastIndex) {
-        parts.push(content.slice(lastIndex, match.index));
+    type Part = string | { action: string; title: string; params: any };
+    const parts: Part[] = [];
+
+    /** Добавить текст, если он не пустой */
+    const pushText = (from: number, to: number) => {
+      if (to > from) parts.push(content.slice(from, to));
+    };
+
+    let i = 0;
+    while (i < content.length) {
+      // ближайшее появление [[  или {
+      const sq = content.indexOf("[[", i);
+      const cu = content.indexOf("{", i);
+      const next = sq === -1 ? cu : cu === -1 ? sq : Math.min(sq, cu);
+
+      if (next === -1) {
+        pushText(i, content.length);
+        break;
       }
-      let params: any = {};
-      try {
-        params = JSON.parse(match[2]);
-      } catch {}
-      parts.push({ action: match[1], params });
-      lastIndex = regex.lastIndex;
+      pushText(i, next);
+
+      /* ---- 1. Старый формат [[action|json]] ---- */
+      if (content.startsWith("[[", next)) {
+        const end = content.indexOf("]]", next);
+        if (end === -1) { pushText(next, content.length); break; }
+
+        const body = content.slice(next + 2, end);
+        const bar = body.indexOf("|");
+        if (bar !== -1) {
+          const action = body.slice(0, bar).trim();
+          let json: any = {};
+          try { json = JSON.parse(body.slice(bar + 1)); } catch { /* ignore */ }
+          parts.push({
+            action,
+            title: json.title ?? action,
+            params: json.params ?? json,
+          });
+        } else {
+          pushText(next, end + 2); // кривой тег — вернём в текст
+        }
+        i = end + 2;
+        continue;
+      }
+
+      /* ---- 2. Новый формат { action, title, params } ---- */
+      if (content[next] === "{") {
+        let depth = 0, j = next;
+        do {                     // баланс скобок, чтобы поймать вложенные { }
+          if (content[j] === "{") depth++;
+          else if (content[j] === "}") depth--;
+          j++;
+        } while (j < content.length && depth > 0);
+
+        if (depth === 0) {
+          const raw = content.slice(next, j);
+          try {
+            const obj = JSON.parse(raw);
+            if (obj?.action) {
+              parts.push({
+                action: obj.action,
+                title: obj.title ?? obj.action,
+                params: obj.params ?? (() => {
+                  const { action, title, ...rest } = obj;
+                  return rest;
+                })(),
+              });
+              i = j;
+              continue;
+            }
+          } catch { /* невалидный JSON — упадёт ниже */ }
+        }
+        // не тег: сохранить как обычный текст
+        pushText(next, j);
+        i = j;
+      }
     }
-    if (lastIndex < content.length) {
-      parts.push(content.slice(lastIndex));
-    }
+
     return parts;
   };
 
+
   const handleAction = async (act: string, params: any) => {
+    console.log('handleAction', act, params)
     try {
       if (act === "createBlock") {
         await createBlock(params);

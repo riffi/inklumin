@@ -249,7 +249,7 @@ export const BlockInstanceEditor = (props: IBlockInstanceEditorProps) => {
                         label="Краткое описание"
                         placeholder="Введите описание..."
                         onChange={(val) => updateBlockInstanceShortDescription(val)}
-                        value={blockInstance?.shortDescription || ""}
+                        value={blockInstance?.description || ""}
                         size="sm"
                       />
                     </Box>

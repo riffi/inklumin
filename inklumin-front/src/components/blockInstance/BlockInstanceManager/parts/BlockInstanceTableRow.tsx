@@ -81,9 +81,9 @@ export const BlockInstanceTableRow = ({
             <Text style={{ cursor: "pointer", fontSize: "1.1rem", lineHeight: "1.5rem" }}>
               {instance.title}
             </Text>
-            {instance.shortDescription && (
+            {instance.description && (
               <Text size="sm" c="dimmed" mt={0}>
-                {instance.shortDescription}
+                {instance.description}
               </Text>
             )}
           </Stack>

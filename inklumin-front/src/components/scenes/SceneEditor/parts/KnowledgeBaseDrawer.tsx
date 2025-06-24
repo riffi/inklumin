@@ -212,7 +212,7 @@ export const KnowledgeBaseDrawer = ({
             uuid: generateUUID(),
             blockUuid: selectedBlock.uuid,
             title: entity.title,
-            shortDescription: entity.description,
+            description: entity.description,
           };
           await BlockInstanceRepository.create(bookDb, newInstance);
           notifications.show({

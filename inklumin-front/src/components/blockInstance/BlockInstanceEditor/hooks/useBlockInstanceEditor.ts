@@ -143,10 +143,10 @@ export const useBlockInstanceEditor = (
     });
   };
 
-  const updateBlockInstanceShortDescription = async (newDescription: string) => {
+  const updateBlockInstanceDescription = async (newDescription: string) => {
     if (!blockInstance) return;
     await BlockInstanceRepository.updateByInstanceUuid(bookDb, blockInstance.uuid, {
-      shortDescription: newDescription,
+      description: newDescription,
     });
   };
 
@@ -172,7 +172,7 @@ export const useBlockInstanceEditor = (
     childInstancesMap,
     blockTabs,
     referencingParams,
-    updateBlockInstanceShortDescription,
+    updateBlockInstanceShortDescription: updateBlockInstanceDescription,
     updateBlockInstanceIcon,
   };
 };
