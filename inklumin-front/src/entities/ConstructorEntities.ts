@@ -21,13 +21,11 @@ export enum IBlockParameterDataTypeTitle {
 export enum IBlockStructureKind {
   single = "single",
   multiple = "multiple",
-  tree = "tree",
 }
 
 export enum IBlockStructureKindTitle {
   single = "Одиночный",
   multiple = "Множественный",
-  tree = "Дерево",
 }
 
 export enum IBlockDisplayKind {

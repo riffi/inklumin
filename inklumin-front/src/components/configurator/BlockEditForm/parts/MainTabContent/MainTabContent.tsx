@@ -43,7 +43,6 @@ interface MainTabContentProps {
 const structureKindOptions = [
   { value: IBlockStructureKind.single, label: IBlockStructureKindTitle.single },
   { value: IBlockStructureKind.multiple, label: IBlockStructureKindTitle.multiple },
-  { value: IBlockStructureKind.tree, label: IBlockStructureKindTitle.tree },
 ];
 
 export const MainTabContent = ({ block, onSave, bookUuid }: MainTabContentProps) => {

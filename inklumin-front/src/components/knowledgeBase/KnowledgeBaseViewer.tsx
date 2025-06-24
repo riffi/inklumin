@@ -38,7 +38,6 @@ export const KnowledgeBaseViewer = ({ uuid, bookUuid }: KnowledgeBaseViewerProps
   if (!page) return <Container>Страница не найдена</Container>;
   return (
     <Container>
-      <h1>{page.title}</h1>
       <ReactMarkdown remarkPlugins={[remarkGfm]}>{page.markdown}</ReactMarkdown>
     </Container>
   );
