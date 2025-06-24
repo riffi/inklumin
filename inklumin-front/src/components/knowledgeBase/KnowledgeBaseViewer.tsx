@@ -6,6 +6,7 @@ import { Container, LoadingOverlay } from "@mantine/core";
 import { bookDb } from "@/entities/bookDb";
 import { configDatabase } from "@/entities/configuratorDb";
 import { IKnowledgeBasePage } from "@/entities/KnowledgeBaseEntities";
+import { loadSystemKnowledgeBasePage } from "@/knowledge-base/loader";
 import { KnowledgeBaseRepository } from "@/repository/KnowledgeBaseRepository";
 
 interface KnowledgeBaseViewerProps {
@@ -23,12 +24,15 @@ export const KnowledgeBaseViewer = ({ uuid, bookUuid }: KnowledgeBaseViewerProps
   useEffect(() => {
     const load = async () => {
       setLoading(true);
-      const p = await KnowledgeBaseRepository.getByUuid(db, pageUuid);
+      let p = await KnowledgeBaseRepository.getByUuid(db, pageUuid);
+      if (!p && !bookUuid) {
+        p = await loadSystemKnowledgeBasePage(pageUuid);
+      }
       setPage(p || null);
       setLoading(false);
     };
     load();
-  }, [pageUuid, db]);
+  }, [pageUuid, db, bookUuid]);
 
   if (loading) return <LoadingOverlay visible />;
   if (!page) return <Container>Страница не найдена</Container>;

@@ -6,7 +6,7 @@ import { Router } from "./Router";
 
 import "@mantine/notifications/styles.css";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { ReactFlowProvider } from "reactflow";
 import { Notifications } from "@mantine/notifications";
 import ErrorBoundary from "@/components/ErrorBoundary/ErrorBoundary";
@@ -16,14 +16,10 @@ import { DialogProvider } from "@/providers/DialogProvider/DialogProvider";
 import { MediaQueryProvider } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 import { PageTitleProvider } from "@/providers/PageTitleProvider/PageTitleProvider";
 import { useServerSync } from "@/services/bookSyncService";
-import { initKnowledgeBasePages } from "./knowledge-base/init";
 
 function AppContent() {
   const { user } = useAuth();
   useServerSync(user?.token);
-  useEffect(() => {
-    initKnowledgeBasePages();
-  }, []);
 
   return (
     <MantineProvider defaultColorScheme={"light"} datesLocale="ru">

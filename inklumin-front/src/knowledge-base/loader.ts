@@ -1,5 +1,4 @@
-import { configDatabase } from "@/entities/configuratorDb";
-import { KnowledgeBaseRepository } from "@/repository/KnowledgeBaseRepository";
+import { IKnowledgeBasePage } from "@/entities/KnowledgeBaseEntities";
 
 interface ParsedPage {
   uuid: string;
@@ -8,9 +7,7 @@ interface ParsedPage {
 }
 
 function parseFrontMatter(raw: string): ParsedPage | null {
-  const text = raw
-    .replace(/^\uFEFF/, "") // срезаем возможный BOM
-    .replace(/\r\n/g, "\n"); // все переводы строк → LF
+  const text = raw.replace(/^\uFEFF/, "").replace(/\r\n/g, "\n");
 
   const match = /^---\n([\s\S]+?)\n---\n([\s\S]*)$/m.exec(text);
   if (!match) return null;
@@ -27,17 +24,17 @@ function parseFrontMatter(raw: string): ParsedPage | null {
   return { uuid, title, markdown };
 }
 
-export async function initKnowledgeBasePages() {
+export async function loadSystemKnowledgeBasePage(
+  uuid: string
+): Promise<IKnowledgeBasePage | null> {
   const modules = import.meta.glob("./*.md", { as: "raw" });
   const entries = Object.entries(modules);
   for (const [, loader] of entries) {
     const raw = await loader();
     const page = parseFrontMatter(raw);
-    if (page) {
-      const existing = await KnowledgeBaseRepository.getByUuid(configDatabase, page.uuid);
-      if (!existing) {
-        await KnowledgeBaseRepository.save(configDatabase, page);
-      }
+    if (page && page.uuid === uuid) {
+      return page;
     }
   }
+  return null;
 }
