@@ -1,10 +1,7 @@
 import React from "react";
 import { IconPlus } from "@tabler/icons-react";
-import { useLiveQuery } from "dexie-react-hooks";
 import { Center, Group, LoadingOverlay, Paper, Table, Text } from "@mantine/core";
-import { IChapter, IScene, ISceneWithInstances } from "@/entities/BookEntities";
-import { useChapters } from "../useChapters";
-import { useScenes } from "../useScenes";
+import { IChapter, ISceneWithInstances } from "@/entities/BookEntities";
 import { ChapterRow } from "./ChapterRow";
 import { SceneRow } from "./SceneRow";
 
@@ -31,8 +28,9 @@ export const SceneTable = ({
   selectedInstanceUuid,
   chapterOnly,
 }: SceneTableProps) => {
-  // Функция фильтрации сцен
-  const filterScenes = (scenes: ISceneWithInstances[]) => {
+  // Отфильтрованные сцены мемоизируются, чтобы избежать лишних вычислений
+  const filteredScenes = React.useMemo(() => {
+    if (!scenes) return [] as ISceneWithInstances[];
     return scenes.filter((scene) => {
       if (!searchQuery && !selectedInstanceUuid) {
         return true;
@@ -52,10 +50,11 @@ export const SceneTable = ({
 
       return matchesSearch && matchesInstance;
     });
-  };
+  }, [scenes, chapters, searchQuery, selectedInstanceUuid]);
 
-  // Функция фильтрации глав
-  const filterChapters = (chapters: IChapter[], filteredScenes: ISceneWithInstances[]) => {
+  // Отфильтрованные главы также мемоизируются
+  const filteredChapters = React.useMemo(() => {
+    if (!chapters) return [] as IChapter[];
     if (chapterOnly) {
       return chapters.filter(
         (chapter) =>
@@ -69,10 +68,7 @@ export const SceneTable = ({
       const hasScenes = filteredScenes.some((scene) => scene.chapterId === chapter.id);
       return hasScenes;
     });
-  };
-
-  const filteredScenes = scenes ? filterScenes(scenes) : [];
-  const filteredChapters = chapters ? filterChapters(chapters, filteredScenes) : [];
+  }, [chapters, filteredScenes, searchQuery, selectedInstanceUuid, chapterOnly]);
 
   // Получение сцен для главы с учетом фильтрации
   const getScenesForChapter = (chapterId: number | null) => {
