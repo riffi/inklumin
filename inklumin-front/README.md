@@ -159,3 +159,10 @@ The `package.json` file defines several scripts for development and maintenance:
 *   `yarn storybook:build`: Builds Storybook as a static app.
 
 **Note:** Since the application uses Dexie.js for client-side storage, all your data (books, scenes, notes, etc.) will be stored in your browser's IndexedDB. Clearing your browser's site data for this application will erase your local SoulWriter data.
+
+## Недостающая документация
+
+- Требуется более подробное описание работы Zustand и Dexie.
+- Нет инструкции по подключению к внешним сервисам.
+- Отсутствует руководство по структуре локальной базы данных.
+- Не описан запуск тестов и линтеров.
