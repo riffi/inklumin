@@ -130,7 +130,7 @@ export const ParamEditModal = (props: IBlockEditModalProps) => {
               label="Связанный блок"
               data={relatedBlocksOptions}
               disabled={props.initialData?.uuid}
-              {...form.getInputProps("relatedBlockUuid")}
+              {...form.getInputProps("linkedBlockUuid")}
             />
           )}
           {form.values.dataType === IBlockParameterDataType.blockLink && (

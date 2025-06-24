@@ -19,11 +19,11 @@ export const BlocksMindMap = () => {
         const parameters = await bookDb.blockParameters.toArray();
 
         const parameterRelations = parameters
-          .filter((p) => p.relatedBlockUuid)
+          .filter((p) => p.linkedBlockUuid)
           .map((p) => ({
             id: `param-${p.uuid}`,
             source: p.blockUuid,
-            target: p.relatedBlockUuid!,
+            target: p.linkedBlockUuid!,
             labelStyle: {
               fontSize: "5px",
               fill: "#797979",

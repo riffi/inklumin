@@ -47,7 +47,7 @@ export const useBlockInstanceEditor = (
 
   const referencingParams = useLiveQuery<IBlockParameter[]>(() => {
     if (!block || !blockRelations) return [];
-    return bookDb.blockParameters.where("relatedBlockUuid").equals(block.uuid).toArray();
+    return bookDb.blockParameters.where("linkedBlockUuid").equals(block.uuid).toArray();
   }, [block, blockRelations]);
 
   //группы параметров блока

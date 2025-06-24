@@ -7,18 +7,18 @@ import { updateBlockInstance } from "./BlockInstanceUpdateHelper";
 export const getInstanceRelations = async (
   db: BookDB,
   blockInstanceUuid: string,
-  relatedBlockUuid?: string
+  linkedBlockUuid?: string
 ) => {
   const [source, target] = await Promise.all([
     db.blockInstanceRelations
       .where("sourceInstanceUuid")
       .equals(blockInstanceUuid)
-      .filter((r) => !relatedBlockUuid || r.targetBlockUuid === relatedBlockUuid)
+      .filter((r) => !linkedBlockUuid || r.targetBlockUuid === linkedBlockUuid)
       .toArray(),
     db.blockInstanceRelations
       .where("targetInstanceUuid")
       .equals(blockInstanceUuid)
-      .filter((r) => !relatedBlockUuid || r.sourceBlockUuid === relatedBlockUuid)
+      .filter((r) => !linkedBlockUuid || r.sourceBlockUuid === linkedBlockUuid)
       .toArray(),
   ]);
   return [...source, ...target];

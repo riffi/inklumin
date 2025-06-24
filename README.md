@@ -175,7 +175,7 @@ bookDb — локальная база данных Dexie.js, создаваем
   - `isDefault` — добавлять по умолчанию blockParameterInstance при создании экземпляра блока
   - `displayInCard` — выводить в карточке экземпляра блока в менеджере экземпляров
   - `orderNumber` — порядок отображения.
-  - `relatedBlockUuid` — ссылка на другой блок.
+  - `linkedBlockUuid` — ссылка на другой блок.
   - `allowMultiple` — можно создавать несколько blockParameterInstance.
   - `useForInstanceGrouping` — использовать для группировки экземпляров в менеджере экземпляров.
   - `knowledgeBasePageUuid` — страница базы знаний.

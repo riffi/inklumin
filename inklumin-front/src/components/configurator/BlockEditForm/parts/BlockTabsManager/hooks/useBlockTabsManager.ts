@@ -25,7 +25,7 @@ export const useBlockTabsManager = ({ bookUuid, blockUuid }: UseBlockTabsManager
 
   const referencingParams = useLiveQuery(async () => {
     // Получаем все параметры связанные с блоком
-    const params = await db.blockParameters.where("relatedBlockUuid").equals(blockUuid).toArray();
+    const params = await db.blockParameters.where("linkedBlockUuid").equals(blockUuid).toArray();
 
     // Если нет параметров - сразу возвращаем пустой массив
     if (!params.length) return [];

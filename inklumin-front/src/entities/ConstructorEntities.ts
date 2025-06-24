@@ -105,12 +105,10 @@ export interface IBlockParameter {
   blockUuid: string; // Ссылка на блок
   description: string; // Описание
   dataType: string; // Вид данных
-  linkedBlockUuid?: string; // Ссылка на другой строительный блок через UUID
-  linkedParameterUuid?: string; // Ссылка на параметр строительного блока через UUID
+  linkedBlockUuid?: string; // Ссылка на связанный блок
   isDefault?: number; // Добавлять параметр по умолчанию
   displayInCard: number; // Отображать ли параметр в карточке
   orderNumber: number; // Порядковый номер
-  relatedBlockUuid?: string; // Ссылка на связь блоков
   allowMultiple?: number;
   useForInstanceGrouping?: number;
   knowledgeBasePageUuid?: string; // Ссылка на страницу базы знаний

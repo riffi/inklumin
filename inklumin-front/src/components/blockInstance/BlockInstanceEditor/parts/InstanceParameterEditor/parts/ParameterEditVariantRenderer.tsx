@@ -101,7 +101,7 @@ export const ParameterEditVariantRenderer = ({
   }
 
   if (dataType === IBlockParameterDataType.blockLink) {
-    const relatedBlock = allBlocks?.find((b: IBlock) => b.uuid === parameter.relatedBlockUuid);
+    const relatedBlock = allBlocks?.find((b: IBlock) => b.uuid === parameter.linkedBlockUuid);
     const instances = useLiveQuery(() =>
       BlockInstanceRepository.getBlockInstances(bookDb, relatedBlock?.uuid)
     );

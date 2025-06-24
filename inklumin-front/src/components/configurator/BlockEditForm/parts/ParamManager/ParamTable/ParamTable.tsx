@@ -107,7 +107,7 @@ export const ParamTable = ({
                   <Text>{param.title}</Text>
                   {param.dataType === IBlockParameterDataType.blockLink && (
                     <Text c="dimmed" size="xs">
-                      Блок: {otherBlocks?.find((b) => b.uuid === param?.relatedBlockUuid)?.title}
+                      Блок: {otherBlocks?.find((b) => b.uuid === param?.linkedBlockUuid)?.title}
                     </Text>
                   )}
                   <Space h={5} />

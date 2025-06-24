@@ -39,9 +39,9 @@ export const useBlockInstanceManager = (blockUuid: string, titleSearch?: string)
   }, [blockUuid]);
 
   const linkGroups = useLiveQuery<IBlockInstance[]>(() => {
-    if (!groupingParam?.relatedBlockUuid) return [];
-    return BlockInstanceRepository.getBlockInstances(bookDb, groupingParam.relatedBlockUuid);
-  }, [groupingParam?.relatedBlockUuid]);
+    if (!groupingParam?.linkedBlockUuid) return [];
+    return BlockInstanceRepository.getBlockInstances(bookDb, groupingParam.linkedBlockUuid);
+  }, [groupingParam?.linkedBlockUuid]);
 
   const instances = useLiveQuery<IBlockInstance[]>(() => {
     if (block && block.uuid !== blockUuid) {

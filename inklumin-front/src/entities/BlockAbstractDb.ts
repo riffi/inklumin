@@ -15,7 +15,7 @@ export const baseSchema = {
     "++id, &uuid, configurationUuid, parentBlockUuid, title, sceneLinkAllowed, showInSceneList, showInMainMenu, useGroups",
   blockParameterGroups: "++id, &uuid, blockUuid, title",
   blockParameters:
-    "++id, &uuid, groupUuid, blockUuid, dataType, linkedBlockUuid, linkedParameterUuid, isDefault, displayInCard, relatedBlockUuid, useForInstanceGrouping ",
+    "++id, &uuid, groupUuid, blockUuid, dataType, linkedBlockUuid, linkedParameterUuid, isDefault, displayInCard, useForInstanceGrouping ",
   blockParameterPossibleValues: "++id, &uuid, parameterUuid, value",
   blocksRelations: "++id, &uuid, sourceBlockUuid, targetBlockUuid, configurationUuid",
   blockTabs: "++id, &uuid, blockUuid, title, relationUuid",
