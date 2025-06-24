@@ -24,7 +24,7 @@ const bookSchema = {
   blockInstanceGroups: "++id, &uuid, blockUuid, title, order",
   blockInstances: "++id, &uuid, blockUuid, title, parentInstanceUuid, blockInstanceGroupUuid",
   blockParameterInstances:
-    "++id, &uuid, blockParameterUuid, blockInstanceUuid, blockParameterGroupUuid, value",
+    "++id, &uuid, blockParameterUuid, blockInstanceUuid, blockParameterGroupUuid, value, linkedBlockUuid",
   blockInstanceRelations:
     "++id, &uuid, sourceInstanceUuid, targetInstanceUuid, blockRelationUuid, sourceBlockUuid, targetBlockUuid",
   blockInstanceSceneLinks: "++id, &uuid, blockInstanceUuid, sceneId, blockUuid, title",
@@ -44,7 +44,7 @@ export class BookDB extends BlockAbstractDb {
   knowledgeBasePages!: Dexie.Table<IKnowledgeBasePage, number>;
   constructor(dbName: string) {
     super(dbName);
-    this.version(8)
+    this.version(9)
       .stores(bookSchema)
       .upgrade(async (tx) => {
         await tx
@@ -53,6 +53,22 @@ export class BookDB extends BlockAbstractDb {
           .modify((book) => {
             if (book.chapterOnlyMode === undefined) {
               book.chapterOnlyMode = 1;
+            }
+          });
+
+        const blockLinkParams = await tx
+          .table("blockParameters")
+          .where("dataType")
+          .equals("blockLink")
+          .toArray();
+        const blockLinkUuids = new Set(blockLinkParams.map((p) => p.uuid));
+
+        await tx
+          .table("blockParameterInstances")
+          .toCollection()
+          .modify((inst) => {
+            if (blockLinkUuids.has(inst.blockParameterUuid)) {
+              inst.linkedBlockUuid = inst.value;
             }
           });
       });

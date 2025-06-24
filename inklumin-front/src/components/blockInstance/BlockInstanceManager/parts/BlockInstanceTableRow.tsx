@@ -8,7 +8,7 @@ import {
   RowActionButtons,
 } from "@/components/shared/RowActionButtons/RowActionButtons";
 import { IBlockInstance } from "@/entities/BookEntities";
-import { IBlock, IBlockParameter } from "@/entities/ConstructorEntities";
+import { IBlock, IBlockParameter, IBlockParameterDataType } from "@/entities/ConstructorEntities";
 
 interface BlockInstanceTableRowProps {
   instance: IBlockInstanceWithParams;
@@ -121,7 +121,11 @@ export const BlockInstanceTableRow = ({
 
                   <ParameterViewVariantRenderer
                     dataType={param.dataType}
-                    value={paramInstance?.value || ""}
+                    value={
+                      param.dataType === IBlockParameterDataType.blockLink
+                        ? paramInstance?.linkedBlockUuid || ""
+                        : paramInstance?.value || ""
+                    }
                   />
                 </Group>
               </Badge>

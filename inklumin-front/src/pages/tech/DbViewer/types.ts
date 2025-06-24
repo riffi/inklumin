@@ -39,6 +39,7 @@ export const relations: Record<TableName, Record<string, { table: TableName; fie
     blockInstanceUuid: { table: "blockInstances", field: "uuid" },
     blockParameterUuid: { table: "blockParameters", field: "uuid" },
     blockParameterGroupUuid: { table: "blockParameterGroups", field: "uuid" },
+    linkedBlockUuid: { table: "blockInstances", field: "uuid" },
   },
   blocksRelations: {
     sourceBlockUuid: { table: "blocks", field: "uuid" },

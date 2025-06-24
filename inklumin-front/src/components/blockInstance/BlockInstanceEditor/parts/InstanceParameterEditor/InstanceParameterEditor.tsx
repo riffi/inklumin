@@ -8,6 +8,7 @@ import { ParameterList } from "@/components/blockInstance/BlockInstanceEditor/pa
 import { FullParam } from "@/components/blockInstance/BlockInstanceEditor/types";
 import { bookDb } from "@/entities/bookDb";
 import { IBlockParameterInstance } from "@/entities/BookEntities";
+import { IBlockParameterDataType } from "@/entities/ConstructorEntities";
 import { IBlock, IBlockParameterGroup, IBlockRelation } from "@/entities/ConstructorEntities";
 import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";
 import {
@@ -140,9 +141,14 @@ export const InstanceParameterEditor = ({
     newValue: string | number
   ) => {
     try {
-      await BlockParameterInstanceRepository.updateParameterInstance(bookDb, instance.id, {
-        value: newValue,
-      });
+      const paramDef = await bookDb.blockParameters.get({ uuid: instance.blockParameterUuid });
+      const changes: Partial<IBlockParameterInstance> = {};
+      if (paramDef?.dataType === IBlockParameterDataType.blockLink) {
+        changes.linkedBlockUuid = String(newValue);
+      } else {
+        changes.value = newValue;
+      }
+      await BlockParameterInstanceRepository.updateParameterInstance(bookDb, instance.id, changes);
     } catch (error) {
       console.error("Error updating parameter instance:", error);
     }
@@ -175,6 +181,8 @@ export const InstanceParameterEditor = ({
       // For now, currentParamGroup?.uuid (which could be null -> undefined) or "" is fine.
       blockParameterGroupUuid: currentParamGroup?.uuid || "",
       value: defaultValue,
+      linkedBlockUuid:
+        parameterDefinition?.dataType === IBlockParameterDataType.blockLink ? "" : undefined,
     };
 
     try {

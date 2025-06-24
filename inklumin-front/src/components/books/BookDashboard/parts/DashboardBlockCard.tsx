@@ -31,7 +31,7 @@ export const DashboardBlockCard = ({ block }: BlockCardProps) => {
 
   const allParametersEmpty =
     block.structureKind === IBlockStructureKind.single &&
-    parameters?.every((param) => param.value === "");
+    parameters?.every((param) => param.value === "" && !param.linkedBlockUuid);
 
   // Получаем HTML первого параметра
   const firstParamHtml = parameters?.[0]?.value || "";

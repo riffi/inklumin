@@ -241,7 +241,11 @@ export const ParameterList = ({
                               {/* Removed inline paddingLeft */}
                               <ParameterViewVariantRenderer
                                 dataType={parameter.dataType || "text"}
-                                value={fullParam.instance.value || ""}
+                                value={
+                                  parameter.dataType === IBlockParameterDataType.blockLink
+                                    ? fullParam.instance.linkedBlockUuid || ""
+                                    : fullParam.instance.value || ""
+                                }
                                 fontSize={14}
                               />
                             </Box>
@@ -249,7 +253,12 @@ export const ParameterList = ({
                               <ActionIcon
                                 variant="subtle"
                                 onClick={() =>
-                                  handleStartEdit(fullParam.instance.id, fullParam.instance.value)
+                                  handleStartEdit(
+                                    fullParam.instance.id,
+                                    parameter.dataType === IBlockParameterDataType.blockLink
+                                      ? fullParam.instance.linkedBlockUuid || ""
+                                      : fullParam.instance.value
+                                  )
                                 }
                                 title="Edit this item"
                               >
@@ -313,7 +322,12 @@ export const ParameterList = ({
                   <ParameterActions
                     isEditing={isEditing}
                     onEdit={() =>
-                      handleStartEdit(fullParam.instance.id, fullParam.instance.value || "")
+                      handleStartEdit(
+                        fullParam.instance.id,
+                        parameter?.dataType === IBlockParameterDataType.blockLink
+                          ? fullParam.instance.linkedBlockUuid || ""
+                          : fullParam.instance.value || ""
+                      )
                     }
                     onSave={() => handleSaveEdit(fullParam.instance)}
                     onCancel={handleCancelEdit}
@@ -370,7 +384,11 @@ export const ParameterList = ({
                         <Box ml={10}>
                           <ParameterViewVariantRenderer
                             dataType={parameter?.dataType || "text"}
-                            value={fullParam.instance.value || ""}
+                            value={
+                              parameter?.dataType === IBlockParameterDataType.blockLink
+                                ? fullParam.instance.linkedBlockUuid || ""
+                                : fullParam.instance.value || ""
+                            }
                             fontSize={16}
                           />
                         </Box>

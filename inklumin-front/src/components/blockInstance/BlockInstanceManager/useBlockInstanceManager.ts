@@ -82,8 +82,8 @@ export const useBlockInstanceManager = (blockUuid: string, titleSearch?: string)
       if (param.dataType === "blockLink") {
         instancesWithParams.forEach((instance) => {
           instance.params.forEach((p) => {
-            if (p.blockParameterUuid === param.uuid && p.value) {
-              blockLinkUuids.add(p.value);
+            if (p.blockParameterUuid === param.uuid && p.linkedBlockUuid) {
+              blockLinkUuids.add(p.linkedBlockUuid);
             }
           });
         });
@@ -110,7 +110,7 @@ export const useBlockInstanceManager = (blockUuid: string, titleSearch?: string)
         const displayedParam = displayedParameters.find((p) => p.uuid === param.blockParameterUuid);
         let displayValue: string;
         if (displayedParam?.dataType === "blockLink") {
-          displayValue = uuidToTitle.get(param.value) || "—";
+          displayValue = uuidToTitle.get(param.linkedBlockUuid || "") || "—";
         } else if (param.value instanceof Number) {
           displayValue = `${param.value}`;
         } else {

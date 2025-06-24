@@ -1,6 +1,6 @@
 import { BookDB } from "@/entities/bookDb";
 import { IBlockInstance, IBlockParameterInstance } from "@/entities/BookEntities";
-import { IBlockParameter } from "@/entities/ConstructorEntities";
+import { IBlockParameter, IBlockParameterDataType } from "@/entities/ConstructorEntities";
 import { BlockParameterRepository } from "@/repository/Block/BlockParameterRepository";
 import { updateBookLocalUpdatedAt } from "@/utils/bookSyncUtils";
 import { generateUUID } from "@/utils/UUIDUtils";
@@ -21,6 +21,7 @@ export const appendDefaultParam = async (
     blockParameterUuid: param.uuid!,
     blockParameterGroupUuid: param.groupUuid,
     value: "",
+    linkedBlockUuid: param.dataType === IBlockParameterDataType.blockLink ? "" : undefined,
   };
   await db.blockParameterInstances.add(paramInstance);
   await updateBlockInstance(db, instance);
@@ -42,6 +43,7 @@ export const appendDefaultParams = async (db: BookDB, instance: IBlockInstance) 
     blockParameterUuid: param.uuid!,
     blockParameterGroupUuid: param.groupUuid,
     value: "",
+    linkedBlockUuid: param.dataType === IBlockParameterDataType.blockLink ? "" : undefined,
   }));
 
   await db.blockParameterInstances.bulkAdd(paramInstances);
@@ -83,13 +85,13 @@ export const deleteParameterInstance = async (db: BookDB, id: number) => {
 export const removeAllForInstance = async (db: BookDB, instanceUuid: string) => {
   await Promise.all([
     db.blockParameterInstances.where("blockInstanceUuid").equals(instanceUuid).delete(),
-    db.blockParameterInstances.where("value").equals(instanceUuid).delete(),
+    db.blockParameterInstances.where("linkedBlockUuid").equals(instanceUuid).delete(),
   ]);
   await updateBookLocalUpdatedAt(db);
 };
 
 export const getReferencingParamsToInstance = async (db: BookDB, instanceUuid: string) => {
-  return db.blockParameterInstances.filter((param) => param.value === instanceUuid).toArray();
+  return db.blockParameterInstances.filter((param) => param.linkedBlockUuid === instanceUuid).toArray();
 };
 
 export const BlockParameterInstanceRepository = {
