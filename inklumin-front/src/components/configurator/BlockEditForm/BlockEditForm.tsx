@@ -1,5 +1,5 @@
 // BlockEditForm.tsx
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
   Anchor,
   Breadcrumbs,
@@ -16,6 +16,9 @@ import { ParamManager } from "@/components/configurator/BlockEditForm/parts/Para
 import { RelationManager } from "@/components/configurator/BlockEditForm/parts/RelationManager/RelationManager";
 import { useBlockEditForm } from "@/components/configurator/BlockEditForm/useBlockEditForm";
 import classes from "./BlockEditForm.module.css";
+import {useMedia} from "@/providers/MediaQueryProvider/MediaQueryProvider";
+import {usePageTitle} from "@/providers/PageTitleProvider/PageTitleProvider";
+import {getBlockTitle} from "@/utils/configUtils";
 
 interface IBlockEditFormProps {
   blockUuid: string;
@@ -23,6 +26,8 @@ interface IBlockEditFormProps {
 }
 
 export const BlockEditForm = ({ blockUuid, bookUuid }: IBlockEditFormProps) => {
+  const {isMobile} = useMedia()
+  const { setPageTitle } = usePageTitle();
   const [activeTab, setActiveTab] = useState<
     "main" | "parameters" | "relations" | "children" | "tabs"
   >("main");
@@ -36,6 +41,10 @@ export const BlockEditForm = ({ blockUuid, bookUuid }: IBlockEditFormProps) => {
     paramGroupList,
     blockRelations,
   } = useBlockEditForm(blockUuid, bookUuid);
+
+    useEffect(() => {
+        setPageTitle(getBlockTitle(block))
+    }, [blockUuid, block]);
 
   const breadCrumbs = [
     { title: "Конфигуратор", href: "/configurator" },
@@ -60,12 +69,16 @@ export const BlockEditForm = ({ blockUuid, bookUuid }: IBlockEditFormProps) => {
 
   return (
     <Container size="lg" py="md" className={classes.container}>
-      <h1>Блок: {block.title}</h1>
-      <Breadcrumbs separator="→" separatorMargin="md" mt="xs">
-        {breadCrumbs}
-      </Breadcrumbs>
+      {!isMobile &&
+      <>
+          <h1>Блок: {block?.title}</h1>
+          <Breadcrumbs separator="→" separatorMargin="md" mt="xs">
+            {breadCrumbs}
+          </Breadcrumbs>
+          <Space h="md" />
+      </>
+      }
 
-      <Space h="md" />
 
       <Group mb="md" pos="relative" style={{ overflow: "visible" }}>
         <ScrollArea

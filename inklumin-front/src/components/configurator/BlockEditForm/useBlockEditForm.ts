@@ -28,20 +28,25 @@ export const useBlockEditForm = (
   const isBookDb = !!bookUuid;
 
   const block = useLiveQuery<IBlock>(() => {
-    if (!blockUuid) {
+    if (!blockUuid || !db) {
       return;
     }
     return BlockRepository.getByUuid(db, blockUuid);
-  }, [blockUuid]);
+  }, [blockUuid, db]);
 
   const otherBlocks = useLiveQuery<IBlock[]>(() => {
-    if (!block) return [];
+    if (!blockUuid || !db || !block) {
+      return;
+    }
     return BlockRepository.getSiblings(db, block);
-  }, [block]);
+  }, [block, db]);
 
   const paramGroupList = useLiveQuery<IBlockParameterGroup[]>(() => {
+    if (!blockUuid || !db) {
+      return;
+    }
     return db.blockParameterGroups.where("blockUuid").equals(blockUuid).sortBy("orderNumber");
-  }, [block]);
+  }, [block, db]);
 
   const paramList = useLiveQuery<IBlockParameter[]>(() => {
     if (currentGroupUuid) {
@@ -56,13 +61,16 @@ export const useBlockEditForm = (
   }, [blockUuid, currentGroupUuid]);
 
   const configuration = useLiveQuery(() => {
-    if (!block) return undefined;
-    return ConfigurationRepository.getByUuid(db, block.configurationUuid);
-  }, [block?.uuid]);
+    if (!blockUuid || !block || !db) return null
+    return ConfigurationRepository.getByUuid(db, block?.configurationUuid);
+  }, [block, block?.uuid, db]);
 
   const blockRelations = useLiveQuery<IBlockRelation[]>(() => {
+    if (!block || !db){
+      return []
+    }
     return BlockRelationRepository.getBlockRelations(db, blockUuid);
-  }, [blockUuid]);
+  }, [blockUuid, db]);
 
   const saveBlock = async (blockData: Partial<IBlock>, manualTitleForms?: IBlockTitleForms) => {
     if (!blockData.uuid && !block?.uuid) {

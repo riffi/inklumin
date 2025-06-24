@@ -21,6 +21,7 @@ import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 import { BlockInstanceSceneLinkRepository } from "@/repository/BlockInstance/BlockInstanceSceneLinkRepository";
 import { SceneLinkManagerModal } from "../SceneLinkManagerModal";
 import { useSceneLinks } from "./hooks/useSceneLinks";
+import {getBlockTitle} from "@/utils/configUtils";
 
 interface ISceneLinkManagerProps {
   sceneId: number;
@@ -99,10 +100,7 @@ export const SceneLinkManager = (props: ISceneLinkManagerProps) => {
         <List spacing="md">
           {blocks.map((block) => {
             const linkedInstances = getLinkedInstances(block.uuid!);
-            const blockTitle =
-              block.structureKind === IBlockStructureKind.multiple
-                ? block.titleForms?.plural
-                : block.title;
+            const blockTitle = getBlockTitle(block)
 
             return (
               <Box key={block.uuid} mb="xl">

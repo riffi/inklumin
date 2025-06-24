@@ -24,6 +24,7 @@ import {
 } from "@/entities/ConstructorEntities";
 import { useConnection } from "@/providers/ConnectionStatusProvider/ConnectionStatusProvider";
 import { useBookStore } from "@/stores/bookStore/bookStore";
+import {getBlockTitle} from "@/utils/configUtils";
 
 export interface NavLinkItem {
   label: string;
@@ -70,10 +71,7 @@ const BASE_MENU_ITEMS: NavLinkGroup[] = [
 ];
 
 const getBlockPageTitle = (block: IBlock) => {
-  if (block.structureKind === IBlockStructureKind.single) {
-    return block.title;
-  }
-  return block.titleForms?.plural || block.title;
+  return getBlockTitle(block)
 };
 
 export const NavbarNested = ({
@@ -120,8 +118,7 @@ export const NavbarNested = ({
           label: "База знаний",
           icon: IconBrandDatabricks,
           links:
-            blocks
-              ?.filter((b) => !b.parentBlockUuid && b.showInMainMenu === 1)
+            blocks?.filter((b) => !b.parentBlockUuid && b.showInMainMenu === 1)
               .map((b) => ({
                 label: getBlockPageTitle(b),
                 icon: b.icon,

@@ -47,6 +47,7 @@ import {
 } from "@/stores/uiSettingsStore/uiSettingsStore";
 import { generateUUID } from "@/utils/UUIDUtils";
 import classes from "./BlockInstanceManager.module.css";
+import {getBlockTitle} from "@/utils/configUtils";
 
 export interface IBlockInstanceManagerProps {
   blockUuid: string;
@@ -124,9 +125,7 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
           color: isMobile ? "var(--mantine-color-blue-5)" : "white",
         }}
       >
-        {block?.structureKind === IBlockStructureKind.multiple
-          ? block?.titleForms?.plural
-          : block?.title}
+        {getBlockTitle(block)}
       </Title>
     </Group>
   );
@@ -134,7 +133,7 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
   useEffect(() => {
     if (block) {
       setTitleElement(header);
-      setPageTitle(block?.titleForms?.plural || "");
+      setPageTitle(getBlockTitle(block));
     }
   }, [block]);
 
@@ -277,7 +276,6 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
         const param = i.params.find((p) => p.blockParameterUuid === groupingParam.uuid);
         if (currentGroupUuid === "none") {
           return true;
-          //return !param?.value || (linkGroups?.findIndex(g => g.uuid === param.value) === -1);
         }
         return param?.linkedBlockUuid === currentGroupUuid;
       });

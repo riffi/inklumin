@@ -9,6 +9,7 @@ import { IBlock, IBlockStructureKind } from "@/entities/ConstructorEntities";
 import { BlockInstanceRelationRepository } from "@/repository/BlockInstance/BlockInstanceRelationRepository";
 import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";
 import { BlockParameterInstanceRepository } from "@/repository/BlockInstance/BlockParameterInstanceRepository";
+import {getBlockTitle} from "@/utils/configUtils";
 
 interface BlockCardProps {
   block: IBlock;
@@ -53,9 +54,7 @@ export const DashboardBlockCard = ({ block }: BlockCardProps) => {
           <Group gap="xs" style={{ cursor: "pointer" }} onClick={handleNavigateToBlockManager}>
             <IconViewer iconName={block?.icon} size={28} color="var(--mantine-color-blue-7)" />
             <Text fw={500} size="lg" truncate style={{ textTransform: "capitalize" }}>
-              {block.structureKind === IBlockStructureKind.multiple
-                ? block.titleForms?.plural
-                : block.title}
+              {getBlockTitle(block)}
             </Text>
             <ActionIcon variant="transparent" color="gray" onClick={handleNavigateToBlockManager}>
               <IconArrowRight size="1.2rem" />

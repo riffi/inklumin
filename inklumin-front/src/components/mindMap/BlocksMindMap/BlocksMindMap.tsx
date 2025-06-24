@@ -5,6 +5,7 @@ import { bookDb } from "@/entities/bookDb";
 import { IBlockStructureKind } from "@/entities/ConstructorEntities";
 import { MindMap } from "../MindMap/MindMap";
 import { FlowEdge, FlowNode } from "../MindMap/types";
+import {getBlockTitle} from "@/utils/configUtils";
 
 export const BlocksMindMap = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -65,10 +66,7 @@ export const BlocksMindMap = () => {
           type: "custom",
           position: { x: 0, y: 0 },
           data: {
-            label:
-              block?.structureKind === IBlockStructureKind.multiple
-                ? block.titleForms?.plural
-                : block.title,
+            label: getBlockTitle(block),
             icon: block.icon,
             uuid: block.uuid,
             style: {

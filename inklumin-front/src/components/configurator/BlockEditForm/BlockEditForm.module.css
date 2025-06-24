@@ -15,6 +15,10 @@
   .scrollArea {
     overflow: visible !important;
   }
+
+  .container{
+    padding: 10px;
+  }
 }
 
 .scrollArrows button {
