@@ -160,7 +160,7 @@ export const SceneRow = ({
                 display: "flex",
                 gap: "8px",
                 transition: "opacity 0.2s ease",
-                opacity: hovered ? 1 : 0,
+                opacity: hovered ? 1 : 0.3,
               }}
             >
               <ActionIcon
