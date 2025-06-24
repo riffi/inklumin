@@ -12,12 +12,12 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useBlockParams } from "@/components/configurator/BlockEditForm/useBlockParams";
 import {
   IBlock,
   IBlockParameter,
   IBlockParameterDataType,
   IBlockParameterDataTypeTitle,
+  IBlockParameterPossibleValue,
   IBlockRelation,
   IBlockStructureKind,
   IBlockStructureKindTitle,
@@ -34,15 +34,14 @@ interface IBlockEditModalProps {
   bookUuid?: string;
   initialData?: IBlockParameter;
   otherBlocks: IBlock[];
+  loadPossibleValues: (parameterUuid: string) => Promise<IBlockParameterPossibleValue[]>;
+  savePossibleValues: (parameterUuid: string, values: string[]) => Promise<void>;
 }
 
 export const ParamEditModal = (props: IBlockEditModalProps) => {
   const [possibleValues, setPossibleValues] = useState<string[]>([]);
   const [newValue, setNewValue] = useState("");
-  const { loadPossibleValues, savePossibleValues } = useBlockParams(
-    props.blockUuid,
-    props.bookUuid
-  );
+  const { loadPossibleValues, savePossibleValues } = props;
   const { isMobile } = useMedia();
 
   const form = useForm<IBlockParameter>({

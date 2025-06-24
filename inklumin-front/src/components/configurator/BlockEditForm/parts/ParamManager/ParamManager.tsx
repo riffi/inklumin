@@ -43,6 +43,8 @@ export const ParamManager = ({ blockUuid, bookUuid, useTabs, otherBlocks }: Para
     deleteGroup,
     moveParamUp,
     moveParamDown,
+    loadPossibleValues,
+    savePossibleValues,
   } = useBlockParams(blockUuid, bookUuid, currentGroupUuid);
 
   useEffect(() => {
@@ -215,6 +217,8 @@ export const ParamManager = ({ blockUuid, bookUuid, useTabs, otherBlocks }: Para
           blockUuid={blockUuid}
           bookUuid={bookUuid}
           otherBlocks={otherBlocks}
+          loadPossibleValues={loadPossibleValues}
+          savePossibleValues={savePossibleValues}
         />
       )}
 
