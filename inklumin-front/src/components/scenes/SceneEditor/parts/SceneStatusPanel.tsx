@@ -26,6 +26,7 @@ const desktopStyle = {
   alignItems: "center",
   gap: "10px",
   zIndex: "99",
+  width: "900px"
 };
 
 export const SceneStatusPanel = (props: { scene: IScene }) => {
