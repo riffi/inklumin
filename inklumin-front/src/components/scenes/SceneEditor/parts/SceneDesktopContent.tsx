@@ -110,9 +110,9 @@ export const SceneDesktopContent = ({
                     </Box>
                     <Box>
                       <Button
-                          leftSection={readOnly ? <IconEdit size={14} /> : <IconEye size={14} />}
-                          onClick={() => setReadOnly(!readOnly)}
-                          variant={"outline"}
+                        leftSection={readOnly ? <IconEdit size={14} /> : <IconEye size={14} />}
+                        onClick={() => setReadOnly(!readOnly)}
+                        variant={"outline"}
                       >
                         {readOnly ? "Редактирование" : "Просмотр"}
                       </Button>
@@ -140,7 +140,6 @@ export const SceneDesktopContent = ({
                         >
                           Анализ
                         </Menu.Item>
-
                       </Menu.Dropdown>
                     </Menu>
                   </Group>
