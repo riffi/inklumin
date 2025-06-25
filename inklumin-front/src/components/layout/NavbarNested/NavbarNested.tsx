@@ -8,6 +8,7 @@ import {
   IconDashboard,
   IconDatabaseCog,
   IconGraph,
+  IconMessageChatbot,
   IconNotes,
   IconSettings,
 } from "@tabler/icons-react";
@@ -128,7 +129,7 @@ export const NavbarNested = ({
         dynamicItems.push({ label: "Чтение", icon: IconBooks, link: "/book/reader" });
       }
 
-      dynamicItems.push({ label: "Помощник", icon: IconBulb, link: "/book/agent" });
+      dynamicItems.push({ label: "Помощник", icon: IconMessageChatbot, link: "/book/agent" });
 
       const blockLinks =
         blocks

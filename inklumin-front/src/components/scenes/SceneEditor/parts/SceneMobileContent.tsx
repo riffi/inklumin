@@ -8,6 +8,7 @@ import { InlineEdit2 } from "@/components/shared/InlineEdit2/InlineEdit2";
 import { RichEditor } from "@/components/shared/RichEditor/RichEditor";
 import type { IWarningGroup } from "@/components/shared/RichEditor/types";
 import { IChapter, IScene } from "@/entities/BookEntities";
+import { useBookStore } from "@/stores/bookStore/bookStore";
 
 interface SceneMobileContentProps {
   sceneBody: string;
@@ -45,15 +46,16 @@ export const SceneMobileContent = ({
   const [linkManagerOpened, { open: openLinkManager, close: closeLinkManager }] =
     useDisclosure(false);
   const keyboardHeight = useKeyboardHeight(true);
+  const chapterOnlyMode = useBookStore((state) => state.selectedBook?.chapterOnlyMode === 1);
 
   // Элемент панели управления сценой
   const managementPanel = (
     <Group display="flex" align="center" style={{ flexGrow: 1, paddingLeft: "10px" }}>
       <Box flex={1} flexGrow={1}>
         <InlineEdit2
-          value={chapter ? chapter.title : scene.title}
+          value={chapterOnlyMode ? (chapter?.title ?? scene.title) : scene.title}
           onChange={(title) => {
-            if (chapter && onChapterTitleChange) {
+            if (chapterOnlyMode && chapter && onChapterTitleChange) {
               onChapterTitleChange(title);
             } else {
               saveScene({ ...scene, title });

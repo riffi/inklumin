@@ -20,6 +20,7 @@ import { InlineEdit2 } from "@/components/shared/InlineEdit2/InlineEdit2";
 import { RichEditor } from "@/components/shared/RichEditor/RichEditor";
 import type { IWarningGroup } from "@/components/shared/RichEditor/types";
 import { IChapter, IScene } from "@/entities/BookEntities";
+import { useBookStore } from "@/stores/bookStore/bookStore";
 import styles from "./SceneDesktopContent.module.css";
 
 interface SceneDesktopContentProps {
@@ -58,6 +59,7 @@ export const SceneDesktopContent = ({
   onChapterTitleChange,
 }: SceneDesktopContentProps) => {
   const { isHeaderVisible, handleEditorScroll } = useHeaderVisibility();
+  const chapterOnlyMode = useBookStore((state) => state.selectedBook?.chapterOnlyMode === 1);
   const [linkManagerOpened, { open: openLinkManager, close: closeLinkManager }] =
     useDisclosure(false);
   const [readOnly, setReadOnly] = useState(true);
@@ -97,10 +99,10 @@ export const SceneDesktopContent = ({
                   <Group p={10} justify="space-between" align="center" w="100%">
                     <Box flex={1}>
                       <InlineEdit2
-                        value={chapter ? chapter.title : scene.title}
+                        value={chapterOnlyMode ? (chapter?.title ?? scene.title) : scene.title}
                         size={"xl"}
                         onChange={(title) => {
-                          if (chapter && onChapterTitleChange) {
+                          if (chapterOnlyMode && chapter && onChapterTitleChange) {
                             onChapterTitleChange(title);
                           } else {
                             saveScene({ ...scene, title });
