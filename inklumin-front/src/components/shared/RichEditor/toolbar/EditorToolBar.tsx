@@ -48,7 +48,6 @@ export const EditorToolBar = (props: IEditorToolBarProps) => {
           {!isMobile && (
             <>
               <RichTextEditor.Strikethrough />
-              <RichTextEditor.Highlight />
             </>
           )}
         </RichTextEditor.ControlsGroup>
