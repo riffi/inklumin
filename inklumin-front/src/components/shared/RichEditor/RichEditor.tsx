@@ -15,8 +15,8 @@ import { LoadingOverlayExtended } from "@/components/shared/overlay/LoadingOverl
 import { useEditorState } from "@/components/shared/RichEditor/hooks/useEditorState";
 import { useWarningGroups } from "@/components/shared/RichEditor/hooks/useWarningGroups";
 import { ChecksDrawerButton } from "@/components/shared/RichEditor/toolbar/ChecksDrawerButton";
-import { SuggestionsDrawerButton } from "@/components/shared/RichEditor/toolbar/SuggestionsDrawerButton";
 import { EditorToolBar } from "@/components/shared/RichEditor/toolbar/EditorToolBar";
+import { SuggestionsDrawerButton } from "@/components/shared/RichEditor/toolbar/SuggestionsDrawerButton";
 import { IWarningGroup } from "@/components/shared/RichEditor/types";
 
 export interface IRichEditorConstraints {
@@ -54,12 +54,17 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
     "synonyms" | "paraphrase" | "simplify" | "spelling" | "rhymes"
   >("synonyms");
   const [selectedText, setSelectedText] = useState("");
+  const [selectionRange, setSelectionRange] = useState<{ from: number; to: number }>({
+    from: 0,
+    to: 0,
+  });
   const [repeatsActive, setRepeatsActive] = useState(false);
   const [clichesActive, setClichesActive] = useState(false);
   const { isMobile } = useMedia();
 
   const onSelectionChange = (from: number, to: number) => {
     setSelectedText(editor?.state.doc.textBetween(from, to, " "));
+    setSelectionRange({ from, to });
   };
 
   const { editor } = useEditorState(
@@ -126,6 +131,7 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
           />
           <SuggestionsDrawerButton
             editor={editor}
+            selectedText={selectedText}
             onLoadingChange={(isLoading, message) =>
               setLoadingState({ isLoading, message: message || "" })
             }
@@ -213,7 +219,20 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
                   textOverflow: "ellipsis",
                 }}
                 onClick={() => {
-                  editor?.chain().insertContent(suggestion).run();
+                  if (editor) {
+                    editor.setEditable(true);
+                    editor.commands.setTextSelection({
+                      from: selectionRange.from,
+                      to: selectionRange.to,
+                    });
+                    editor.chain().insertContent(suggestion).run();
+                    editor.commands.focus(selectionRange.from + suggestion.length)
+                    editor.commands.setTextSelection({
+                      from: selectionRange.from,
+                      to: selectionRange.from + suggestion.length,
+                    });
+
+                  }
                   closeDrawer();
                 }}
               >

@@ -7,16 +7,21 @@ import { OpenRouterApi } from "@/api/openRouterApi";
 
 interface SynonymsActionProps {
   editor: ReturnType<typeof useEditor>;
+  selectedText: string;
   onLoadingChange: (isLoading: boolean, message?: string) => void;
   onFound: (synonyms: string[]) => void;
 }
 
-export const SynonymsAction = ({ editor, onLoadingChange, onFound }: SynonymsActionProps) => {
+export const SynonymsAction = ({
+  editor,
+  selectedText,
+  onLoadingChange,
+  onFound,
+}: SynonymsActionProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleClick = async () => {
-    const { from, to } = editor.state.selection;
-    const selectedText = editor.state.doc.textBetween(from, to, " ");
+    editor.setEditable(false);
 
     if (selectedText.trim().split(/\s+/).length > 1) {
       notifications.show({ message: "Выделите только одно слово", color: "orange" });

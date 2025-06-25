@@ -7,16 +7,21 @@ import { OpenRouterApi } from "@/api/openRouterApi";
 
 interface SimplifyActionProps {
   editor: ReturnType<typeof useEditor>;
+  selectedText: string;
   onLoadingChange: (isLoading: boolean, message?: string) => void;
   onFound: (simplifications: string[]) => void;
 }
 
-export const SimplifyAction = ({ editor, onLoadingChange, onFound }: SimplifyActionProps) => {
+export const SimplifyAction = ({
+  editor,
+  selectedText,
+  onLoadingChange,
+  onFound,
+}: SimplifyActionProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleClick = async () => {
-    const { from, to } = editor.state.selection;
-    const selectedText = editor.state.doc.textBetween(from, to, " ");
+    editor.setEditable(false);
 
     if (!selectedText.trim()) {
       notifications.show({ message: "Выделите текст для упрощения", color: "orange" });

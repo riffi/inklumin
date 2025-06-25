@@ -7,16 +7,21 @@ import { YandexSpellerApi } from "@/api/yandexSpellerApi";
 
 interface SpellingActionProps {
   editor: ReturnType<typeof useEditor>;
+  selectedText: string;
   onLoadingChange: (isLoading: boolean, message?: string) => void;
   onFound: (corrections: string[]) => void;
 }
 
-export const SpellingAction = ({ editor, onLoadingChange, onFound }: SpellingActionProps) => {
+export const SpellingAction = ({
+  editor,
+  selectedText,
+  onLoadingChange,
+  onFound,
+}: SpellingActionProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleClick = async () => {
-    const { from, to } = editor.state.selection;
-    const selectedText = editor.state.doc.textBetween(from, to, " ");
+    editor.setEditable(false);
 
     if (!selectedText.trim()) {
       alert("Выделите текст для проверки");

@@ -7,16 +7,21 @@ import { OpenRouterApi } from "@/api/openRouterApi";
 
 interface ParaphraseActionProps {
   editor: ReturnType<typeof useEditor>;
+  selectedText: string;
   onLoadingChange: (isLoading: boolean, message?: string) => void;
   onFound: (paraphrases: string[]) => void;
 }
 
-export const ParaphraseAction = ({ editor, onLoadingChange, onFound }: ParaphraseActionProps) => {
+export const ParaphraseAction = ({
+  editor,
+  selectedText,
+  onLoadingChange,
+  onFound,
+}: ParaphraseActionProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleClick = async () => {
-    const { from, to } = editor.state.selection;
-    const selectedText = editor.state.doc.textBetween(from, to, " ");
+    editor.setEditable(false);
 
     if (!selectedText.trim()) {
       notifications.show({ message: "Выделите текст для перефразирования", color: "orange" });

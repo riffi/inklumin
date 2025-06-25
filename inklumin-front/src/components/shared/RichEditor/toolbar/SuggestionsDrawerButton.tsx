@@ -10,12 +10,14 @@ import { SynonymsAction } from "./actions/SynonymsAction";
 
 interface SuggestionsDrawerButtonProps {
   editor: any;
+  selectedText: string;
   onLoadingChange: (isLoading: boolean, message?: string) => void;
   onSuggestionsFound: (suggestions: string[], type: string) => void;
 }
 
 export const SuggestionsDrawerButton = ({
   editor,
+  selectedText,
   onLoadingChange,
   onSuggestionsFound,
 }: SuggestionsDrawerButtonProps) => {
@@ -28,33 +30,42 @@ export const SuggestionsDrawerButton = ({
 
   return (
     <>
-      <RichTextEditor.Control onClick={open} title="Инструменты">
+      <RichTextEditor.Control onClick={() => {
+        editor.setEditable(false)
+        editor.commands.blur()
+        open()
+      }} title="Инструменты">
         <IconBulb size={20} color="gray" />
       </RichTextEditor.Control>
       <Drawer opened={opened} onClose={close} title="Инструменты" position="right">
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           <SynonymsAction
             editor={editor}
+            selectedText={selectedText}
             onLoadingChange={onLoadingChange}
             onFound={(s) => handleFound(s, "synonyms")}
           />
           <ParaphraseAction
             editor={editor}
+            selectedText={selectedText}
             onLoadingChange={onLoadingChange}
             onFound={(s) => handleFound(s, "paraphrase")}
           />
           <SimplifyAction
             editor={editor}
+            selectedText={selectedText}
             onLoadingChange={onLoadingChange}
             onFound={(s) => handleFound(s, "simplify")}
           />
           <SpellingAction
             editor={editor}
+            selectedText={selectedText}
             onLoadingChange={onLoadingChange}
             onFound={(s) => handleFound(s, "spelling")}
           />
           <RhymesAction
             editor={editor}
+            selectedText={selectedText}
             onLoadingChange={onLoadingChange}
             onFound={(s) => handleFound(s, "rhymes")}
           />
