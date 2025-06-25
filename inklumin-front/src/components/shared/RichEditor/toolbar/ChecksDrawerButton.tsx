@@ -4,6 +4,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { RichTextEditor } from "@mantine/tiptap";
 import { CheckClichesAction } from "./actions/CheckClichesAction";
 import { CheckRepeatsAction } from "./actions/CheckRepeatsAction";
+import { CheckSpellingAction } from "./actions/CheckSpellingAction";
 
 interface ChecksDrawerButtonProps {
   editor: any;
@@ -12,6 +13,8 @@ interface ChecksDrawerButtonProps {
   setRepeatsActive: (value: boolean) => void;
   clichesActive: boolean;
   setClichesActive: (value: boolean) => void;
+  spellingActive: boolean;
+  setSpellingActive: (value: boolean) => void;
 }
 
 export const ChecksDrawerButton = ({
@@ -21,6 +24,8 @@ export const ChecksDrawerButton = ({
   setRepeatsActive,
   clichesActive,
   setClichesActive,
+  spellingActive,
+  setSpellingActive,
 }: ChecksDrawerButtonProps) => {
   const [opened, { open, close }] = useDisclosure(false);
 
@@ -42,6 +47,12 @@ export const ChecksDrawerButton = ({
             onLoadingChange={onLoadingChange}
             isActive={clichesActive}
             setIsActive={setClichesActive}
+          />
+          <CheckSpellingAction
+            editor={editor}
+            onLoadingChange={onLoadingChange}
+            isActive={spellingActive}
+            setIsActive={setSpellingActive}
           />
         </div>
       </Drawer>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import {IconChecks, IconTextSpellcheck} from "@tabler/icons-react";
+import {IconArrowsDoubleSwNe, IconChecks, IconTextSpellcheck} from "@tabler/icons-react";
 import { Button } from "@mantine/core";
 import { YandexSpellerApi } from "@/api/yandexSpellerApi";
 import { spellingHighlighterKey } from "@/components/shared/RichEditor/plugins/SpellingHighlighterExtension";
@@ -49,9 +49,14 @@ export const CheckSpellingAction = ({
   };
 
   return (
-      <RichTextEditor.Control active={isActive} onClick={handleClick} title="Орфография">
-        <IconTextSpellcheck color="gray" />
-      </RichTextEditor.Control>
+      <Button
+          onClick={handleClick}
+          loading={isLoading}
+          variant={isActive ? "filled" : "outline"}
+          leftSection={<IconTextSpellcheck size={16} />}
+      >
+        {isActive ? "Скрыть проверку оргографии" : "Проверить орфографию"}
+      </Button>
   )
 
 };

@@ -14,7 +14,6 @@ import { useDisclosure } from "@mantine/hooks";
 import { LoadingOverlayExtended } from "@/components/shared/overlay/LoadingOverlayExtended";
 import { useEditorState } from "@/components/shared/RichEditor/hooks/useEditorState";
 import { useWarningGroups } from "@/components/shared/RichEditor/hooks/useWarningGroups";
-import { CheckSpellingAction } from "@/components/shared/RichEditor/toolbar/actions/CheckSpellingAction";
 import { ChecksDrawerButton } from "@/components/shared/RichEditor/toolbar/ChecksDrawerButton";
 import { EditorToolBar } from "@/components/shared/RichEditor/toolbar/EditorToolBar";
 import { SuggestionsDrawerButton } from "@/components/shared/RichEditor/toolbar/SuggestionsDrawerButton";
@@ -131,14 +130,8 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
             setRepeatsActive={setRepeatsActive}
             clichesActive={clichesActive}
             setClichesActive={setClichesActive}
-          />
-          <CheckSpellingAction
-            editor={editor}
-            onLoadingChange={(isLoading, message) =>
-              setLoadingState({ isLoading, message: message || "" })
-            }
-            isActive={spellingActive}
-            setIsActive={setSpellingActive}
+            spellingActive={spellingActive}
+            setSpellingActive={setSpellingActive}
           />
           <SuggestionsDrawerButton
             editor={editor}
