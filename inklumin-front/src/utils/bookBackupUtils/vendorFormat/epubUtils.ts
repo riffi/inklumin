@@ -2,10 +2,9 @@
 import ePub, { Book } from "epubjs";
 import JSZip from "jszip";
 import { notifications } from "@mantine/notifications";
-import { connectToBookDatabase } from "@/entities/bookDb";
 import { IBook, IChapter, IScene } from "@/entities/BookEntities";
-import { configDatabase } from "@/entities/configuratorDb";
 import { importBookData } from "@/utils/bookBackupUtils/bookBackupManager";
+import { getEpubExportData } from "@/repository/Book/BookBackupRepository";
 import { buildBackupData, textFromHtml } from "@/utils/bookBackupUtils/vendorFormat/shared";
 import { generateUUID } from "@/utils/UUIDUtils";
 
@@ -316,13 +315,7 @@ export const importEpubFile = async (file: File): Promise<boolean> => {
 
 export const exportBookToEpub = async (bookUuid: string): Promise<boolean> => {
   try {
-    const book = await configDatabase.books.get({ uuid: bookUuid });
-    if (!book) throw new Error("Book not found");
-
-    const db = connectToBookDatabase(bookUuid);
-    const chapters = await db.chapters.orderBy("order").toArray();
-    const scenes = await db.scenes.toArray();
-    const sceneBodies = await db.sceneBodies.toArray();
+    const { book, chapters, scenes, sceneBodies } = await getEpubExportData(bookUuid);
 
     const bodyMap = new Map<number, string>();
     sceneBodies.forEach((b) => bodyMap.set(b.sceneId, b.body));

@@ -22,6 +22,10 @@ export const getBodyById = async (db: BookDB, sceneId: number): Promise<string |
   return body?.body;
 };
 
+export const getAllBodies = async (db: BookDB) => {
+  return db.sceneBodies.toArray();
+};
+
 export const getByChapterId = async (db: BookDB, chapterId: number): Promise<IScene[]> => {
   const scenes = await db.scenes.where("chapterId").equals(chapterId).toArray();
   const ids = scenes.map((s) => s.id!);
@@ -286,6 +290,7 @@ export const SceneRepository = {
   getById,
   getAll,
   getBodyById,
+  getAllBodies,
   getByChapterId,
   create,
   update,

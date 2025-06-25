@@ -2,6 +2,7 @@ import moment from "moment/moment";
 import { BookDB } from "@/entities/bookDb";
 import { IBook } from "@/entities/BookEntities";
 import { configDatabase } from "@/entities/configuratorDb";
+import { BookRepository } from "@/repository/Book/BookRepository";
 import { useBookStore } from "@/stores/bookStore/bookStore";
 
 export const updateBookSyncState = async (bookUuid: string, syncState: IBook["syncState"]) => {
@@ -9,7 +10,7 @@ export const updateBookSyncState = async (bookUuid: string, syncState: IBook["sy
 
   try {
     const currentDate = moment().toISOString(true);
-    await configDatabase.books.where("uuid").equals(bookUuid).modify({
+    await BookRepository.update(configDatabase, bookUuid, {
       localUpdatedAt: currentDate,
       syncState,
     });
