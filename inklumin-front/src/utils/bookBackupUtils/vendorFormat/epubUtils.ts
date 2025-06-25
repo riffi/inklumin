@@ -3,8 +3,7 @@ import ePub, { Book } from "epubjs";
 import JSZip from "jszip";
 import { notifications } from "@mantine/notifications";
 import { IBook, IChapter, IScene } from "@/entities/BookEntities";
-import { importBookData } from "@/utils/bookBackupUtils/bookBackupManager";
-import { getEpubExportData } from "@/repository/Book/BookBackupRepository";
+import {getEpubExportData, importBookData} from "@/repository/Book/BookBackupRepository";
 import { buildBackupData, textFromHtml } from "@/utils/bookBackupUtils/vendorFormat/shared";
 import { generateUUID } from "@/utils/UUIDUtils";
 

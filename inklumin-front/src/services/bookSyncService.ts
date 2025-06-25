@@ -8,8 +8,9 @@ import { BookRepository } from "@/repository/Book/BookRepository";
 import {
   BackupData,
   collectBookBackupData,
-  importBookData,
-} from "@/utils/bookBackupUtils/bookBackupManager";
+  importBookData
+} from "@/repository/Book/BookBackupRepository";
+
 
 /** Save a book to the server */
 export const saveBookToServer = async (bookUuid: string, token: string) => {
