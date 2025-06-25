@@ -2,6 +2,7 @@ import React, { useCallback } from "react";
 import {
   IconChevronDown,
   IconChevronRight,
+  IconDotsVertical,
   IconEdit,
   IconFolder,
   IconFolderOpen,
@@ -9,7 +10,7 @@ import {
   IconPlus,
   IconTrash,
 } from "@tabler/icons-react";
-import { ActionIcon, Box, Collapse, Table } from "@mantine/core";
+import { ActionIcon, Box, Collapse, Menu, Table } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useScenes } from "@/components/scenes/SceneManager/useScenes";
 import { IChapter, IScene, ISceneWithInstances } from "@/entities/BookEntities";
@@ -107,37 +108,47 @@ const ChapterRowComponent = ({
             >
               {chapter.order ? `${chapter.order}. ` : ""} {chapter.title}
             </span>
-            <Box ml="auto" style={{ display: "flex", gap: "8px" }}>
-              {!chapterOnly && (
-                <ActionIcon
-                  variant="subtle"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onAddScene();
-                  }}
-                >
-                  <IconPlus size={16} />
-                </ActionIcon>
-              )}
-              <ActionIcon
-                variant="subtle"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  openEditModal();
-                }}
-              >
-                <IconEdit size={16} />
-              </ActionIcon>
-              <ActionIcon
-                variant="subtle"
-                color="red"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  openDeleteModal();
-                }}
-              >
-                <IconTrash size={16} />
-              </ActionIcon>
+            <Box ml="auto">
+              {/* меню действий по аналогии со сценой */}
+              <Menu withinPortal shadow="md" position="left-start">
+                <Menu.Target>
+                  <ActionIcon variant="subtle" onClick={(e) => e.stopPropagation()}>
+                    <IconDotsVertical size={16} />
+                  </ActionIcon>
+                </Menu.Target>
+                <Menu.Dropdown>
+                  {!chapterOnly && (
+                    <Menu.Item
+                      icon={<IconPlus size={14} />}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onAddScene();
+                      }}
+                    >
+                      Добавить сцену
+                    </Menu.Item>
+                  )}
+                  <Menu.Item
+                    icon={<IconEdit size={14} />}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openEditModal();
+                    }}
+                  >
+                    Переименовать
+                  </Menu.Item>
+                  <Menu.Item
+                    icon={<IconTrash size={14} />}
+                    color="red"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openDeleteModal();
+                    }}
+                  >
+                    Удалить главу
+                  </Menu.Item>
+                </Menu.Dropdown>
+              </Menu>
             </Box>
           </Box>
 

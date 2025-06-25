@@ -103,7 +103,9 @@ const SceneRowComponent = ({
         onClick={handleClick}
         style={{ cursor: "pointer" }}
       >
-        <Table.Td colSpan={2} pl={scene.chapterId ? theme.spacing.md : theme.spacing.sm}>
+        <Table.Td colSpan={2}
+                  style={{padding: "10px 16px"}}
+        >
           {/*<Group justify="space-between" wrap="nowrap" style={{*/}
           {/*}}>*/}
           <Box style={{ display: "flex" }}>
