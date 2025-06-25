@@ -11,6 +11,7 @@ interface CheckClichesActionProps {
   onLoadingChange: (isLoading: boolean, message?: string) => void;
   isActive: boolean;
   setIsActive: (value: boolean) => void;
+  onClose: () => void;
 }
 
 export const CheckClichesAction = ({
@@ -18,6 +19,7 @@ export const CheckClichesAction = ({
   onLoadingChange,
   isActive,
   setIsActive,
+  onClose,
 }: CheckClichesActionProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -33,6 +35,8 @@ export const CheckClichesAction = ({
       setIsActive(false);
       return;
     }
+    onClose();
+
     onLoadingChange(true, "Поиск фраз-штампов...");
     setIsLoading(true);
     try {

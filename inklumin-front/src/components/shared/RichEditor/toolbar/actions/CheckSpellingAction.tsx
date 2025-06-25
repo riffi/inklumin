@@ -11,6 +11,7 @@ interface CheckSpellingActionProps {
   onLoadingChange: (isLoading: boolean, message?: string) => void;
   isActive: boolean;
   setIsActive: (value: boolean) => void;
+  onClose: () => void;
 }
 
 export const CheckSpellingAction = ({
@@ -18,6 +19,7 @@ export const CheckSpellingAction = ({
   onLoadingChange,
   isActive,
   setIsActive,
+  onClose,
 }: CheckSpellingActionProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -33,6 +35,7 @@ export const CheckSpellingAction = ({
       setIsActive(false);
       return;
     }
+    onClose();
     onLoadingChange(true, "Проверяем орфографию...");
     setIsLoading(true);
     try {

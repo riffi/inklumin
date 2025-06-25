@@ -41,18 +41,21 @@ export const ChecksDrawerButton = ({
             onLoadingChange={onLoadingChange}
             isActive={repeatsActive}
             setIsActive={setRepeatsActive}
+            onClose={close}
           />
           <CheckClichesAction
             editor={editor}
             onLoadingChange={onLoadingChange}
             isActive={clichesActive}
             setIsActive={setClichesActive}
+            onClose={close}
           />
           <CheckSpellingAction
             editor={editor}
             onLoadingChange={onLoadingChange}
             isActive={spellingActive}
             setIsActive={setSpellingActive}
+            onClose={close}
           />
         </div>
       </Drawer>

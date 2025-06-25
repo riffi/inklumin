@@ -10,6 +10,7 @@ interface CheckRepeatsActionProps {
   onLoadingChange: (isLoading: boolean, message?: string) => void;
   isActive: boolean;
   setIsActive: (value: boolean) => void;
+  onClose: () => void;
 }
 
 export const CheckRepeatsAction = ({
@@ -17,6 +18,7 @@ export const CheckRepeatsAction = ({
   onLoadingChange,
   isActive,
   setIsActive,
+  onClose,
 }: CheckRepeatsActionProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -27,11 +29,13 @@ export const CheckRepeatsAction = ({
   };
 
   const handleClick = async () => {
+
     if (isActive) {
       updateHighlights([]);
       setIsActive(false);
       return;
     }
+    onClose();
     onLoadingChange(true, "Анализ текста на повторения...");
     setIsLoading(true);
     try {
