@@ -24,6 +24,7 @@ import { NoteList } from "@/components/notes/parts/NoteList";
 import { INote, INoteGroup } from "@/entities/BookEntities";
 import { configDatabase } from "@/entities/configuratorDb";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
+import { NoteGroupRepository } from "@/repository/Note/NoteGroupRepository";
 
 export const NoteFolder = () => {
   const { folderUuid } = useParams();
@@ -47,11 +48,7 @@ export const NoteFolder = () => {
   const groups = useLiveQuery(() => getChildGroups(folderUuid || ""), [folderUuid]) || [];
   const notes = useLiveQuery(() => getNotesByGroup(folderUuid || ""), [folderUuid]) || [];
   const currentFolder = useLiveQuery(
-    () =>
-      configDatabase.notesGroups
-        .where("uuid")
-        .equals(folderUuid || "")
-        .first(),
+    () => NoteGroupRepository.getByUuid(configDatabase, folderUuid || ""),
     [folderUuid]
   );
 
@@ -62,10 +59,7 @@ export const NoteFolder = () => {
       let current = currentFolder;
 
       while (current && current.parentUuid !== "topLevel") {
-        const parent = await configDatabase.notesGroups
-          .where("uuid")
-          .equals(current.parentUuid)
-          .first();
+        const parent = await NoteGroupRepository.getByUuid(configDatabase, current.parentUuid);
 
         if (parent) {
           crumbs.unshift(parent);

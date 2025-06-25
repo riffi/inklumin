@@ -1,35 +1,33 @@
 import { useState } from "react";
+import { IconNote } from "@tabler/icons-react";
+import moment from "moment";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import {
   ActionIcon,
   Box,
   Button,
-  Modal,
   Group,
+  Modal,
   Paper,
+  Select,
   Stack,
   Text,
   Textarea,
-  Select,
   TextInput,
 } from "@mantine/core";
-import { IconNote } from "@tabler/icons-react";
-import moment from "moment";
-import { useBookStore } from "@/stores/bookStore/bookStore";
 import { configDatabase } from "@/entities/configuratorDb";
 import { NoteGroupRepository } from "@/repository/Note/NoteGroupRepository";
 import { NoteRepository } from "@/repository/Note/NoteRepository";
+import { useBookStore } from "@/stores/bookStore/bookStore";
 import { generateUUID } from "@/utils/UUIDUtils";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+
 import "github-markdown-css/github-markdown.css";
-import { notifications } from "@mantine/notifications";
+
 import MarkdownIt from "markdown-it";
-import { bookAgent, AgentMessage } from "@/agents/bookAgent";
-import {
-  createBlock,
-  createBlockInstance,
-  saveParamInstance,
-} from "@/agents/bookAgentActions";
+import { notifications } from "@mantine/notifications";
+import { AgentMessage, bookAgent } from "@/agents/bookAgent";
+import { createBlock, createBlockInstance, saveParamInstance } from "@/agents/bookAgentActions";
 import { useApiSettingsStore } from "@/stores/apiSettingsStore/apiSettingsStore";
 
 export const BookAgentChat = () => {
@@ -39,11 +37,8 @@ export const BookAgentChat = () => {
   const [noteModalOpen, setNoteModalOpen] = useState(false);
   const [noteTitle, setNoteTitle] = useState("");
   const [noteContent, setNoteContent] = useState("");
-  const {
-    openRouterModels,
-    currentOpenRouterModel,
-    setCurrentOpenRouterModel,
-  } = useApiSettingsStore();
+  const { openRouterModels, currentOpenRouterModel, setCurrentOpenRouterModel } =
+    useApiSettingsStore();
 
   const handleAsk = async () => {
     if (!question.trim()) return;
@@ -87,14 +82,21 @@ export const BookAgentChat = () => {
       /* ---- 1. Старый формат [[action|json]] ---- */
       if (content.startsWith("[[", next)) {
         const end = content.indexOf("]]", next);
-        if (end === -1) { pushText(next, content.length); break; }
+        if (end === -1) {
+          pushText(next, content.length);
+          break;
+        }
 
         const body = content.slice(next + 2, end);
         const bar = body.indexOf("|");
         if (bar !== -1) {
           const action = body.slice(0, bar).trim();
           let json: any = {};
-          try { json = JSON.parse(body.slice(bar + 1)); } catch { /* ignore */ }
+          try {
+            json = JSON.parse(body.slice(bar + 1));
+          } catch {
+            /* ignore */
+          }
           parts.push({
             action,
             title: json.title ?? action,
@@ -109,8 +111,10 @@ export const BookAgentChat = () => {
 
       /* ---- 2. Новый формат { action, title, params } ---- */
       if (content[next] === "{") {
-        let depth = 0, j = next;
-        do {                     // баланс скобок, чтобы поймать вложенные { }
+        let depth = 0,
+          j = next;
+        do {
+          // баланс скобок, чтобы поймать вложенные { }
           if (content[j] === "{") depth++;
           else if (content[j] === "}") depth--;
           j++;
@@ -124,15 +128,19 @@ export const BookAgentChat = () => {
               parts.push({
                 action: obj.action,
                 title: obj.title ?? obj.action,
-                params: obj.params ?? (() => {
-                  const { action, title, ...rest } = obj;
-                  return rest;
-                })(),
+                params:
+                  obj.params ??
+                  (() => {
+                    const { action, title, ...rest } = obj;
+                    return rest;
+                  })(),
               });
               i = j;
               continue;
             }
-          } catch { /* невалидный JSON — упадёт ниже */ }
+          } catch {
+            /* невалидный JSON — упадёт ниже */
+          }
         }
         // не тег: сохранить как обычный текст
         pushText(next, j);
@@ -154,10 +162,7 @@ export const BookAgentChat = () => {
     }
 
     try {
-      let group = await configDatabase.notesGroups
-        .where("title")
-        .equals(selectedBook.title)
-        .first();
+      let group = await NoteGroupRepository.getByTitle(configDatabase, selectedBook.title);
 
       if (!group) {
         group = await NoteGroupRepository.create(configDatabase, {
@@ -191,7 +196,7 @@ export const BookAgentChat = () => {
   };
 
   const handleAction = async (act: string, params: any) => {
-    console.log('handleAction', act, params)
+    console.log("handleAction", act, params);
     try {
       if (act === "createBlock") {
         await createBlock(params);
@@ -264,21 +269,20 @@ export const BookAgentChat = () => {
           Отправить
         </Button>
       </Stack>
-      <Modal
-        opened={noteModalOpen}
-        onClose={() => setNoteModalOpen(false)}
-        title="Новая заметка"
-      >
+      <Modal opened={noteModalOpen} onClose={() => setNoteModalOpen(false)} title="Новая заметка">
         <TextInput
           label="Название"
           value={noteTitle}
           onChange={(e) => setNoteTitle(e.currentTarget.value)}
           mb="md"
         />
-        <Button fullWidth onClick={() => {
-          handleCreateNote(noteTitle, noteContent);
-          setNoteModalOpen(false);
-        }}>
+        <Button
+          fullWidth
+          onClick={() => {
+            handleCreateNote(noteTitle, noteContent);
+            setNoteModalOpen(false);
+          }}
+        >
           Сохранить
         </Button>
       </Modal>

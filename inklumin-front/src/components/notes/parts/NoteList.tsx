@@ -26,6 +26,7 @@ import { NoteFolderSelector } from "@/components/notes/parts/NoteFolderSelector"
 import { INote } from "@/entities/BookEntities";
 import { configDatabase } from "@/entities/configuratorDb";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
+import { NoteGroupRepository } from "@/repository/Note/NoteGroupRepository";
 import { useUiSettingsStore } from "@/stores/uiSettingsStore/uiSettingsStore";
 
 interface NoteListProps {
@@ -55,7 +56,7 @@ export const NoteList = ({
   const { updateNote } = useNoteManager();
   const { isMobile } = useMedia();
   // Получаем все группы заметок
-  const allGroups = useLiveQuery(() => configDatabase.notesGroups.toArray(), [notes]) || [];
+  const allGroups = useLiveQuery(() => NoteGroupRepository.getAll(configDatabase), [notes]) || [];
 
   const filteredNotes = notes.filter((note) => {
     const noteTags = note.tags?.toLowerCase().split(",") || [];

@@ -9,6 +9,7 @@ import { configDatabase } from "@/entities/configuratorDb";
 import { useAuth } from "@/providers/AuthProvider/AuthProvider";
 import { useDialog } from "@/providers/DialogProvider/DialogProvider";
 import { NoteGroupRepository } from "@/repository/Note/NoteGroupRepository";
+import { NoteRepository } from "@/repository/Note/NoteRepository";
 
 export const NotesBackupTab = () => {
   const [loading, setLoading] = useState(false);
@@ -18,7 +19,7 @@ export const NotesBackupTab = () => {
   const handleExport = async () => {
     setLoading(true);
     try {
-      const notes = await configDatabase.notes.toArray();
+      const notes = await NoteRepository.getAll(configDatabase);
       const noteGroups = await NoteGroupRepository.getAll(configDatabase);
 
       const backupData = {
@@ -72,11 +73,11 @@ export const NotesBackupTab = () => {
             configDatabase.notesGroups,
             async () => {
               // Очистка существующих данных
-              await configDatabase.notes.clear();
+              await NoteRepository.clear(configDatabase);
               await NoteGroupRepository.clear(configDatabase);
 
               // Добавление новых данных
-              if (data.notes) await configDatabase.notes.bulkAdd(data.notes);
+              if (data.notes) await NoteRepository.bulkAdd(configDatabase, data.notes as INote[]);
               if (data.noteGroups)
                 await NoteGroupRepository.bulkAdd(configDatabase, data.noteGroups as INoteGroup[]);
             }

@@ -21,6 +21,8 @@ import { IBook, INote, INoteGroup } from "@/entities/BookEntities"; // Corrected
 import { configDatabase } from "@/entities/configuratorDb";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 import { usePageTitle } from "@/providers/PageTitleProvider/PageTitleProvider";
+import { BookRepository } from "@/repository/Book/BookRepository";
+import { NoteGroupRepository } from "@/repository/Note/NoteGroupRepository";
 import { NoteRepository } from "@/repository/Note/NoteRepository";
 import { generateUUID } from "@/utils/UUIDUtils";
 
@@ -41,7 +43,7 @@ export const NoteEditPage = () => {
   useEffect(() => {
     const loadNoteAndBooks = async () => {
       setLoading(true);
-      const booksData = await configDatabase.books.toArray();
+      const booksData = await BookRepository.getAll(configDatabase);
       setBooks(booksData);
 
       if (!uuid || uuid === "new") {
@@ -126,26 +128,17 @@ export const NoteEditPage = () => {
         : selectedBookUuid;
 
       if (isNewNote) {
-        let quickNotesGroup = await configDatabase.notesGroups
-          .where("title")
-          .equals("Быстрые заметки")
-          .first();
+        let quickNotesGroup = await NoteGroupRepository.getByTitle(
+          configDatabase,
+          "Быстрые заметки"
+        );
 
         if (!quickNotesGroup) {
-          const newGroupUuid = generateUUID();
-          // Using INoteGroup as per BookEntities.ts, omitting createdAt, updatedAt, notesCount, isSystem
-          const newGroupData: INoteGroup = {
-            uuid: newGroupUuid,
+          quickNotesGroup = await NoteGroupRepository.create(configDatabase, {
             title: "Быстрые заметки",
             kindCode: "system",
             parentUuid: "topLevel",
-            id: undefined, // id will be set by dexie if it's auto-incrementing primary key
-          };
-          await configDatabase.notesGroups.add(newGroupData);
-          quickNotesGroup = await configDatabase.notesGroups
-            .where("uuid")
-            .equals(newGroupUuid)
-            .first();
+          });
         }
 
         if (!quickNotesGroup) {

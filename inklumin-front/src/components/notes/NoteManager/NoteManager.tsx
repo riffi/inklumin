@@ -36,6 +36,7 @@ import { INote, INoteGroup } from "@/entities/BookEntities";
 import { configDatabase } from "@/entities/configuratorDb";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 import { usePageTitle } from "@/providers/PageTitleProvider/PageTitleProvider";
+import { NoteGroupRepository } from "@/repository/Note/NoteGroupRepository";
 import { useBookStore } from "@/stores/bookStore/bookStore";
 import { useUiSettingsStore } from "@/stores/uiSettingsStore/uiSettingsStore";
 
@@ -110,10 +111,7 @@ export const NoteManager = ({ bookNotesMode = false }: NoteManagerProps) => {
         return;
       }
 
-      let targetFolder = await configDatabase.notesGroups
-        .where("title")
-        .equals(selectedBook.title)
-        .first();
+      let targetFolder = await NoteGroupRepository.getByTitle(configDatabase, selectedBook.title);
 
       if (!targetFolder) {
         // createNoteGroup now returns the created group object

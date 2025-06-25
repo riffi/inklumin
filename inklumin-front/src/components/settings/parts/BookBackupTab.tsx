@@ -4,6 +4,7 @@ import { Box, Button, Divider, Group, LoadingOverlay, Select, Stack, Text } from
 import { notifications } from "@mantine/notifications";
 import { configDatabase } from "@/entities/configuratorDb";
 import { useAuth } from "@/providers/AuthProvider/AuthProvider";
+import { BookRepository } from "@/repository/Book/BookRepository";
 import {
   getServerBooksList,
   loadBookFromServer,
@@ -23,7 +24,7 @@ export const BookBackupTab = () => {
   // Загрузка локальных книг
   const loadLocalBooks = async () => {
     try {
-      const books = await configDatabase.books.toArray();
+      const books = await BookRepository.getAll(configDatabase);
       setLocalBooks(books.map((book) => ({ value: book.uuid, label: book.title })));
     } catch (error) {
       notifications.show({

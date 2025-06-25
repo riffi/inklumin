@@ -15,13 +15,13 @@ export const useNoteManager = () => {
     NoteGroupRepository.getChildren(configDatabase, parentUuid);
 
   const getNotesByGroup = (groupUuid: string) =>
-    configDatabase.notes.where("noteGroupUuid").equals(groupUuid).toArray();
+    NoteRepository.getByGroup(configDatabase, groupUuid);
 
   const getAllNotes = (bookUuid?: string) => {
     if (bookUuid) {
-      return configDatabase.notes.where("bookUuid").equals(bookUuid).toArray();
+      return NoteRepository.getAllByBook(configDatabase, bookUuid);
     }
-    return configDatabase.notes.toArray();
+    return NoteRepository.getAll(configDatabase);
   };
 
   const createNoteGroup = async (group: Omit<INoteGroup, "id">) => {
@@ -88,7 +88,7 @@ export const useNoteManager = () => {
       ...note,
       uuid: generateUUID(),
       body: "",
-      order: await configDatabase.notes.count(),
+      order: await NoteRepository.count(configDatabase),
     };
     await NoteRepository.save(configDatabase, newNote as INote);
     return newNote;

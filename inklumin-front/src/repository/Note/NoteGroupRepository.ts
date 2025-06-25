@@ -20,6 +20,10 @@ const getChildren = async (db: typeof configDatabase, parentUuid: string) => {
   return db.notesGroups.where("parentUuid").equals(parentUuid).toArray();
 };
 
+const getByTitle = async (db: typeof configDatabase, title: string) => {
+  return db.notesGroups.where("title").equals(title).first();
+};
+
 const count = async (db: typeof configDatabase) => db.notesGroups.count();
 
 const create = async (
@@ -68,6 +72,7 @@ const bulkAdd = async (db: typeof configDatabase, groups: INoteGroup[]) => {
 export const NoteGroupRepository = {
   getAll,
   getByUuid,
+  getByTitle,
   getTopLevel,
   getChildren,
   count,
