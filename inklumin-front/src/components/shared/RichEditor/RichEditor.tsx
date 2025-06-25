@@ -221,12 +221,15 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
                 onClick={() => {
                   if (editor) {
                     editor.setEditable(true);
+                    // вычисляем число пробелов в конце выбранного текста
+                    const trailingSpaces = selectedText.length - selectedText.trimEnd().length;
+                    // исключаем пробелы из диапазона замены
                     editor.commands.setTextSelection({
                       from: selectionRange.from,
-                      to: selectionRange.to,
+                      to: selectionRange.to - trailingSpaces,
                     });
                     editor.chain().insertContent(suggestion).run();
-                    editor.commands.focus(selectionRange.from + suggestion.length)
+                    editor.commands.focus(selectionRange.from + suggestion.length);
                     editor.commands.setTextSelection({
                       from: selectionRange.from,
                       to: selectionRange.from + suggestion.length,
