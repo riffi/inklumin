@@ -57,13 +57,13 @@
   }
 
   .mantine-RichTextEditor-control {
-    padding: 10px;
+    padding: 5px;
     background-color: transparent;
   }
 
   .mantine-RichTextEditor-controlIcon {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
   }
 
   /* Отступ первой строки по требованию */

@@ -138,6 +138,11 @@ export const EditorToolBar = (props: IEditorToolBarProps) => {
             </Menu>
           </>
         )}
+        <div className={"mantine-RichTextEditor-divider"}/>
+        <RichTextEditor.ControlsGroup>
+          <RichTextEditor.Undo/>
+          <RichTextEditor.Redo/>
+        </RichTextEditor.ControlsGroup>
       </RichTextEditor.Toolbar>
     </>
   );

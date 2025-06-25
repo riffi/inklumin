@@ -152,7 +152,7 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
               }}
             />
             <RichTextEditor.Control onClick={props.toggleFocusMode} aria-label="Focus mode">
-              <IconFocus />
+              <IconFocus color={"gray"} />
             </RichTextEditor.Control>
           </RichTextEditor.ControlsGroup>
         </EditorToolBar>
