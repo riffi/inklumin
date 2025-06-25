@@ -6,17 +6,18 @@ import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 import { usePageTitle } from "@/providers/PageTitleProvider/PageTitleProvider";
 import { useUiSettingsStore } from "@/stores/uiSettingsStore/uiSettingsStore";
 
-export const BaseLayout = () => {
+export const SceneEditorLayout = () => {
   const { isNavbarOpened, toggleNavbarOpened } = useUiSettingsStore();
   const { pageTitle, titleElement } = usePageTitle();
   // Подключаемся к базе данных выбранной книги
   useBookDbConnection();
   const { isMobile } = useMedia();
+  const hideHeader = isMobile;
   return (
     <>
       <AppShell
         header={{
-          height: { base: 50, sm: 0, lg: 0 },
+          height: hideHeader ? 0 : { base: 50, sm: 0, lg: 0 },
         }}
         navbar={{
           width: isNavbarOpened ? 300 : 60,
@@ -30,22 +31,24 @@ export const BaseLayout = () => {
           },
         }}
       >
-        <AppShell.Header>
-          <Group px="md" justify="space-between" align="center" gap="0">
-            <Burger
-              opened={isNavbarOpened}
-              onClick={toggleNavbarOpened}
-              hiddenFrom="sm"
-              lineSize={1}
-              size="lg"
-            />
-            {(isMobile && titleElement) || (
-              <Text fw={500} hiddenFrom="sm">
-                {pageTitle}
-              </Text>
-            )}
-          </Group>
-        </AppShell.Header>
+        {!hideHeader && (
+          <AppShell.Header>
+            <Group px="md" justify="space-between" align="center" gap="0">
+              <Burger
+                opened={isNavbarOpened}
+                onClick={toggleNavbarOpened}
+                hiddenFrom="sm"
+                lineSize={1}
+                size="lg"
+              />
+              {(isMobile && titleElement) || (
+                <Text fw={500} hiddenFrom="sm">
+                  {pageTitle}
+                </Text>
+              )}
+            </Group>
+          </AppShell.Header>
+        )}
 
         <AppShell.Navbar>
           <NavbarNested toggleNavbar={toggleNavbarOpened} opened={isNavbarOpened} />

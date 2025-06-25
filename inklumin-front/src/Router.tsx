@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { KnowledgeBaseViewer } from "@/components/knowledgeBase/KnowledgeBaseViewer";
 import { BaseLayout } from "@/components/layout/BaseLayout/BaseLayout";
+import { SceneEditorLayout } from "@/components/layout/SceneEditorLayout/SceneEditorLayout";
 import { NoteEditPage } from "@/components/notes/NoteEditPage/NoteEditPage";
 import { NoteFolder } from "@/components/notes/NoteFolder/NoteFolder";
 import { NoteManager } from "@/components/notes/NoteManager/NoteManager";
@@ -55,10 +56,6 @@ const router = createBrowserRouter([
         element: (<ScenesPage />) as ReactNode,
       },
       {
-        path: "/scene/card",
-        element: (<SceneCard />) as ReactNode,
-      },
-      {
         path: "/block-instance/manager",
         element: (<BlockInstanceManagerPage />) as ReactNode,
       },
@@ -105,6 +102,16 @@ const router = createBrowserRouter([
       {
         path: "/book/settings",
         element: (<BookSettingsPage />) as ReactNode,
+      },
+    ],
+  },
+  {
+    path: "/scene/card",
+    element: (<SceneEditorLayout />) as ReactNode,
+    children: [
+      {
+        index: true,
+        element: (<SceneCard />) as ReactNode,
       },
     ],
   },

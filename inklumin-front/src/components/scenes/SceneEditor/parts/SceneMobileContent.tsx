@@ -1,17 +1,14 @@
-import { useEffect } from "react";
 import { IconDatabaseSmile, IconLink, IconReportAnalytics } from "@tabler/icons-react";
-import { ActionIcon, Box, Button, Container, Flex, Group } from "@mantine/core";
+import { ActionIcon, Box, Container, Flex, Group } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useKeyboardHeight } from "@/components/scenes/SceneEditor/hooks/useKeyboardHeight";
 import { SceneLinkManager } from "@/components/scenes/SceneEditor/parts/SceneLinkManager/SceneLinkManager";
 import { SceneStatusPanel } from "@/components/scenes/SceneEditor/parts/SceneStatusPanel";
 import { WarningsPanel } from "@/components/scenes/SceneEditor/parts/WarningsPanel/WarningsPanel";
-import { InlineEdit } from "@/components/shared/InlineEdit/InlineEdit";
 import { InlineEdit2 } from "@/components/shared/InlineEdit2/InlineEdit2";
 import { RichEditor } from "@/components/shared/RichEditor/RichEditor";
 import type { IWarningGroup } from "@/components/shared/RichEditor/types";
 import { IChapter, IScene } from "@/entities/BookEntities";
-import { usePageTitle } from "@/providers/PageTitleProvider/PageTitleProvider";
 
 interface SceneMobileContentProps {
   sceneBody: string;
@@ -46,73 +43,58 @@ export const SceneMobileContent = ({
   chapter,
   onChapterTitleChange,
 }: SceneMobileContentProps) => {
-  const { setPageTitle, setTitleElement } = usePageTitle();
   const [linkManagerOpened, { open: openLinkManager, close: closeLinkManager }] =
     useDisclosure(false);
   const keyboardHeight = useKeyboardHeight(true);
 
-  // Управление заголовком через эффект
-  useEffect(() => {
-    if (focusMode) {
-      setTitleElement(null);
-      return;
-    }
-    if (scene) {
-      const headerElement = (
-        <Group display="flex" align="center" style={{ flexGrow: 1, paddingLeft: "10px" }}>
-          <Box flex={1} flexGrow={1}>
-            <InlineEdit2
-              value={chapter ? chapter.title : scene.title}
-              onChange={(title) => {
-                if (chapter && onChapterTitleChange) {
-                  onChapterTitleChange(title);
-                } else {
-                  saveScene({ ...scene, title });
-                }
-              }}
-              label=""
-            />
-          </Box>
-          <ActionIcon
-            variant="outline"
-            onClick={openLinkManager}
-            style={{
-              display: "flex",
-              flexGrow: 0,
-            }}
-          >
-            <IconLink size={16} />
-          </ActionIcon>
-          <ActionIcon
-            variant="outline"
-            onClick={openKnowledgeBaseDrawer}
-            style={{
-              display: "flex",
-              flexGrow: 0,
-            }}
-          >
-            <IconDatabaseSmile size={16} />
-          </ActionIcon>
-          <ActionIcon
-            variant="outline"
-            onClick={openAnalysisDrawer}
-            style={{
-              display: "flex",
-              flexGrow: 0,
-            }}
-          >
-            <IconReportAnalytics size={16} />
-          </ActionIcon>
-        </Group>
-      );
-      setTitleElement(headerElement);
-    } else {
-      setTitleElement(null);
-    }
-    return () => {
-      setTitleElement(null);
-    };
-  }, [scene, chapter, focusMode]);
+  // Элемент панели управления сценой
+  const headerElement = (
+    <Group display="flex" align="center" style={{ flexGrow: 1, paddingLeft: "10px" }}>
+      <Box flex={1} flexGrow={1}>
+        <InlineEdit2
+          value={chapter ? chapter.title : scene.title}
+          onChange={(title) => {
+            if (chapter && onChapterTitleChange) {
+              onChapterTitleChange(title);
+            } else {
+              saveScene({ ...scene, title });
+            }
+          }}
+          label=""
+        />
+      </Box>
+      <ActionIcon
+        variant="outline"
+        onClick={openLinkManager}
+        style={{
+          display: "flex",
+          flexGrow: 0,
+        }}
+      >
+        <IconLink size={16} />
+      </ActionIcon>
+      <ActionIcon
+        variant="outline"
+        onClick={openKnowledgeBaseDrawer}
+        style={{
+          display: "flex",
+          flexGrow: 0,
+        }}
+      >
+        <IconDatabaseSmile size={16} />
+      </ActionIcon>
+      <ActionIcon
+        variant="outline"
+        onClick={openAnalysisDrawer}
+        style={{
+          display: "flex",
+          flexGrow: 0,
+        }}
+      >
+        <IconReportAnalytics size={16} />
+      </ActionIcon>
+    </Group>
+  );
 
   return (
     <Container
@@ -131,8 +113,8 @@ export const SceneMobileContent = ({
           focusMode
             ? { top: 0, bottom: 0 }
             : {
-                top: 50, // Standard top when not in focus mode
-                bottom: warningGroups?.length > 0 && !focusMode ? 100 : 30, // Standard bottom
+                top: 0,
+                bottom: (warningGroups?.length > 0 && !focusMode ? 100 : 30) + 50,
               }
         }
         focusMode={focusMode}
@@ -144,7 +126,7 @@ export const SceneMobileContent = ({
           align="stretch"
           direction="column"
           wrap="wrap"
-          style={{ height: "calc(100dvh - 50px)" }}
+          style={{ height: "calc(100dvh - 80px)" }}
         >
           {warningGroups.length > 0 && (
             <Box flex="auto">
@@ -171,6 +153,23 @@ export const SceneMobileContent = ({
               </Box>
             </Box>
           )}
+          <Box
+            style={{
+              position: "fixed",
+              bottom: 30,
+              left: 0,
+              right: 0,
+              height: 50,
+              padding: "8px",
+              backgroundColor: "white",
+              boxShadow: "0 -2px 10px rgba(0,0,0,0.1)",
+              display: "flex",
+              alignItems: "center",
+              zIndex: 150,
+            }}
+          >
+            {headerElement}
+          </Box>
           <Box flex={2}>
             <SceneStatusPanel scene={scene} />
           </Box>
