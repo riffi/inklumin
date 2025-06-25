@@ -29,6 +29,10 @@ export const getBlockInstances = async (db: BookDB, blockUuid: string, titleSear
   return collection.toArray();
 };
 
+export const getAll = async (db: BookDB) => {
+  return db.blockInstances.toArray();
+};
+
 export const create = async (db: BookDB, instance: IBlockInstance) => {
   const instanceToCreate = {
     ...instance,
@@ -113,6 +117,7 @@ export const BlockInstanceRepository = {
   getByUuid,
   getByUuidList,
   getBlockInstances,
+  getAll,
   create,
   createSingleInstance,
   update,

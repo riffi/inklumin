@@ -23,8 +23,10 @@ import {
   IIcon,
 } from "@/entities/ConstructorEntities";
 import { useConnection } from "@/providers/ConnectionStatusProvider/ConnectionStatusProvider";
+import { BlockRepository } from "@/repository/Block/BlockRepository";
+import { ConfigurationRepository } from "@/repository/ConfigurationRepository";
 import { useBookStore } from "@/stores/bookStore/bookStore";
-import {getBlockTitle} from "@/utils/configUtils";
+import { getBlockTitle } from "@/utils/configUtils";
 
 export interface NavLinkItem {
   label: string;
@@ -71,7 +73,7 @@ const BASE_MENU_ITEMS: NavLinkGroup[] = [
 ];
 
 const getBlockPageTitle = (block: IBlock) => {
-  return getBlockTitle(block)
+  return getBlockTitle(block);
 };
 
 export const NavbarNested = ({
@@ -92,11 +94,11 @@ export const NavbarNested = ({
   }, [navigate]);
 
   const blocks = useLiveQuery<IBlock[]>(() => {
-    return selectedBook ? bookDb.blocks.toArray() : [];
+    return selectedBook ? BlockRepository.getAll(bookDb) : [];
   }, [selectedBook]);
 
   const bookConfiguration = useLiveQuery<IBookConfiguration>(async () => {
-    return selectedBook ? bookDb.bookConfigurations.toCollection().first() : null;
+    return selectedBook ? ConfigurationRepository.getFirst(bookDb) : null;
   }, [selectedBook]);
 
   const { baseItems, dynamicItems } = useMemo(() => {
@@ -118,7 +120,8 @@ export const NavbarNested = ({
           label: "База знаний",
           icon: IconBrandDatabricks,
           links:
-            blocks?.filter((b) => !b.parentBlockUuid && b.showInMainMenu === 1)
+            blocks
+              ?.filter((b) => !b.parentBlockUuid && b.showInMainMenu === 1)
               .map((b) => ({
                 label: getBlockPageTitle(b),
                 icon: b.icon,

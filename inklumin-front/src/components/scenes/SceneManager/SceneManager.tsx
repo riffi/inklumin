@@ -34,6 +34,8 @@ import { IChapter, ISceneWithInstances } from "@/entities/BookEntities";
 import { IBlock } from "@/entities/ConstructorEntities";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 import { usePageTitle } from "@/providers/PageTitleProvider/PageTitleProvider";
+import { BlockRepository } from "@/repository/Block/BlockRepository";
+import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";
 import { useBookStore } from "@/stores/bookStore/bookStore";
 import { CreateChapterModal } from "./modals/CreateChapterModal";
 import { CreateSceneModal } from "./modals/CreateSceneModal";
@@ -90,7 +92,7 @@ export const SceneManager = (props: SceneManagerProps) => {
 
   const navigate = useNavigate();
   const { isMobile } = useMedia();
-  const collapsedCount =  useBookStore((state) => state.collapsedChapters.size);
+  const collapsedCount = useBookStore((state) => state.collapsedChapters.size);
   const { createChapter } = useChapters(props.chapters);
 
   const { createScene } = useScenes(props.scenes);
@@ -115,8 +117,8 @@ export const SceneManager = (props: SceneManagerProps) => {
 
   useEffect(() => {
     const loadBlocks = async () => {
-      const blocks = await bookDb.blocks.filter((b) => b.showInSceneList === 1).toArray();
-      setAvailableBlocks(blocks);
+      const blocks = await BlockRepository.getAll(bookDb);
+      setAvailableBlocks(blocks.filter((b) => b.showInSceneList === 1));
     };
     loadBlocks();
   }, []);
@@ -124,10 +126,7 @@ export const SceneManager = (props: SceneManagerProps) => {
   useEffect(() => {
     const loadInstances = async () => {
       if (!selectedBlock) return;
-      const instances = await bookDb.blockInstances
-        .where("blockUuid")
-        .equals(selectedBlock.uuid)
-        .toArray();
+      const instances = await BlockInstanceRepository.getBlockInstances(bookDb, selectedBlock.uuid);
       setAvailableInstances(instances);
     };
     loadInstances();

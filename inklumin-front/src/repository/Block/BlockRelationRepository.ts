@@ -14,6 +14,10 @@ const getBlockRelations = async (db: BlockAbstractDb, blockUuid: string) => {
   return [...targetRelations, ...sourceRelations];
 };
 
+const getAllRelations = async (db: BlockAbstractDb) => {
+  return db.blocksRelations.toArray();
+};
+
 const save = async (db: BlockAbstractDb, relation: IBlockRelation) => {
   if (!relation.uuid) {
     relation.uuid = generateUUID();
@@ -70,6 +74,7 @@ const getRelatedBlocks = async (
 
 export const BlockRelationRepository = {
   getBlockRelations,
+  getAllRelations,
   remove,
   save,
   getRelatedBlocks, // Added

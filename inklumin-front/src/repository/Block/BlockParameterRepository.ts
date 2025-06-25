@@ -24,6 +24,29 @@ const getParamPossibleValues = async (db: BlockAbstractDb, parameterUuid: string
     .sortBy("orderNumber");
 };
 
+const getAllParameters = async (db: BlockAbstractDb) => {
+  return db.blockParameters.toArray();
+};
+
+const getByUuid = async (db: BlockAbstractDb, uuid: string) => {
+  return db.blockParameters.where("uuid").equals(uuid).first();
+};
+
+const getByUuidList = async (db: BlockAbstractDb, uuids: string[]) => {
+  return db.blockParameters.where("uuid").anyOf(uuids).toArray();
+};
+
+const getReferencingParamsToBlock = async (db: BlockAbstractDb, blockUuid: string) => {
+  return db.blockParameters.where("linkedBlockUuid").equals(blockUuid).toArray();
+};
+
+const getGroupingParameter = async (db: BlockAbstractDb, blockUuid: string) => {
+  return db.blockParameters
+    .where({ blockUuid, dataType: IBlockParameterDataType.blockLink })
+    .filter((p) => p.useForInstanceGrouping === 1)
+    .first();
+};
+
 const getDisplayedParameters = async (db: BlockAbstractDb, blockUuid: string) => {
   return db.blockParameters
     .where("blockUuid")
@@ -301,6 +324,11 @@ export const BlockParameterRepository = {
   getParamsByGroup,
   getGroupByUuid,
   getParamPossibleValues,
+  getAllParameters,
+  getByUuid,
+  getByUuidList,
+  getReferencingParamsToBlock,
+  getGroupingParameter,
   getDisplayedParameters,
   getDefaultParameters,
   deleteParameterGroup,

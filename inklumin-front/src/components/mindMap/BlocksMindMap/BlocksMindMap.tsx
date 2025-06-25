@@ -3,9 +3,12 @@ import { MarkerType } from "reactflow";
 import { Loader } from "@mantine/core";
 import { bookDb } from "@/entities/bookDb";
 import { IBlockStructureKind } from "@/entities/ConstructorEntities";
+import { BlockParameterRepository } from "@/repository/Block/BlockParameterRepository";
+import { BlockRelationRepository } from "@/repository/Block/BlockRelationRepository";
+import { BlockRepository } from "@/repository/Block/BlockRepository";
+import { getBlockTitle } from "@/utils/configUtils";
 import { MindMap } from "../MindMap/MindMap";
 import { FlowEdge, FlowNode } from "../MindMap/types";
-import {getBlockTitle} from "@/utils/configUtils";
 
 export const BlocksMindMap = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -15,9 +18,9 @@ export const BlocksMindMap = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const blocks = await bookDb.blocks.toArray();
-        const relations = await bookDb.blocksRelations.toArray();
-        const parameters = await bookDb.blockParameters.toArray();
+        const blocks = await BlockRepository.getAll(bookDb);
+        const relations = await BlockRelationRepository.getAllRelations(bookDb);
+        const parameters = await BlockParameterRepository.getAllParameters(bookDb);
 
         const parameterRelations = parameters
           .filter((p) => p.linkedBlockUuid)

@@ -73,23 +73,22 @@ export const InstanceMindMap = ({ blockInstance }: InstanceMindMapProps) => {
           );
 
         // Находим инстансы параметров текущего инстанса блока, которые ссылаются на другие инстансы блоков
-        const currentBlockParamInstances = await bookDb.blockParameterInstances
-          .filter(
-            (param) =>
-              param.blockInstanceUuid === currentUuid &&
-              currentBlockReferencingParameters.some(
-                (refParam) => refParam.uuid === param.blockParameterUuid
-              )
+        const currentBlockParamInstances = (
+          await BlockParameterInstanceRepository.getInstanceParams(bookDb, currentUuid)
+        ).filter((param) =>
+          currentBlockReferencingParameters.some(
+            (refParam) => refParam.uuid === param.blockParameterUuid
           )
-          .toArray();
+        );
 
         const otherBlockParamUuids = otherBlocksParamInstances.map(
           (param) => param.blockParameterUuid
         );
 
-        const otherBlockReferencingParameters = await bookDb.blockParameters
-          .filter((param) => otherBlockParamUuids.includes(param.uuid))
-          .toArray();
+        const otherBlockReferencingParameters = await BlockParameterRepository.getByUuidList(
+          bookDb,
+          otherBlockParamUuids
+        );
 
         // Объединяем все найденные связанные инстансы параметров в один массив
         const blockParameterInstances = [

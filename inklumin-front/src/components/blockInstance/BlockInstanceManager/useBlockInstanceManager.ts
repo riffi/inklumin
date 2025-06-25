@@ -32,10 +32,7 @@ export const useBlockInstanceManager = (blockUuid: string, titleSearch?: string)
   }, [blockUuid]);
 
   const groupingParam = useLiveQuery<IBlockParameter | undefined>(() => {
-    return bookDb.blockParameters
-      .where({ blockUuid, dataType: "blockLink" })
-      .filter((p) => p.useForInstanceGrouping === 1)
-      .first();
+    return BlockParameterRepository.getGroupingParameter(bookDb, blockUuid);
   }, [blockUuid]);
 
   const linkGroups = useLiveQuery<IBlockInstance[]>(() => {
@@ -67,12 +64,12 @@ export const useBlockInstanceManager = (blockUuid: string, titleSearch?: string)
     // Получаем базовые данные
     const instancesWithParams = await Promise.all(
       instances.map(async (instance) => {
-        const params = await bookDb.blockParameterInstances
-          .where("blockInstanceUuid")
-          .equals(instance.uuid)
-          .filter((p) => parameterUuids.includes(p.blockParameterUuid))
-          .toArray();
-        return { ...instance, params };
+        const params = await BlockParameterInstanceRepository.getInstanceParams(
+          bookDb,
+          instance.uuid
+        );
+        const filtered = params.filter((p) => parameterUuids.includes(p.blockParameterUuid));
+        return { ...instance, params: filtered };
       })
     );
 
@@ -122,7 +119,7 @@ export const useBlockInstanceManager = (blockUuid: string, titleSearch?: string)
   }, [instances, displayedParameters, groupingParam]);
 
   const addBlockInstance = async (data: IBlockInstance) => {
-    const instanceId = await bookDb.blockInstances.add(data);
+    await BlockInstanceRepository.create(bookDb, data);
     await BlockParameterInstanceRepository.appendDefaultParams(bookDb, data);
   };
 

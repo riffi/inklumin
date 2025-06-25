@@ -10,6 +10,10 @@ export const getInstanceParams = async (db: BookDB, instanceUuid: string) => {
   return db.blockParameterInstances.where("blockInstanceUuid").equals(instanceUuid).toArray();
 };
 
+export const getById = async (db: BookDB, id: number) => {
+  return db.blockParameterInstances.get(id);
+};
+
 export const appendDefaultParam = async (
   db: BookDB,
   instance: IBlockInstance,
@@ -91,11 +95,14 @@ export const removeAllForInstance = async (db: BookDB, instanceUuid: string) => 
 };
 
 export const getReferencingParamsToInstance = async (db: BookDB, instanceUuid: string) => {
-  return db.blockParameterInstances.filter((param) => param.linkedBlockUuid === instanceUuid).toArray();
+  return db.blockParameterInstances
+    .filter((param) => param.linkedBlockUuid === instanceUuid)
+    .toArray();
 };
 
 export const BlockParameterInstanceRepository = {
   getInstanceParams,
+  getById,
   appendDefaultParam,
   appendDefaultParams,
   addParameterInstance,

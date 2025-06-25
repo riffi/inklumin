@@ -53,11 +53,9 @@ export const KnowledgeBaseDrawer = ({
     if (!selectedBlock) {
       return [];
     }
-    return bookDb.blockInstances
-      .where("blockUuid")
-      .equals(selectedBlock?.uuid)
-      .toArray()
-      .then((arr) => arr.sort((a, b) => a.title.localeCompare(b.title)));
+    return BlockInstanceRepository.getBlockInstances(bookDb, selectedBlock.uuid).then((arr) =>
+      arr.sort((a, b) => a.title.localeCompare(b.title))
+    );
   }, [selectedBlock]);
 
   const sceneLinks = useLiveQuery(() => {
@@ -198,7 +196,7 @@ export const KnowledgeBaseDrawer = ({
         const selectedUuid = entitySelection[entity.title];
 
         if (selectedUuid) {
-          const existing = await bookDb.blockInstances.where("uuid").equals(selectedUuid).first();
+          const existing = await BlockInstanceRepository.getByUuid(bookDb, selectedUuid);
           if (!existing) {
             notifications.show({
               title: "Ошибка",

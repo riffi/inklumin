@@ -15,6 +15,7 @@ import { BlockRelationRepository } from "@/repository/Block/BlockRelationReposit
 import { BlockRepository } from "@/repository/Block/BlockRepository";
 import { BlockTabRepository } from "@/repository/Block/BlockTabRepository";
 import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";
+import { BlockParameterInstanceRepository } from "@/repository/BlockInstance/BlockParameterInstanceRepository";
 
 export const useBlockInstanceEditor = (
   blockInstanceUuid: string,
@@ -47,7 +48,7 @@ export const useBlockInstanceEditor = (
 
   const referencingParams = useLiveQuery<IBlockParameter[]>(() => {
     if (!block || !blockRelations) return [];
-    return bookDb.blockParameters.where("linkedBlockUuid").equals(block.uuid).toArray();
+    return BlockParameterRepository.getReferencingParamsToBlock(bookDb, block.uuid);
   }, [block, blockRelations]);
 
   //группы параметров блока
@@ -64,12 +65,9 @@ export const useBlockInstanceEditor = (
   //значения параметров группы
   const parameterInstances = useLiveQuery<IBlockParameterInstance[]>(() => {
     if (!blockInstance || !currentParamGroup) return [];
-    return bookDb.blockParameterInstances
-      .where({
-        blockParameterGroupUuid: currentParamGroup?.uuid,
-        blockInstanceUuid: blockInstance?.uuid,
-      })
-      .toArray();
+    return BlockParameterInstanceRepository.getInstanceParams(bookDb, blockInstance.uuid).then(
+      (params) => params.filter((p) => p.blockParameterGroupUuid === currentParamGroup?.uuid)
+    );
   }, [currentParamGroup, blockInstance]);
 
   //все доступные параметры в группе параметров блока
@@ -80,22 +78,20 @@ export const useBlockInstanceEditor = (
 
   const possibleValuesMap = useLiveQuery<Record<string, IBlockParameterPossibleValue[]>>(() => {
     if (!availableParameters) return {};
-    const paramUuids = availableParameters.map((p) => p.uuid || "");
-    return bookDb.blockParameterPossibleValues
-      .where("parameterUuid")
-      .anyOf(paramUuids)
-      .toArray()
-      .then((values) => {
-        return values.reduce(
-          (acc, value) => {
-            const key = value.parameterUuid;
-            if (!acc[key]) acc[key] = [];
-            acc[key].push(value);
-            return acc;
-          },
-          {} as Record<string, IBlockParameterPossibleValue[]>
-        );
+    return Promise.all(
+      availableParameters.map((p) =>
+        BlockParameterRepository.getParamPossibleValues(bookDb, p.uuid!).then((values) => ({
+          uuid: p.uuid!,
+          values,
+        }))
+      )
+    ).then((results) => {
+      const map: Record<string, IBlockParameterPossibleValue[]> = {};
+      results.forEach((r) => {
+        map[r.uuid] = r.values;
       });
+      return map;
+    });
   }, [availableParameters]);
 
   //параметры, которые еще не используются в данном блоке

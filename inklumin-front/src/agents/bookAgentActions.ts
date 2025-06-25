@@ -1,12 +1,22 @@
 import { bookDb } from "@/entities/bookDb";
+import { IBlockParameterInstance } from "@/entities/BookEntities";
+import { IBlockParameterDataType } from "@/entities/ConstructorEntities";
+import { BlockParameterRepository } from "@/repository/Block/BlockParameterRepository";
 import { BlockRepository } from "@/repository/Block/BlockRepository";
 import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";
 import { BlockParameterInstanceRepository } from "@/repository/BlockInstance/BlockParameterInstanceRepository";
-import { IBlockParameterDataType } from "@/entities/ConstructorEntities";
-import { IBlockParameterInstance } from "@/entities/BookEntities";
+import { ConfigurationRepository } from "@/repository/ConfigurationRepository";
 
-export const createBlock = async ({ title, description, structureKind }: { title: string; description?: string; structureKind: string; }) => {
-  const config = await bookDb.bookConfigurations.toCollection().first();
+export const createBlock = async ({
+  title,
+  description,
+  structureKind,
+}: {
+  title: string;
+  description?: string;
+  structureKind: string;
+}) => {
+  const config = await ConfigurationRepository.getFirst(bookDb);
   const block = {
     title,
     description: description || "",
@@ -17,8 +27,16 @@ export const createBlock = async ({ title, description, structureKind }: { title
   return block;
 };
 
-export const createBlockInstance = async ({ blockUuid, title, description }: { blockUuid: string; title: string; description?: string; }) => {
-  console.log('createBlockInstance', blockUuid, title, description)
+export const createBlockInstance = async ({
+  blockUuid,
+  title,
+  description,
+}: {
+  blockUuid: string;
+  title: string;
+  description?: string;
+}) => {
+  console.log("createBlockInstance", blockUuid, title, description);
   const instance = {
     uuid: crypto.randomUUID(),
     blockUuid,
@@ -30,11 +48,26 @@ export const createBlockInstance = async ({ blockUuid, title, description }: { b
   return instance;
 };
 
-export const saveParamInstance = async ({ id, blockInstanceUuid, blockParameterUuid, blockParameterGroupUuid, value }: { id?: number; blockInstanceUuid?: string; blockParameterUuid?: string; blockParameterGroupUuid?: string; value: string | number; }) => {
+export const saveParamInstance = async ({
+  id,
+  blockInstanceUuid,
+  blockParameterUuid,
+  blockParameterGroupUuid,
+  value,
+}: {
+  id?: number;
+  blockInstanceUuid?: string;
+  blockParameterUuid?: string;
+  blockParameterGroupUuid?: string;
+  value: string | number;
+}) => {
   if (id) {
-    const instance = await bookDb.blockParameterInstances.get(id);
+    const instance = await BlockParameterInstanceRepository.getById(bookDb, id);
     if (instance) {
-      const paramDef = await bookDb.blockParameters.get({ uuid: instance.blockParameterUuid });
+      const paramDef = await BlockParameterRepository.getByUuid(
+        bookDb,
+        instance.blockParameterUuid
+      );
       const changes: Partial<IBlockParameterInstance> = {};
       if (paramDef?.dataType === IBlockParameterDataType.blockLink) {
         changes.linkedBlockUuid = value as string;
@@ -43,17 +76,18 @@ export const saveParamInstance = async ({ id, blockInstanceUuid, blockParameterU
       }
       await BlockParameterInstanceRepository.updateParameterInstance(bookDb, Number(id), changes);
     }
-    return await bookDb.blockParameterInstances.get(id);
+    return await BlockParameterInstanceRepository.getById(bookDb, id);
   }
   if (!blockInstanceUuid || !blockParameterUuid || !blockParameterGroupUuid) return null;
-  const paramDef = await bookDb.blockParameters.get({ uuid: blockParameterUuid });
+  const paramDef = await BlockParameterRepository.getByUuid(bookDb, blockParameterUuid);
   const instance = {
     uuid: crypto.randomUUID(),
     blockInstanceUuid,
     blockParameterUuid,
     blockParameterGroupUuid,
     value: paramDef?.dataType === IBlockParameterDataType.blockLink ? "" : value,
-    linkedBlockUuid: paramDef?.dataType === IBlockParameterDataType.blockLink ? (value as string) : undefined,
+    linkedBlockUuid:
+      paramDef?.dataType === IBlockParameterDataType.blockLink ? (value as string) : undefined,
   } as any;
   await BlockParameterInstanceRepository.addParameterInstance(bookDb, instance);
   return instance;

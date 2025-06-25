@@ -6,6 +6,10 @@ const getByUuid = async (db: BlockAbstractDb, uuid?: string) => {
   return db.bookConfigurations.where("uuid").equals(uuid).first();
 };
 
+const getFirst = async (db: BlockAbstractDb) => {
+  return db.bookConfigurations.toCollection().first();
+};
+
 const getExportData = async (db: BlockAbstractDb, configurationUuid: string) => {
   // Вспомогательная функция для удаления id
   const excludeId = <T extends { id?: number }>(obj: T): Omit<T, "id"> => {
@@ -66,5 +70,6 @@ const getExportData = async (db: BlockAbstractDb, configurationUuid: string) => 
 
 export const ConfigurationRepository = {
   getByUuid,
+  getFirst,
   getExportData,
 };
