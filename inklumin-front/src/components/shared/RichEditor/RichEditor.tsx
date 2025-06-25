@@ -118,7 +118,8 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
           focusMode={props.focusMode}
           toggleFocusMode={props.toggleFocusMode}
         >
-          <ChecksDrawerButton
+          <RichTextEditor.ControlsGroup>
+              <ChecksDrawerButton
             editor={editor}
             onLoadingChange={(isLoading, message) =>
               setLoadingState({
@@ -149,6 +150,7 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
           <RichTextEditor.Control onClick={props.toggleFocusMode} aria-label="Focus mode">
             <IconFocus />
           </RichTextEditor.Control>
+          </RichTextEditor.ControlsGroup>
         </EditorToolBar>
         <RichTextEditor.Content />
       </RichTextEditor>

@@ -1,11 +1,22 @@
 .mantine-RichTextEditor-toolbar {
   --rte-sticky-offset: 0px !important;
-  margin-left: 5px;
+  margin-left: 0px;
 }
 
 .ProseMirror {
   /*text-indent: 2em;*/
 }
+
+.mantine-RichTextEditor-control {
+  padding: 10px;
+  background-color: transparent;
+}
+
+.mantine-RichTextEditor-controlsGroup{
+  padding: 0px 10px;
+  border-right: 1px solid #dddddd;
+}
+
 /* В вашем глобальном CSS */
 @media (max-width: 48em) {
   .ProseMirror {
@@ -15,11 +26,18 @@
   .mantine-RichTextEditor-toolbar {
     --rte-sticky-offset: 0px !important;
     margin-left: 0px;
+    width: 100%;
   }
 
   .mantine-RichTextEditor-controlsGroup {
     background-color: transparent;
   }
+
+  .mantine-RichTextEditor-controlsGroup{
+    padding: 0px;
+    border-right: 1px solid #dddddd;
+  }
+
   .mantine-RichTextEditor-control {
     padding: 10px;
     background-color: transparent;

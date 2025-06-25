@@ -1,6 +1,6 @@
 import React from "react";
-import { IconFocus2 } from "@tabler/icons-react";
-import { ActionIcon } from "@mantine/core";
+import { IconAlignJustified, IconBlockquote, IconH1, IconPalette } from "@tabler/icons-react";
+import { Menu } from "@mantine/core";
 import { RichTextEditor } from "@mantine/tiptap";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 
@@ -43,7 +43,6 @@ export const EditorToolBar = (props: IEditorToolBarProps) => {
           <RichTextEditor.Italic />
           <RichTextEditor.Underline />
           <RichTextEditor.ClearFormatting />
-          {props.children}
 
           {!isMobile && (
             <>
@@ -52,54 +51,93 @@ export const EditorToolBar = (props: IEditorToolBarProps) => {
           )}
         </RichTextEditor.ControlsGroup>
 
+          {props.children}
+
+
         {!isMobile && (
           <>
-            <RichTextEditor.ControlsGroup>
-              <RichTextEditor.H1 />
-              <RichTextEditor.H2 />
-              <RichTextEditor.H3 />
-              <RichTextEditor.H4 />
-            </RichTextEditor.ControlsGroup>
+            <Menu withinPortal={false}>
+              <Menu.Target>
+                <RichTextEditor.Control>
+                  <IconH1 size={16} />
+                </RichTextEditor.Control>
+              </Menu.Target>
+              <Menu.Dropdown>
+                <RichTextEditor.ControlsGroup>
+                  <RichTextEditor.H1 />
+                  <RichTextEditor.H2 />
+                  <RichTextEditor.H3 />
+                  <RichTextEditor.H4 />
+                </RichTextEditor.ControlsGroup>
+              </Menu.Dropdown>
+            </Menu>
 
-            <RichTextEditor.ControlsGroup>
-              <RichTextEditor.Blockquote />
-              <RichTextEditor.Hr />
-              <RichTextEditor.Subscript />
-              <RichTextEditor.Superscript />
-            </RichTextEditor.ControlsGroup>
+            <Menu withinPortal={false}>
+              <Menu.Target>
+                <RichTextEditor.Control>
+                  <IconBlockquote size={16} />
+                </RichTextEditor.Control>
+              </Menu.Target>
+              <Menu.Dropdown>
+                <RichTextEditor.ControlsGroup>
+                  <RichTextEditor.Blockquote />
+                  <RichTextEditor.Hr />
+                  <RichTextEditor.Subscript />
+                  <RichTextEditor.Superscript />
+                </RichTextEditor.ControlsGroup>
+              </Menu.Dropdown>
+            </Menu>
 
-            <RichTextEditor.ControlsGroup>
-              <RichTextEditor.AlignLeft />
-              <RichTextEditor.AlignCenter />
-              <RichTextEditor.AlignJustify />
-              <RichTextEditor.AlignRight />
-            </RichTextEditor.ControlsGroup>
+            <Menu withinPortal={false}>
+              <Menu.Target>
+                <RichTextEditor.Control>
+                  <IconAlignJustified size={16} />
+                </RichTextEditor.Control>
+              </Menu.Target>
+              <Menu.Dropdown>
+                <RichTextEditor.ControlsGroup>
+                  <RichTextEditor.AlignLeft />
+                  <RichTextEditor.AlignCenter />
+                  <RichTextEditor.AlignJustify />
+                  <RichTextEditor.AlignRight />
+                </RichTextEditor.ControlsGroup>
+              </Menu.Dropdown>
+            </Menu>
 
-            <RichTextEditor.ControlsGroup>
-              <RichTextEditor.ColorPicker
-                colors={[
-                  "#25262b",
-                  "#868e96",
-                  "#fa5252",
-                  "#e64980",
-                  "#be4bdb",
-                  "#7950f2",
-                  "#4c6ef5",
-                  "#228be6",
-                  "#15aabf",
-                  "#12b886",
-                  "#40c057",
-                  "#82c91e",
-                  "#fab005",
-                  "#fd7e14",
-                ]}
-              />
-              <RichTextEditor.Color color="#F03E3E" />
-              <RichTextEditor.Color color="#7048E8" />
-              <RichTextEditor.Color color="#1098AD" />
-              <RichTextEditor.Color color="#37B24D" />
-              <RichTextEditor.Color color="#F59F00" />
-            </RichTextEditor.ControlsGroup>
+            <Menu withinPortal={false}>
+              <Menu.Target>
+                <RichTextEditor.Control>
+                  <IconPalette size={16} />
+                </RichTextEditor.Control>
+              </Menu.Target>
+              <Menu.Dropdown>
+                <RichTextEditor.ControlsGroup>
+                  <RichTextEditor.ColorPicker
+                    colors={[
+                      "#25262b",
+                      "#868e96",
+                      "#fa5252",
+                      "#e64980",
+                      "#be4bdb",
+                      "#7950f2",
+                      "#4c6ef5",
+                      "#228be6",
+                      "#15aabf",
+                      "#12b886",
+                      "#40c057",
+                      "#82c91e",
+                      "#fab005",
+                      "#fd7e14",
+                    ]}
+                  />
+                  <RichTextEditor.Color color="#F03E3E" />
+                  <RichTextEditor.Color color="#7048E8" />
+                  <RichTextEditor.Color color="#1098AD" />
+                  <RichTextEditor.Color color="#37B24D" />
+                  <RichTextEditor.Color color="#F59F00" />
+                </RichTextEditor.ControlsGroup>
+              </Menu.Dropdown>
+            </Menu>
           </>
         )}
       </RichTextEditor.Toolbar>
