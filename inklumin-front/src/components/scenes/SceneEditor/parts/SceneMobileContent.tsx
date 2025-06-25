@@ -118,6 +118,7 @@ export const SceneMobileContent = ({
         }
         focusMode={focusMode}
         toggleFocusMode={toggleFocusMode}
+        useIndent
       />
       {!focusMode && (
         <Flex

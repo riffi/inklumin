@@ -34,6 +34,8 @@ export interface ISceneRichTextEditorProps {
   setSelectedGroup?: (group: IWarningGroup | undefined) => void;
   focusMode: boolean;
   toggleFocusMode: () => void;
+  /** Включить отступ первой строки */
+  useIndent?: boolean;
 }
 
 const TOOLBAR_HEIGHT = 40;
@@ -93,7 +95,9 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
       <RichTextEditor
         editor={editor}
         variant={props.focusMode ? "unstyled" : "subtle"}
-        className={props.focusMode ? "focus-mode-paragraphs" : ""}
+        className={`${props.focusMode ? "focus-mode-paragraphs" : ""} ${
+          props.useIndent ? "use-indent" : ""
+        }`}
         style={
           isMobile
             ? {
@@ -119,37 +123,37 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
           toggleFocusMode={props.toggleFocusMode}
         >
           <RichTextEditor.ControlsGroup>
-              <ChecksDrawerButton
-            editor={editor}
-            onLoadingChange={(isLoading, message) =>
-              setLoadingState({
-                isLoading,
-                message: message || "",
-              })
-            }
-            repeatsActive={repeatsActive}
-            setRepeatsActive={setRepeatsActive}
-            clichesActive={clichesActive}
-            setClichesActive={setClichesActive}
-            spellingActive={spellingActive}
-            setSpellingActive={setSpellingActive}
-          />
-          <SuggestionsDrawerButton
-            editor={editor}
-            selectedText={selectedText}
-            onLoadingChange={(isLoading, message) =>
-              setLoadingState({ isLoading, message: message || "" })
-            }
-            onSuggestionsFound={(items, type) => {
-              if (!items || items.length === 0) return;
-              setSuggestions(items);
-              setSuggestionType(type as any);
-              openDrawer();
-            }}
-          />
-          <RichTextEditor.Control onClick={props.toggleFocusMode} aria-label="Focus mode">
-            <IconFocus />
-          </RichTextEditor.Control>
+            <ChecksDrawerButton
+              editor={editor}
+              onLoadingChange={(isLoading, message) =>
+                setLoadingState({
+                  isLoading,
+                  message: message || "",
+                })
+              }
+              repeatsActive={repeatsActive}
+              setRepeatsActive={setRepeatsActive}
+              clichesActive={clichesActive}
+              setClichesActive={setClichesActive}
+              spellingActive={spellingActive}
+              setSpellingActive={setSpellingActive}
+            />
+            <SuggestionsDrawerButton
+              editor={editor}
+              selectedText={selectedText}
+              onLoadingChange={(isLoading, message) =>
+                setLoadingState({ isLoading, message: message || "" })
+              }
+              onSuggestionsFound={(items, type) => {
+                if (!items || items.length === 0) return;
+                setSuggestions(items);
+                setSuggestionType(type as any);
+                openDrawer();
+              }}
+            />
+            <RichTextEditor.Control onClick={props.toggleFocusMode} aria-label="Focus mode">
+              <IconFocus />
+            </RichTextEditor.Control>
           </RichTextEditor.ControlsGroup>
         </EditorToolBar>
         <RichTextEditor.Content />

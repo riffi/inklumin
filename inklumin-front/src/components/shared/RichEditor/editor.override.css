@@ -7,6 +7,11 @@
   /*text-indent: 2em;*/
 }
 
+/* Отступ первой строки по требованию */
+.use-indent .ProseMirror {
+  text-indent: 2em;
+}
+
 .mantine-RichTextEditor-control {
   padding: 10px;
   background-color: transparent;
@@ -46,6 +51,11 @@
   .mantine-RichTextEditor-controlIcon {
     width: 24px;
     height: 24px;
+  }
+
+  /* Отступ первой строки по требованию */
+  .use-indent .ProseMirror {
+    text-indent: 1em;
   }
 }
 

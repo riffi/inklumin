@@ -159,6 +159,7 @@ export const SceneDesktopContent = ({
                   }}
                   focusMode={focusMode}
                   toggleFocusMode={toggleFocusMode}
+                  useIndent
                 />
               )}
               <>
