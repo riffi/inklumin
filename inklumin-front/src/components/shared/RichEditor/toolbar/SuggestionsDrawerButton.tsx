@@ -5,7 +5,6 @@ import { RichTextEditor } from "@mantine/tiptap";
 import { ParaphraseAction } from "./actions/ParaphraseAction";
 import { RhymesAction } from "./actions/RhymesAction";
 import { SimplifyAction } from "./actions/SimplifyAction";
-import { SpellingAction } from "./actions/SpellingAction";
 import { SynonymsAction } from "./actions/SynonymsAction";
 
 interface SuggestionsDrawerButtonProps {
@@ -30,12 +29,15 @@ export const SuggestionsDrawerButton = ({
 
   return (
     <>
-      <RichTextEditor.Control onClick={() => {
-        editor.setEditable(false)
-        editor.commands.blur()
-        open()
-      }} title="Инструменты">
-        <IconBulb  color="gray" />
+      <RichTextEditor.Control
+        onClick={() => {
+          editor.setEditable(false);
+          editor.commands.blur();
+          open();
+        }}
+        title="Инструменты"
+      >
+        <IconBulb color="gray" />
       </RichTextEditor.Control>
       <Drawer opened={opened} onClose={close} title="Инструменты" position="right">
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -56,12 +58,6 @@ export const SuggestionsDrawerButton = ({
             selectedText={selectedText}
             onLoadingChange={onLoadingChange}
             onFound={(s) => handleFound(s, "simplify")}
-          />
-          <SpellingAction
-            editor={editor}
-            selectedText={selectedText}
-            onLoadingChange={onLoadingChange}
-            onFound={(s) => handleFound(s, "spelling")}
           />
           <RhymesAction
             editor={editor}

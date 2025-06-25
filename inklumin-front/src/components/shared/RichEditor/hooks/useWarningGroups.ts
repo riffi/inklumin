@@ -4,6 +4,7 @@ import { Editor } from "@tiptap/react";
 import { Transaction } from "prosemirror-state";
 import { clicheHighlighterKey } from "@/components/shared/RichEditor/plugins/ClisheHightligherExtension";
 import { repeatHighlighterKey } from "@/components/shared/RichEditor/plugins/RepeatHighlighterExtension";
+import { spellingHighlighterKey } from "@/components/shared/RichEditor/plugins/SpellingHighlighterExtension";
 import { IWarningGroup, IWarningKind } from "@/components/shared/RichEditor/types";
 
 // Хук обновления данных о замечаниях при изменении состояния редактора
@@ -21,12 +22,14 @@ export const useWarningGroups = (
     const updateWarnings = ({ editor, transaction: tr }) => {
       const clicheMeta = tr.getMeta(clicheHighlighterKey);
       const repeatMeta = tr.getMeta(repeatHighlighterKey);
-      const meta = clicheMeta || repeatMeta;
+      const spellingMeta = tr.getMeta(spellingHighlighterKey);
+      const meta = clicheMeta || repeatMeta || spellingMeta;
       if (meta?.action === "UPDATE_DECORATIONS") {
         const clicheGroups = clicheHighlighterKey.getState(editor.state)?.warningGroups || [];
         const repeatGroups = repeatHighlighterKey.getState(editor.state)?.warningGroups || [];
+        const spellingGroups = spellingHighlighterKey.getState(editor.state)?.warningGroups || [];
 
-        const newWarningGroups = [...clicheGroups, ...repeatGroups];
+        const newWarningGroups = [...clicheGroups, ...repeatGroups, ...spellingGroups];
         setWarningGroups(newWarningGroups);
         onWarningsChange(newWarningGroups);
       }
@@ -43,7 +46,8 @@ export const useWarningGroups = (
     const handlePluginUpdate = ({ editor, transaction: tr }) => {
       const clicheMeta = tr.getMeta(clicheHighlighterKey);
       const repeatMeta = tr.getMeta(repeatHighlighterKey);
-      const meta = clicheMeta || repeatMeta;
+      const spellingMeta = tr.getMeta(spellingHighlighterKey);
+      const meta = clicheMeta || repeatMeta || spellingMeta;
 
       if (meta?.action === "ACTIVATE_GROUP" && !internalUpdate.current) {
         internalUpdate.current = true; // Блокируем обратную связь
@@ -51,6 +55,7 @@ export const useWarningGroups = (
         const groups = [
           ...(clicheHighlighterKey.getState(editor.state)?.warningGroups || []),
           ...(repeatHighlighterKey.getState(editor.state)?.warningGroups || []),
+          ...(spellingHighlighterKey.getState(editor.state)?.warningGroups || []),
         ];
 
         const group = groups.find((g) => g.groupIndex === meta.groupIndex);
@@ -77,7 +82,9 @@ export const useWarningGroups = (
       const key =
         selectedGroup.warningKind === IWarningKind.CLICHE
           ? clicheHighlighterKey
-          : repeatHighlighterKey;
+          : selectedGroup.warningKind === IWarningKind.REPEAT
+            ? repeatHighlighterKey
+            : spellingHighlighterKey;
 
       editor.view.dispatch(
         editor.state.tr.setMeta(key, {

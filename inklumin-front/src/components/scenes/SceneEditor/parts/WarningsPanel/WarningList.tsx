@@ -20,6 +20,8 @@ const WarningContainer = ({ container, onSelectWarning }) => {
         <div key={i}>
           {container.warningKind === IWarningKind.REPEAT ? (
             <RepeatWarnings warnings={group.warnings} onSelect={onSelectWarning} />
+          ) : container.warningKind === IWarningKind.CLICHE ? (
+            <ClicheWarnings warnings={group.warnings} onSelect={onSelectWarning} />
           ) : (
             <ClicheWarnings warnings={group.warnings} onSelect={onSelectWarning} />
           )}

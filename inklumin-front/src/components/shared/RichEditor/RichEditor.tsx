@@ -8,12 +8,13 @@ import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 import "./editor.override.css";
 
 import React, { useState } from "react";
-import {IconCheck, IconFocus} from "@tabler/icons-react";
+import { IconCheck, IconFocus } from "@tabler/icons-react";
 import { Button, Drawer } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { LoadingOverlayExtended } from "@/components/shared/overlay/LoadingOverlayExtended";
 import { useEditorState } from "@/components/shared/RichEditor/hooks/useEditorState";
 import { useWarningGroups } from "@/components/shared/RichEditor/hooks/useWarningGroups";
+import { CheckSpellingAction } from "@/components/shared/RichEditor/toolbar/actions/CheckSpellingAction";
 import { ChecksDrawerButton } from "@/components/shared/RichEditor/toolbar/ChecksDrawerButton";
 import { EditorToolBar } from "@/components/shared/RichEditor/toolbar/EditorToolBar";
 import { SuggestionsDrawerButton } from "@/components/shared/RichEditor/toolbar/SuggestionsDrawerButton";
@@ -51,7 +52,7 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
   const [isDrawerOpened, { open: openDrawer, close: closeDrawer }] = useDisclosure(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [suggestionType, setSuggestionType] = useState<
-    "synonyms" | "paraphrase" | "simplify" | "spelling" | "rhymes"
+    "synonyms" | "paraphrase" | "simplify" | "rhymes"
   >("synonyms");
   const [selectedText, setSelectedText] = useState("");
   const [selectionRange, setSelectionRange] = useState<{ from: number; to: number }>({
@@ -60,6 +61,7 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
   });
   const [repeatsActive, setRepeatsActive] = useState(false);
   const [clichesActive, setClichesActive] = useState(false);
+  const [spellingActive, setSpellingActive] = useState(false);
   const { isMobile } = useMedia();
 
   const onSelectionChange = (from: number, to: number) => {
@@ -104,7 +106,7 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
                 left: 0,
                 backgroundColor: "white",
                 width: "100%",
-                border: "none"
+                border: "none",
               }
             : {}
         }
@@ -130,6 +132,14 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
             clichesActive={clichesActive}
             setClichesActive={setClichesActive}
           />
+          <CheckSpellingAction
+            editor={editor}
+            onLoadingChange={(isLoading, message) =>
+              setLoadingState({ isLoading, message: message || "" })
+            }
+            isActive={spellingActive}
+            setIsActive={setSpellingActive}
+          />
           <SuggestionsDrawerButton
             editor={editor}
             selectedText={selectedText}
@@ -143,13 +153,9 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
               openDrawer();
             }}
           />
-          <RichTextEditor.Control
-              onClick={props.toggleFocusMode}
-              aria-label="Focus mode"
-          >
-            <IconFocus  />
+          <RichTextEditor.Control onClick={props.toggleFocusMode} aria-label="Focus mode">
+            <IconFocus />
           </RichTextEditor.Control>
-
         </EditorToolBar>
         <RichTextEditor.Content />
       </RichTextEditor>
@@ -157,15 +163,13 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
         opened={isDrawerOpened}
         onClose={closeDrawer}
         title={
-          suggestionType === "spelling"
-            ? "Исправленный текст"
-            : suggestionType === "synonyms"
-              ? "Найденные синонимы"
-              : suggestionType === "paraphrase"
-                ? "Варианты перефразирования"
-                : suggestionType === "rhymes" // Добавляем условие для рифм
-                  ? "Найденные рифмы"
-                  : "Упрощенные варианты"
+          suggestionType === "synonyms"
+            ? "Найденные синонимы"
+            : suggestionType === "paraphrase"
+              ? "Варианты перефразирования"
+              : suggestionType === "rhymes" // Добавляем условие для рифм
+                ? "Найденные рифмы"
+                : "Упрощенные варианты"
         }
         position="right"
       >
@@ -242,7 +246,6 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
                       from: selectionRange.from,
                       to: selectionRange.from + suggestion.length,
                     });
-
                   }
                   closeDrawer();
                 }}

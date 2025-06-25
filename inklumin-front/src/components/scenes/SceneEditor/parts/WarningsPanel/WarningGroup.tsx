@@ -21,6 +21,12 @@ export const WarningGroup = (props: IWarningGroupProps) => {
           color: "blue",
           icon: <IconRepeat size={18} />,
         };
+      case IWarningKind.SPELLING:
+        return {
+          title: "Орфография",
+          color: "red",
+          icon: <IconAlertCircle size={18} />,
+        };
       default:
         return {
           title: "Замечание",

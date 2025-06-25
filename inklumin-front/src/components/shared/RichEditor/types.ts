@@ -1,11 +1,13 @@
 export enum IWarningKind {
   CLICHE = "CLICHE",
   REPEAT = "REPEAT",
+  SPELLING = "SPELLING",
 }
 
 export enum IWarningKindTile {
   CLICHE = "Штампы",
   REPEAT = "Повторы",
+  SPELLING = "Орфография",
 }
 export interface IWarning {
   id: string;
@@ -21,6 +23,10 @@ export interface IClicheWarning extends IWarning {
 }
 
 export interface IRepeatWarning extends IWarning {}
+
+export interface ISpellingWarning extends IWarning {
+  suggestions: string[];
+}
 
 export interface IWarningGroup {
   groupIndex: string;
