@@ -1,9 +1,8 @@
 import { IconDatabaseSmile, IconLink, IconReportAnalytics } from "@tabler/icons-react";
-import { ActionIcon, Box, Container, Flex, Group } from "@mantine/core";
+import {ActionIcon, Box, Container, Flex, Group, Text} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useKeyboardHeight } from "@/components/scenes/SceneEditor/hooks/useKeyboardHeight";
 import { SceneLinkManager } from "@/components/scenes/SceneEditor/parts/SceneLinkManager/SceneLinkManager";
-import { SceneStatusPanel } from "@/components/scenes/SceneEditor/parts/SceneStatusPanel";
 import { WarningsPanel } from "@/components/scenes/SceneEditor/parts/WarningsPanel/WarningsPanel";
 import { InlineEdit2 } from "@/components/shared/InlineEdit2/InlineEdit2";
 import { RichEditor } from "@/components/shared/RichEditor/RichEditor";
@@ -48,7 +47,7 @@ export const SceneMobileContent = ({
   const keyboardHeight = useKeyboardHeight(true);
 
   // Элемент панели управления сценой
-  const headerElement = (
+  const managementPanel = (
     <Group display="flex" align="center" style={{ flexGrow: 1, paddingLeft: "10px" }}>
       <Box flex={1} flexGrow={1}>
         <InlineEdit2
@@ -114,7 +113,7 @@ export const SceneMobileContent = ({
             ? { top: 0, bottom: 0 }
             : {
                 top: 0,
-                bottom: (warningGroups?.length > 0 && !focusMode ? 100 : 30) + 50,
+                bottom: (warningGroups?.length > 0 && !focusMode ? 100 : 80),
               }
         }
         focusMode={focusMode}
@@ -156,7 +155,7 @@ export const SceneMobileContent = ({
           <Box
             style={{
               position: "fixed",
-              bottom: 30,
+              bottom: 30 + keyboardHeight,
               left: 0,
               right: 0,
               height: 50,
@@ -168,10 +167,26 @@ export const SceneMobileContent = ({
               zIndex: 150,
             }}
           >
-            {headerElement}
+            {managementPanel}
           </Box>
-          <Box flex={2}>
-            <SceneStatusPanel scene={scene} />
+          <Box style={{
+            position: "fixed",
+            bottom: keyboardHeight,
+            height: "30px",
+            width: "100%",
+            backgroundColor: "rgb(236,236,236)",
+            color: "black",
+            padding: "8px 16px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "10px",
+            zIndex: 150,
+          }}>
+            <Text size="sm">
+              Символов: {scene?.totalSymbolCountWoSpaces} /{" "}
+              {scene?.totalSymbolCountWithSpaces}
+            </Text>
           </Box>
         </Flex>
       )}

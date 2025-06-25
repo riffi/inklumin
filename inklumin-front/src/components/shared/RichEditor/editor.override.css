@@ -14,7 +14,7 @@
   }
   .mantine-RichTextEditor-toolbar{
     --rte-sticky-offset: 0px  !important;
-    margin-left: 5px;
+    margin-left: 0px;
   }
 
 }
