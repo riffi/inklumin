@@ -104,6 +104,7 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
                 left: 0,
                 backgroundColor: "white",
                 width: "100%",
+                border: "none"
               }
             : {}
         }

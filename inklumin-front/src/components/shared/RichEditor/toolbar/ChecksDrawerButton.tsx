@@ -27,7 +27,7 @@ export const ChecksDrawerButton = ({
   return (
     <>
       <RichTextEditor.Control onClick={open} title="Проверки">
-        <IconChecks size={20} color="gray" />
+        <IconChecks color="gray" />
       </RichTextEditor.Control>
       <Drawer opened={opened} onClose={close} title="Проверки" position="right">
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>

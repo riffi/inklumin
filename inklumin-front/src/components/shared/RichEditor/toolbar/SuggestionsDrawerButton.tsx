@@ -35,7 +35,7 @@ export const SuggestionsDrawerButton = ({
         editor.commands.blur()
         open()
       }} title="Инструменты">
-        <IconBulb size={20} color="gray" />
+        <IconBulb  color="gray" />
       </RichTextEditor.Control>
       <Drawer opened={opened} onClose={close} title="Инструменты" position="right">
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>

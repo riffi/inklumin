@@ -29,6 +29,7 @@ export const EditorToolBar = (props: IEditorToolBarProps) => {
                 top: props.mobileTop,
                 width: "100%",
                 zIndex: 1000,
+                backgroundColor: "#f8f9fa"
               }
             : {
                 position: "sticky",
@@ -43,13 +44,13 @@ export const EditorToolBar = (props: IEditorToolBarProps) => {
           <RichTextEditor.Underline />
           <RichTextEditor.ClearFormatting />
           {props.children}
-          <ActionIcon
+          <RichTextEditor.Control
             onClick={props.toggleFocusMode}
             variant={props.focusMode ? "filled" : "default"}
             aria-label="Focus mode"
           >
-            <IconFocus2 size={16} />
-          </ActionIcon>
+            <IconFocus2  />
+          </RichTextEditor.Control>
 
           {!isMobile && (
             <>

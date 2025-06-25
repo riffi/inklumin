@@ -17,6 +17,18 @@
     margin-left: 0px;
   }
 
+  .mantine-RichTextEditor-controlsGroup{
+    background-color: transparent;
+  }
+  .mantine-RichTextEditor-control{
+    padding: 10px;
+    background-color: transparent;
+  }
+
+  .mantine-RichTextEditor-controlIcon{
+    width: 24px;
+    height: 24px;
+  }
 }
 
 
