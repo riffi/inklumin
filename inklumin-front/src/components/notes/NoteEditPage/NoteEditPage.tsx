@@ -119,7 +119,6 @@ export const NoteEditPage = () => {
         console.error("Attempted to save without note data or new note flag.");
         return;
       }
-      setLoading(true);
       let noteToSave: INote;
       let finalUuid = note?.uuid;
 
@@ -145,7 +144,7 @@ export const NoteEditPage = () => {
           console.error(
             "Failed to create or find 'Быстрые заметки' group after attempting creation."
           );
-          setLoading(false);
+
           return;
         }
 
@@ -160,7 +159,7 @@ export const NoteEditPage = () => {
         finalUuid = note!.uuid;
       } else {
         if (!note) {
-          setLoading(false);
+
           console.error("Attempted to update a null note.");
           return;
         }
@@ -195,7 +194,7 @@ export const NoteEditPage = () => {
       } catch (error) {
         console.error("Failed to save note:", error);
       } finally {
-        setLoading(false);
+
       }
     },
     [note, isNewNote, navigate, selectedBookUuid]

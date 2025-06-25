@@ -7,8 +7,8 @@ import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 
 import "./editor.override.css";
 
-import { useState } from "react";
-import { IconCheck } from "@tabler/icons-react";
+import React, { useState } from "react";
+import {IconCheck, IconFocus} from "@tabler/icons-react";
 import { Button, Drawer } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { LoadingOverlayExtended } from "@/components/shared/overlay/LoadingOverlayExtended";
@@ -143,6 +143,13 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
               openDrawer();
             }}
           />
+          <RichTextEditor.Control
+              onClick={props.toggleFocusMode}
+              aria-label="Focus mode"
+          >
+            <IconFocus  />
+          </RichTextEditor.Control>
+
         </EditorToolBar>
         <RichTextEditor.Content />
       </RichTextEditor>

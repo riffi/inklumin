@@ -44,13 +44,6 @@ export const EditorToolBar = (props: IEditorToolBarProps) => {
           <RichTextEditor.Underline />
           <RichTextEditor.ClearFormatting />
           {props.children}
-          <RichTextEditor.Control
-            onClick={props.toggleFocusMode}
-            variant={props.focusMode ? "filled" : "default"}
-            aria-label="Focus mode"
-          >
-            <IconFocus2  />
-          </RichTextEditor.Control>
 
           {!isMobile && (
             <>
