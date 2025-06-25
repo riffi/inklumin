@@ -25,15 +25,10 @@ export const EditorToolBar = (props: IEditorToolBarProps) => {
         style={
           isMobile
             ? {
-                position: "fixed",
                 top: props.mobileTop,
-                width: "100%",
-                zIndex: 1000,
-                backgroundColor: "#f8f9fa",
+
               }
             : {
-                position: "sticky",
-                stickyOffset: "50px",
                 top: props.desktopTop,
               }
         }
@@ -50,8 +45,11 @@ export const EditorToolBar = (props: IEditorToolBarProps) => {
             </>
           )}
         </RichTextEditor.ControlsGroup>
+        <div className={"mantine-RichTextEditor-divider"}/>
 
-          {props.children}
+        {props.children}
+
+        {!isMobile && <div className={"mantine-RichTextEditor-divider"}/>}
 
 
         {!isMobile && (

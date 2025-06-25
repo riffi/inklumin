@@ -1,11 +1,20 @@
+ .mantine-RichTextEditor-root{
+   border: none;
+ }
+
 .mantine-RichTextEditor-toolbar {
   --rte-sticky-offset: 0px !important;
   margin-left: 0px;
+  position: sticky;
+  sticky-offset: 50px;
+  background-color: #f8f9fa;
+  border: 1px solid #f1f1f1;
+  border-radius: 5px 0px 0px 0px;
+  margin-left: -20px;
+  width: 880px;
+  box-shadow: 0px 1px 0px rgba(0,0,0,0.1);
 }
 
-.ProseMirror {
-  /*text-indent: 2em;*/
-}
 
 /* Отступ первой строки по требованию */
 .use-indent .ProseMirror {
@@ -18,29 +27,33 @@
 }
 
 .mantine-RichTextEditor-controlsGroup{
-  padding: 0px 10px;
-  border-right: 1px solid #dddddd;
+  padding: 0px 5px;
+  background-color: transparent;
 }
 
-/* В вашем глобальном CSS */
+.mantine-RichTextEditor-divider{
+  border-right: 1px solid #e3e3e3;
+  height: 15px;
+  width: 0px;
+}
+
 @media (max-width: 48em) {
   .ProseMirror {
     padding: 10px !important;
     padding-top: 10px !important;
   }
+
   .mantine-RichTextEditor-toolbar {
     --rte-sticky-offset: 0px !important;
     margin-left: 0px;
     width: 100%;
+    z-index: 1000;
+    position: fixed;
   }
 
-  .mantine-RichTextEditor-controlsGroup {
-    background-color: transparent;
-  }
 
   .mantine-RichTextEditor-controlsGroup{
     padding: 0px;
-    border-right: 1px solid #dddddd;
   }
 
   .mantine-RichTextEditor-control {
