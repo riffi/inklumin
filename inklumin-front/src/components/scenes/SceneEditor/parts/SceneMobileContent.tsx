@@ -113,7 +113,7 @@ export const SceneMobileContent = ({
             ? { top: 0, bottom: 0 }
             : {
                 top: 0,
-                bottom: (warningGroups?.length > 0 && !focusMode ? 100 : 80),
+                bottom: (warningGroups?.length > 0 && !focusMode ? 130 : 80),
               }
         }
         focusMode={focusMode}
@@ -133,7 +133,7 @@ export const SceneMobileContent = ({
                 style={{
                   position: "absolute",
                   bottom: keyboardHeight > 0 ? -1000 : 0,
-                  height: "100px",
+                  height: "130px",
                   left: 0,
                   right: 0,
                   zIndex: 200,

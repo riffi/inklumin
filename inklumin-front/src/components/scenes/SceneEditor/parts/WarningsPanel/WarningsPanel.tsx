@@ -31,16 +31,12 @@ export const WarningsPanel = (props: IWarningsPanelProps) => {
 
   const content = (
     <>
-      {props.warningGroups && props.displayType === "iteration" ? (
         <WarningIteration
           warningGroups={props.warningGroups}
           currentIndex={currentIndex}
           selectedGroup={props.selectedGroup}
           onSelectGroup={props.onSelectGroup}
         />
-      ) : (
-        <WarningList {...props} />
-      )}
     </>
   );
   return (
