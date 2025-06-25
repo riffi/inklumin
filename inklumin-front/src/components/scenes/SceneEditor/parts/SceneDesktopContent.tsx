@@ -9,7 +9,7 @@ import {
   IconMenu2,
   IconReportAnalytics,
 } from "@tabler/icons-react";
-import { ActionIcon, Box, Container, Flex, Group, Menu, Paper, Text } from "@mantine/core";
+import { ActionIcon, Box, Button, Container, Flex, Group, Menu, Paper, Text } from "@mantine/core";
 import { useDisclosure, useWindowScroll } from "@mantine/hooks";
 import { useHeaderVisibility } from "@/components/scenes/SceneEditor/hooks/useHeaderVisibility";
 import { SceneLinkManager } from "@/components/scenes/SceneEditor/parts/SceneLinkManager/SceneLinkManager";
@@ -108,6 +108,15 @@ export const SceneDesktopContent = ({
                         }}
                       />
                     </Box>
+                    <Box>
+                      <Button
+                          leftSection={readOnly ? <IconEdit size={14} /> : <IconEye size={14} />}
+                          onClick={() => setReadOnly(!readOnly)}
+                          variant={"outline"}
+                      >
+                        {readOnly ? "Редактирование" : "Просмотр"}
+                      </Button>
+                    </Box>
 
                     <Menu shadow="md" width={220}>
                       <Menu.Target>
@@ -131,12 +140,7 @@ export const SceneDesktopContent = ({
                         >
                           Анализ
                         </Menu.Item>
-                        <Menu.Item
-                          leftSection={readOnly ? <IconEdit size={14} /> : <IconEye size={14} />}
-                          onClick={() => setReadOnly(!readOnly)}
-                        >
-                          {readOnly ? "Редактирование" : "Просмотр"}
-                        </Menu.Item>
+
                       </Menu.Dropdown>
                     </Menu>
                   </Group>
@@ -168,6 +172,7 @@ export const SceneDesktopContent = ({
                             textIndent: "1rem",
                             width: "100%",
                           }}
+                          onDoubleClick={() => setReadOnly(false)}
                           dangerouslySetInnerHTML={{ __html: sceneBody }}
                           className={styles["readonly-content"]}
                         />
