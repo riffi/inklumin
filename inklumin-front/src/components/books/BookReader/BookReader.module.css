@@ -80,6 +80,10 @@
   text-indent: 1.5rem;
 }
 
+.contentBody img{
+  max-width: 100%;
+}
+
 /* Кнопка для показа/скрытия оглавления */
 .tocToggleButton {
   display: none;
