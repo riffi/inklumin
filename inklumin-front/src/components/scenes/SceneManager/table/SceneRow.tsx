@@ -101,68 +101,76 @@ const SceneRowComponent = ({
             // Выделяем выбранную сцену
             // bg={!isMobile ? selectedSceneId === scene.id  ? theme.colors.blue[0] : undefined : undefined}
             onClick={handleClick}
-            style={{ cursor: "pointer" }}
+            style={{ cursor: "pointer"}}
         >
           <Table.Td colSpan={2} pl={scene.chapterId ? theme.spacing.md : theme.spacing.sm}>
-            <Group justify="space-between" >
-              {/* ---------- title + badges ---------- */}
-              <Stack gap={2} style={{ flex: 1 }}>
-                <Text fz="sm" fw={400} c="dark.6">
-                  {scene.order ? `${scene.order}. ` : ""}
-                  {scene.title}
-                </Text>
+            {/*<Group justify="space-between" wrap="nowrap" style={{*/}
+            {/*}}>*/}
+            <Box style={{ display: "flex" }}>
+              <Box style={{ flex: 1, minWidth: 0 }}>
+                <Stack gap={2} style={{
+                }}>
+                  <Text fz="sm" fw={400} c="dark.6">
+                    {scene.order ? `${scene.order}. ` : ""}
+                    {scene.title}
+                  </Text>
 
-                {mode === "manager" && (
-                    <>
-                      <Stack gap={5} wrap="wrap">
-                        {scene?.blockInstances.map((sceneWithInstancesBlock) => (
-                            <>
-                              <Group
-                                  gap={4}
-                                  key={`block-${sceneWithInstancesBlock.block.id}`}
-                                  wrap="nowrap"
-                              >
-                                <IconViewer
-                                    icon={sceneWithInstancesBlock.block.icon}
-                                    size={14}
-                                    color={theme.colors.gray[6]}
-                                    backgroundColor="transparent"
-                                />
-                                <Text fz={10} c="gray.6">
-                                  {sceneWithInstancesBlock.block.titleForms?.plural}:
-                                </Text>
-                                {sceneWithInstancesBlock.instances.map((instance) => (
-                                    <Text
-                                        key={`instance-${instance.id}`}
-                                        style={{
-                                          fontSize: 10,
-                                          fontWeight: 500,
-                                          backgroundColor: theme.colors.gray[5],
-                                          padding: "0 4px",
-                                          borderRadius: theme.radius.sm,
-                                          color: theme.white,
-                                        }}
-                                    >
-                                      {instance.title.length > 15
-                                          ? `${instance.title.slice(0, 12)}…`
-                                          : instance.title}
-                                    </Text>
-                                ))}
-                              </Group>
-                            </>
-                        ))}
-                      </Stack>
-                      <Group>
-                        <Text style={{ fontSize: 11, color: "#999" }}>
-                          Символов: {scene.totalSymbolCountWithSpaces}
-                        </Text>
-                      </Group>
-                    </>
-                )}
-              </Stack>
-
+                  {mode === "manager" && (
+                      <>
+                        <Stack gap={5}>
+                          {scene?.blockInstances.map((sceneWithInstancesBlock) => (
+                              <>
+                                <Group
+                                    gap={4}
+                                    key={`block-${sceneWithInstancesBlock.block.id}`}
+                                    wrap="wrap"
+                                >
+                                  <IconViewer
+                                      icon={sceneWithInstancesBlock.block.icon}
+                                      size={14}
+                                      color={theme.colors.gray[6]}
+                                      backgroundColor="transparent"
+                                  />
+                                  <Text fz={10} c="gray.6">
+                                    {sceneWithInstancesBlock.block.titleForms?.plural}:
+                                  </Text>
+                                  {sceneWithInstancesBlock.instances.map((instance) => (
+                                      <Text
+                                          key={`instance-${instance.id}`}
+                                          style={{
+                                            fontSize: 10,
+                                            fontWeight: 500,
+                                            backgroundColor: theme.colors.gray[5],
+                                            padding: "0 4px",
+                                            borderRadius: theme.radius.sm,
+                                            color: theme.white,
+                                          }}
+                                      >
+                                        {instance.title.length > 15
+                                            ? `${instance.title.slice(0, 12)}…`
+                                            : instance.title}
+                                      </Text>
+                                  ))}
+                                </Group>
+                              </>
+                          ))}
+                        </Stack>
+                        <Group>
+                          <Text style={{ fontSize: 11, color: "#999" }}>
+                            Символов: {scene.totalSymbolCountWithSpaces}
+                          </Text>
+                        </Group>
+                      </>
+                  )}
+                </Stack>
+              </Box>
+              <Box style={{ }}>
               {/* ---------- actions ---------- */}
-              <Menu withinPortal shadow="md" position="left-start" >
+              <Menu
+                  withinPortal
+                  shadow="md"
+                  position="left-start"
+              >
                 <Menu.Target>
                   <ActionIcon
                       variant="subtle"
@@ -217,7 +225,9 @@ const SceneRowComponent = ({
                   </Menu.Item>
                 </Menu.Dropdown>
               </Menu>
-            </Group>
+              </Box>
+            </Box>
+            {/*</Group>*/}
           </Table.Td>
         </Table.Tr>
 
