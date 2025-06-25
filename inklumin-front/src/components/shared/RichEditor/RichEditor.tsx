@@ -14,13 +14,8 @@ import { useDisclosure } from "@mantine/hooks";
 import { LoadingOverlayExtended } from "@/components/shared/overlay/LoadingOverlayExtended";
 import { useEditorState } from "@/components/shared/RichEditor/hooks/useEditorState";
 import { useWarningGroups } from "@/components/shared/RichEditor/hooks/useWarningGroups";
-import { CheckClichesButton } from "@/components/shared/RichEditor/toolbar/CheckClishesButton";
-import { CheckParaphraseButton } from "@/components/shared/RichEditor/toolbar/CheckParaphraseButton";
-import { CheckRepeatsButton } from "@/components/shared/RichEditor/toolbar/CheckRepeatsButton";
-import { CheckRhymesButton } from "@/components/shared/RichEditor/toolbar/CheckRhymesButton";
-import { CheckSimplifyButton } from "@/components/shared/RichEditor/toolbar/CheckSimplifyButton";
-import { CheckSpellingButton } from "@/components/shared/RichEditor/toolbar/CheckSpellingButton";
-import { CheckSynonymsButton } from "@/components/shared/RichEditor/toolbar/CheckSynonymsButton";
+import { ChecksDrawerButton } from "@/components/shared/RichEditor/toolbar/ChecksDrawerButton";
+import { SuggestionsDrawerButton } from "@/components/shared/RichEditor/toolbar/SuggestionsDrawerButton";
 import { EditorToolBar } from "@/components/shared/RichEditor/toolbar/EditorToolBar";
 import { IWarningGroup } from "@/components/shared/RichEditor/types";
 
@@ -59,6 +54,8 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
     "synonyms" | "paraphrase" | "simplify" | "spelling" | "rhymes"
   >("synonyms");
   const [selectedText, setSelectedText] = useState("");
+  const [repeatsActive, setRepeatsActive] = useState(false);
+  const [clichesActive, setClichesActive] = useState(false);
   const { isMobile } = useMedia();
 
   const onSelectionChange = (from: number, to: number) => {
@@ -114,7 +111,7 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
           focusMode={props.focusMode}
           toggleFocusMode={props.toggleFocusMode}
         >
-          <CheckRepeatsButton
+          <ChecksDrawerButton
             editor={editor}
             onLoadingChange={(isLoading, message) =>
               setLoadingState({
@@ -122,72 +119,20 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
                 message: message || "",
               })
             }
+            repeatsActive={repeatsActive}
+            setRepeatsActive={setRepeatsActive}
+            clichesActive={clichesActive}
+            setClichesActive={setClichesActive}
           />
-          <CheckClichesButton
-            editor={editor}
-            onLoadingChange={(isLoading, message) =>
-              setLoadingState({
-                isLoading,
-                message: message || "",
-              })
-            }
-          />
-          <CheckSynonymsButton
+          <SuggestionsDrawerButton
             editor={editor}
             onLoadingChange={(isLoading, message) =>
               setLoadingState({ isLoading, message: message || "" })
             }
-            onSynonymsFound={(synonyms) => {
-              setSuggestions(synonyms);
-              setSuggestionType("synonyms");
-              openDrawer();
-            }}
-          />
-          <CheckParaphraseButton
-            editor={editor}
-            onLoadingChange={(isLoading, message) =>
-              setLoadingState({ isLoading, message: message || "" })
-            }
-            onParaphrasesFound={(paraphrases) => {
-              if (!paraphrases || paraphrases.length === 0) return;
-              setSuggestions(paraphrases);
-              setSuggestionType("paraphrase");
-              openDrawer();
-            }}
-          />
-          <CheckSimplifyButton
-            editor={editor}
-            onLoadingChange={(isLoading, message) =>
-              setLoadingState({ isLoading, message: message || "" })
-            }
-            onSimplificationsFound={(simplifications) => {
-              if (!simplifications || simplifications.length === 0) return;
-              setSuggestions(simplifications);
-              setSuggestionType("simplify");
-              openDrawer();
-            }}
-          />
-          <CheckSpellingButton
-            editor={editor}
-            onLoadingChange={(isLoading, message) =>
-              setLoadingState({ isLoading, message: message || "" })
-            }
-            onCorrectionFound={(correction) => {
-              if (!correction) return;
-              setSuggestions([correction]);
-              setSuggestionType("spelling");
-              openDrawer();
-            }}
-            checkKind={"yandex-speller"}
-          />
-          <CheckRhymesButton
-            editor={editor}
-            onLoadingChange={(isLoading, message) =>
-              setLoadingState({ isLoading, message: message || "" })
-            }
-            onRhymesFound={(rhymes) => {
-              setSuggestions(rhymes);
-              setSuggestionType("rhymes");
+            onSuggestionsFound={(items, type) => {
+              if (!items || items.length === 0) return;
+              setSuggestions(items);
+              setSuggestionType(type as any);
               openDrawer();
             }}
           />

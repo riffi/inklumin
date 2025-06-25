@@ -1,21 +1,17 @@
 import { useState } from "react";
-import { IconBulb, IconIrregularPolyhedronOff } from "@tabler/icons-react";
+import { IconIrregularPolyhedronOff } from "@tabler/icons-react";
 import { useEditor } from "@tiptap/react";
+import { Button } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { RichTextEditor } from "@mantine/tiptap";
 import { OpenRouterApi } from "@/api/openRouterApi";
 
-interface CheckSimplifyButtonProps {
+interface SimplifyActionProps {
   editor: ReturnType<typeof useEditor>;
   onLoadingChange: (isLoading: boolean, message?: string) => void;
-  onSimplificationsFound: (simplifications: string[]) => void;
+  onFound: (simplifications: string[]) => void;
 }
 
-export const CheckSimplifyButton = ({
-  editor,
-  onLoadingChange,
-  onSimplificationsFound,
-}: CheckSimplifyButtonProps) => {
+export const SimplifyAction = ({ editor, onLoadingChange, onFound }: SimplifyActionProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleClick = async () => {
@@ -23,10 +19,7 @@ export const CheckSimplifyButton = ({
     const selectedText = editor.state.doc.textBetween(from, to, " ");
 
     if (!selectedText.trim()) {
-      notifications.show({
-        message: "Выделите текст для упрощения",
-        color: "orange",
-      });
+      notifications.show({ message: "Выделите текст для упрощения", color: "orange" });
       return;
     }
 
@@ -34,12 +27,9 @@ export const CheckSimplifyButton = ({
       setIsLoading(true);
       onLoadingChange(true, "Упрощаем текст...");
       const simplifications = await OpenRouterApi.fetchSimplifications(selectedText);
-      onSimplificationsFound(simplifications);
+      onFound(simplifications);
     } catch (error) {
-      notifications.show({
-        message: error.message,
-        color: "red",
-      });
+      notifications.show({ message: (error as Error).message, color: "red" });
     } finally {
       setIsLoading(false);
       onLoadingChange(false);
@@ -47,8 +37,13 @@ export const CheckSimplifyButton = ({
   };
 
   return (
-    <RichTextEditor.Control onClick={handleClick} title="Упростить текст" disabled={isLoading}>
-      <IconIrregularPolyhedronOff size={20} color={"gray"} />
-    </RichTextEditor.Control>
+    <Button
+      onClick={handleClick}
+      loading={isLoading}
+      leftSection={<IconIrregularPolyhedronOff size={16} />}
+      variant="outline"
+    >
+      Упростить
+    </Button>
   );
 };

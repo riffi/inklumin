@@ -1,23 +1,17 @@
 import { useState } from "react";
-import { IconLayersLinked, IconPencil } from "@tabler/icons-react";
+import { IconPencil } from "@tabler/icons-react";
 import { useEditor } from "@tiptap/react";
-import { ActionIcon, Button, useMantineTheme } from "@mantine/core";
-import { RichTextEditor } from "@mantine/tiptap";
+import { Button } from "@mantine/core";
 import { OpenRouterApi } from "@/api/openRouterApi";
 
-interface CheckRhymesButtonProps {
+interface RhymesActionProps {
   editor: ReturnType<typeof useEditor>;
   onLoadingChange: (isLoading: boolean, message?: string) => void;
-  onRhymesFound: (rhymes: string[]) => void;
+  onFound: (rhymes: string[]) => void;
 }
 
-export const CheckRhymesButton = ({
-  editor,
-  onLoadingChange,
-  onRhymesFound,
-}: CheckRhymesButtonProps) => {
+export const RhymesAction = ({ editor, onLoadingChange, onFound }: RhymesActionProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const theme = useMantineTheme();
 
   const handleClick = async () => {
     const { from, to } = editor.state.selection;
@@ -32,7 +26,7 @@ export const CheckRhymesButton = ({
       setIsLoading(true);
       onLoadingChange(true, "Ищем рифмы...");
       const rhymes = await OpenRouterApi.fetchRhymes(selectedText);
-      onRhymesFound(rhymes);
+      onFound(rhymes);
     } catch (error) {
       console.error("Error fetching rhymes:", error);
     } finally {
@@ -42,8 +36,13 @@ export const CheckRhymesButton = ({
   };
 
   return (
-    <RichTextEditor.Control onClick={handleClick} title="Поиск рифм" disabled={isLoading}>
-      <IconPencil size={20} color={"gray"} />
-    </RichTextEditor.Control>
+    <Button
+      onClick={handleClick}
+      loading={isLoading}
+      leftSection={<IconPencil size={16} />}
+      variant="outline"
+    >
+      Рифмы
+    </Button>
   );
 };

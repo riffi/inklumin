@@ -1,26 +1,37 @@
 import { useState } from "react";
 import { IconArrowsDoubleSwNe } from "@tabler/icons-react";
-import { RichTextEditor } from "@mantine/tiptap";
+import { Button } from "@mantine/core";
 import { InkLuminMlApi } from "@/api/inkLuminMlApi";
 import { repeatHighlighterKey } from "@/components/shared/RichEditor/plugins/RepeatHighlighterExtension";
 import { IWarningGroup } from "@/components/shared/RichEditor/types";
 
-interface CheckRepeatsButtonProps {
+interface CheckRepeatsActionProps {
   editor: any;
   onLoadingChange: (isLoading: boolean, message?: string) => void;
+  isActive: boolean;
+  setIsActive: (value: boolean) => void;
 }
 
-export const CheckRepeatsButton = ({ editor, onLoadingChange }: CheckRepeatsButtonProps) => {
-  const [isActive, setIsActive] = useState(false);
+export const CheckRepeatsAction = ({
+  editor,
+  onLoadingChange,
+  isActive,
+  setIsActive,
+}: CheckRepeatsActionProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleCheckRepeats = async () => {
+  const updateHighlights = (warningGroups: IWarningGroup[]) => {
+    const tr = editor.state.tr;
+    tr.setMeta(repeatHighlighterKey, { action: "UPDATE_DECORATIONS", warningGroups });
+    editor.view.dispatch(tr);
+  };
+
+  const handleClick = async () => {
     if (isActive) {
-      clearHighlights();
+      updateHighlights([]);
       setIsActive(false);
       return;
     }
-
     onLoadingChange(true, "Анализ текста на повторения...");
     setIsLoading(true);
     try {
@@ -36,28 +47,14 @@ export const CheckRepeatsButton = ({ editor, onLoadingChange }: CheckRepeatsButt
     }
   };
 
-  const updateHighlights = (warningGroups: IWarningGroup[]) => {
-    const tr = editor.state.tr;
-    tr.setMeta(repeatHighlighterKey, {
-      // Используем pluginKey вместо строки
-      action: "UPDATE_DECORATIONS",
-      warningGroups,
-    });
-    editor.view.dispatch(tr);
-  };
-
-  const clearHighlights = () => {
-    updateHighlights([]);
-  };
-
   return (
-    <RichTextEditor.Control
-      onClick={handleCheckRepeats}
-      title="Проверить повторения"
-      active={isActive}
-      disabled={isLoading}
+    <Button
+      onClick={handleClick}
+      loading={isLoading}
+      variant={isActive ? "filled" : "outline"}
+      leftSection={<IconArrowsDoubleSwNe size={16} />}
     >
-      <IconArrowsDoubleSwNe size={20} color={"gray"} />
-    </RichTextEditor.Control>
+      {isActive ? "Скрыть повторы" : "Найти повторы"}
+    </Button>
   );
 };
