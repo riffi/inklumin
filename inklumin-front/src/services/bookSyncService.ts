@@ -4,13 +4,12 @@ import { notifications } from "@mantine/notifications";
 import { inkLuminAPI } from "@/api/inkLuminApi/inkLuminApi";
 import { IBook } from "@/entities/BookEntities";
 import { configDatabase } from "@/entities/configuratorDb";
-import { BookRepository } from "@/repository/Book/BookRepository";
 import {
   BackupData,
   collectBookBackupData,
-  importBookData
+  importBookData,
 } from "@/repository/Book/BookBackupRepository";
-
+import { BookRepository } from "@/repository/Book/BookRepository";
 
 /** Save a book to the server */
 export const saveBookToServer = async (bookUuid: string, token: string) => {

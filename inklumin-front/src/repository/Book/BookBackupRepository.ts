@@ -1,9 +1,9 @@
 import { connectToBookDatabase, deleteBookDatabase } from "@/entities/bookDb";
 import { configDatabase } from "@/entities/configuratorDb";
+import { BlockInstanceSceneLinkRepository } from "@/repository/BlockInstance/BlockInstanceSceneLinkRepository";
 import { BookRepository } from "@/repository/Book/BookRepository";
 import { ChapterRepository } from "@/repository/Scene/ChapterRepository";
 import { SceneRepository } from "@/repository/Scene/SceneRepository";
-import { BlockInstanceSceneLinkRepository } from "@/repository/BlockInstance/BlockInstanceSceneLinkRepository";
 
 export interface BackupData {
   book: any;
@@ -121,7 +121,9 @@ export const importBookData = async (backupData: BackupData): Promise<void> => {
   otherPromises.push(db.blocks.bulkAdd(backupData.blocks || []));
   otherPromises.push(db.blockParameterGroups.bulkAdd(backupData.blockParameterGroups || []));
   otherPromises.push(db.blockParameters.bulkAdd(backupData.blockParameters || []));
-  otherPromises.push(db.blockParameterPossibleValues.bulkAdd(backupData.blockParameterPossibleValues || []));
+  otherPromises.push(
+    db.blockParameterPossibleValues.bulkAdd(backupData.blockParameterPossibleValues || [])
+  );
   otherPromises.push(db.blocksRelations.bulkAdd(backupData.blocksRelations || []));
   otherPromises.push(db.blockTabs.bulkAdd(backupData.blockTabs || []));
   otherPromises.push(db.blockInstanceGroups.bulkAdd(backupData.blockInstanceGroups || []));

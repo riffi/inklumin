@@ -29,7 +29,6 @@ export const CheckRepeatsAction = ({
   };
 
   const handleClick = async () => {
-
     if (isActive) {
       updateHighlights([]);
       setIsActive(false);

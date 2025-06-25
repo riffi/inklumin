@@ -1,7 +1,7 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { notifications } from "@mantine/notifications";
-import { useDb } from "@/hooks/useDb";
 import { IBlock } from "@/entities/ConstructorEntities";
+import { useDb } from "@/hooks/useDb";
 import { BlockRepository } from "@/repository/Block/BlockRepository";
 
 export const useChildBlocksManager = (

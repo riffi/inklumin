@@ -37,8 +37,8 @@ import {
   Text,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { inkLuminAPI } from "@/api/inkLuminApi/inkLuminApi";
 import { BookShortInfo } from "@/api/inkLuminApi/generatedTypes";
+import { inkLuminAPI } from "@/api/inkLuminApi/inkLuminApi";
 import { useBookManager } from "@/components/books/BookManager/useBookManager";
 import { connectToBookDatabase } from "@/entities/bookDb";
 import { IBook } from "@/entities/BookEntities";

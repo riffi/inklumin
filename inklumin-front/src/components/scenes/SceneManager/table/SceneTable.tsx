@@ -28,8 +28,6 @@ const SceneTableComponent = ({
   selectedInstanceUuid,
   chapterOnly,
 }: SceneTableProps) => {
-
-
   // Отфильтрованные сцены мемоизируются, чтобы избежать лишних вычислений
   const filteredScenes = React.useMemo(() => {
     if (!scenes) return [] as ISceneWithInstances[];
@@ -149,10 +147,7 @@ const SceneTableComponent = ({
   );
 };
 
-const tableEqual = (
-  prev: Readonly<SceneTableProps>,
-  next: Readonly<SceneTableProps>
-) =>
+const tableEqual = (prev: Readonly<SceneTableProps>, next: Readonly<SceneTableProps>) =>
   prev.scenes === next.scenes &&
   prev.chapters === next.chapters &&
   prev.searchQuery === next.searchQuery &&

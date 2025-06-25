@@ -4,9 +4,9 @@ import JSZip from "jszip";
 import moment from "moment";
 import { notifications } from "@mantine/notifications";
 import { IBook, IChapter, IScene } from "@/entities/BookEntities";
+import { importBookData } from "@/repository/Book/BookBackupRepository";
 import { buildBackupData, textFromHtml } from "@/utils/bookBackupUtils/vendorFormat/shared";
 import { generateUUID } from "@/utils/UUIDUtils";
-import {importBookData} from "@/repository/Book/BookBackupRepository";
 
 /**
  * Читает файл document.xml.rels и строит карту связей между rId и путями к ресурсам.

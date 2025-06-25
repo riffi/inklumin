@@ -1,12 +1,8 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { notifications } from "@mantine/notifications";
 import { InkLuminApiError } from "@/api/inkLuminMlApi";
+import { IBlock, IBlockRelation, IBlockTitleForms } from "@/entities/ConstructorEntities";
 import { useDb } from "@/hooks/useDb";
-import {
-  IBlock,
-  IBlockRelation,
-  IBlockTitleForms,
-} from "@/entities/ConstructorEntities";
 import { BlockRelationRepository } from "@/repository/Block/BlockRelationRepository";
 import { BlockRepository } from "@/repository/Block/BlockRepository";
 import { ConfigurationRepository } from "@/repository/ConfigurationRepository";
@@ -35,13 +31,13 @@ export const useBlockEditForm = (
   }, [block, db]);
 
   const configuration = useLiveQuery(() => {
-    if (!blockUuid || !block || !db) return null
+    if (!blockUuid || !block || !db) return null;
     return ConfigurationRepository.getByUuid(db, block?.configurationUuid);
   }, [block, block?.uuid, db]);
 
   const blockRelations = useLiveQuery<IBlockRelation[]>(() => {
-    if (!block || !db){
-      return []
+    if (!block || !db) {
+      return [];
     }
     return BlockRelationRepository.getBlockRelations(db, blockUuid);
   }, [blockUuid, db]);
@@ -88,7 +84,6 @@ export const useBlockEditForm = (
       }
     }
   };
-
 
   return {
     block,

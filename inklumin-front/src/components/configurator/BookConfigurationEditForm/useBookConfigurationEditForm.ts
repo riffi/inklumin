@@ -1,12 +1,12 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { InkLuminApiError } from "@/api/inkLuminMlApi";
-import { useDb } from "@/hooks/useDb";
 import {
   IBlock,
   IBlockParameterGroup,
   IBlockTitleForms,
   IBookConfiguration,
 } from "@/entities/ConstructorEntities";
+import { useDb } from "@/hooks/useDb";
 import { useDialog } from "@/providers/DialogProvider/DialogProvider";
 import { BlockRepository } from "@/repository/Block/BlockRepository";
 import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";

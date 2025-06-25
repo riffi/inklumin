@@ -1,14 +1,14 @@
 import { OpenRouterApi } from "@/api/openRouterApi";
 import { bookDb } from "@/entities/bookDb";
 import { configDatabase } from "@/entities/configuratorDb";
-import { BookRepository } from "@/repository/Book/BookRepository";
-import { SceneRepository } from "@/repository/Scene/SceneRepository";
+import { BlockParameterRepository } from "@/repository/Block/BlockParameterRepository";
 import { BlockRepository } from "@/repository/Block/BlockRepository";
 import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";
-import { BlockParameterRepository } from "@/repository/Block/BlockParameterRepository";
-import { BlockParameterInstanceRepository } from "@/repository/BlockInstance/BlockParameterInstanceRepository";
-import { bookDbInfo } from "./bookDbInfo";
 import BlockInstanceSceneLinkRepository from "@/repository/BlockInstance/BlockInstanceSceneLinkRepository";
+import { BlockParameterInstanceRepository } from "@/repository/BlockInstance/BlockParameterInstanceRepository";
+import { BookRepository } from "@/repository/Book/BookRepository";
+import { SceneRepository } from "@/repository/Scene/SceneRepository";
+import { bookDbInfo } from "./bookDbInfo";
 
 interface ToolDefinition {
   name: string;
@@ -26,7 +26,8 @@ const tools: Record<string, Tool> = {
   getScene: {
     definition: {
       name: "getScene",
-      description: "Получить текст сцены по идентификатору. Функция должна вызываться только для одного id за раз",
+      description:
+        "Получить текст сцены по идентификатору. Функция должна вызываться только для одного id за раз",
       parameters: {
         type: "object",
         properties: {
@@ -45,9 +46,9 @@ const tools: Record<string, Tool> = {
     definition: {
       name: "listScenes",
       description:
-          "Возвращает **уже отсортированный** список сцен книги. " +
-          "Сцены расположены в порядке возрастания поля `order` (порядковый номер), " +
-          "а не `id`.",
+        "Возвращает **уже отсортированный** список сцен книги. " +
+        "Сцены расположены в порядке возрастания поля `order` (порядковый номер), " +
+        "а не `id`.",
       parameters: { type: "object", properties: {} },
     },
     handler: async () => {
@@ -73,8 +74,7 @@ const tools: Record<string, Tool> = {
   searchBlockInstances: {
     definition: {
       name: "searchBlockInstances",
-      description:
-        "Поиск экземпляров блоков по названию. Можно указать uuid блока",
+      description: "Поиск экземпляров блоков по названию. Можно указать uuid блока",
       parameters: {
         type: "object",
         properties: {
@@ -86,20 +86,14 @@ const tools: Record<string, Tool> = {
     },
     handler: async ({ query, blockUuid }) => {
       const blocks = blockUuid
-        ? await BlockRepository.getByUuid(bookDb, blockUuid)
+        ? (await BlockRepository.getByUuid(bookDb, blockUuid))
           ? [await BlockRepository.getByUuid(bookDb, blockUuid)]
           : []
         : await BlockRepository.getAll(bookDb);
       const results = [] as any[];
       for (const block of blocks) {
-        const inst = await BlockInstanceRepository.getBlockInstances(
-          bookDb,
-          block.uuid,
-          query
-        );
-        results.push(
-          ...inst.map((i) => ({ uuid: i.uuid, title: i.title, block: block.title }))
-        );
+        const inst = await BlockInstanceRepository.getBlockInstances(bookDb, block.uuid, query);
+        results.push(...inst.map((i) => ({ uuid: i.uuid, title: i.title, block: block.title })));
       }
       return results;
     },
@@ -165,7 +159,10 @@ const tools: Record<string, Tool> = {
       },
     },
     handler: async ({ instanceUuid }) => {
-      const links = await BlockInstanceSceneLinkRepository.getLinksByBlockInstance(bookDb, instanceUuid);
+      const links = await BlockInstanceSceneLinkRepository.getLinksByBlockInstance(
+        bookDb,
+        instanceUuid
+      );
       const scenes = [] as any[];
       for (const link of links) {
         const scene = await SceneRepository.getById(bookDb, link.sceneId);
@@ -195,11 +192,7 @@ export const bookAgent = async (
   ];
 
   while (true) {
-    const response = await OpenRouterApi.fetchWithTools(
-      prompt,
-      defs,
-      messages
-    );
+    const response = await OpenRouterApi.fetchWithTools(prompt, defs, messages);
     const message = response.choices?.[0]?.message;
     if (!message) return "";
     if (message.content) {
@@ -234,4 +227,3 @@ export const bookAgent = async (
     }
   }
 };
-

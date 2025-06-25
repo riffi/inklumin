@@ -2,7 +2,6 @@ import { Box, Text } from "@mantine/core";
 import { IScene } from "@/entities/BookEntities";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 
-
 const desktopStyle = {
   backgroundColor: "rgb(236,236,236)",
   height: "30px",
@@ -13,7 +12,7 @@ const desktopStyle = {
   alignItems: "center",
   gap: "10px",
   zIndex: "99",
-  width: "900px"
+  width: "900px",
 };
 
 export const SceneStatusPanel = (props: { scene: IScene }) => {

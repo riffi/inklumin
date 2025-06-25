@@ -1,9 +1,9 @@
 // fb2Utils.ts
 import { notifications } from "@mantine/notifications";
 import { IBook, IChapter, IScene } from "@/entities/BookEntities";
+import { importBookData } from "@/repository/Book/BookBackupRepository";
 import { buildBackupData, textFromHtml } from "@/utils/bookBackupUtils/vendorFormat/shared";
 import { generateUUID } from "@/utils/UUIDUtils";
-import {importBookData} from "@/repository/Book/BookBackupRepository";
 
 // Replace <image> tags with <img> and convert binaries to data URLs
 function convertSectionToHtml(section: Element, images: Map<string, string>): string {

@@ -110,45 +110,53 @@ export const NavbarNested = ({
     const dynamicItems: NavLinkGroup[] = [];
 
     if (selectedBook) {
-      dynamicItems.push({ label: "Рабочий стол", icon: IconDashboard, link: "/book/dashboard" })
-      if (selectedBook.kind === "book"){
-        dynamicItems.push({ label: chapterOnlyMode ? "Главы" : "Сцены", icon: IconNotes, link: "/scenes" })
+      dynamicItems.push({ label: "Рабочий стол", icon: IconDashboard, link: "/book/dashboard" });
+      if (selectedBook.kind === "book") {
+        dynamicItems.push({
+          label: chapterOnlyMode ? "Главы" : "Сцены",
+          icon: IconNotes,
+          link: "/scenes",
+        });
       }
-      dynamicItems.push({ label: `Заметки ${selectedBook.kind === "book" ? "книги" : "материала"}`, icon: IconGraph, link: "/book-notes" })
+      dynamicItems.push({
+        label: `Заметки ${selectedBook.kind === "book" ? "книги" : "материала"}`,
+        icon: IconGraph,
+        link: "/book-notes",
+      });
 
-      if (selectedBook.kind === "book"){
-        dynamicItems.push({ label: "Чтение", icon: IconBooks, link: "/book/reader" })
+      if (selectedBook.kind === "book") {
+        dynamicItems.push({ label: "Чтение", icon: IconBooks, link: "/book/reader" });
       }
 
-      dynamicItems.push({ label: "Помощник", icon: IconBulb, link: "/book/agent" })
+      dynamicItems.push({ label: "Помощник", icon: IconBulb, link: "/book/agent" });
 
-
-      const blockLinks = blocks?.filter((b) => !b.parentBlockUuid && b.showInMainMenu === 1)
-        .map((b) => ({
-          label: getBlockPageTitle(b),
-          icon: b.icon,
-          link: `/block-instance/manager?uuid=${b.uuid}`,
-        })) || []
-      if (blockLinks.length > 0){
+      const blockLinks =
+        blocks
+          ?.filter((b) => !b.parentBlockUuid && b.showInMainMenu === 1)
+          .map((b) => ({
+            label: getBlockPageTitle(b),
+            icon: b.icon,
+            link: `/block-instance/manager?uuid=${b.uuid}`,
+          })) || [];
+      if (blockLinks.length > 0) {
         dynamicItems.push({
           label: "База знаний",
           icon: IconBrandDatabricks,
-          links: blockLinks
-        },)
+          links: blockLinks,
+        });
       }
 
       dynamicItems.push({
-            label: "Конфигурация",
-            icon: IconDatabaseCog,
-            link: `/configuration/edit/?uuid=${bookConfiguration?.uuid}&bookUuid=${selectedBook.uuid}`,
-          },
-      )
+        label: "Конфигурация",
+        icon: IconDatabaseCog,
+        link: `/configuration/edit/?uuid=${bookConfiguration?.uuid}&bookUuid=${selectedBook.uuid}`,
+      });
 
       dynamicItems.push({
         label: "Настройки книги",
         icon: IconSettings,
         link: "/book/settings",
-      })
+      });
       //
       // if (selectedBook.kind === "material") {
       //   dynamicItems = allDynamicItems.filter(

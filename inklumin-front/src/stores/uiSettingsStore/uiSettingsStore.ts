@@ -50,8 +50,7 @@ export const useUiSettingsStore = create<UiSettingsState>()(
         set((state) => ({ navbarLinkStates: { ...state.navbarLinkStates, [label]: isOpen } })),
 
       isNavbarOpened: false,
-      toggleNavbarOpened: () =>
-        set((state) => ({ isNavbarOpened: !state.isNavbarOpened })),
+      toggleNavbarOpened: () => set((state) => ({ isNavbarOpened: !state.isNavbarOpened })),
     }),
     {
       name: "ui-settings-storage",

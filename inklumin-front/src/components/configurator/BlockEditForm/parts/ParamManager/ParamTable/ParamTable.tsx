@@ -10,7 +10,6 @@ import {
 } from "@tabler/icons-react";
 import { ActionIcon, Badge, Box, Button, Group, Menu, Space, Table, Text } from "@mantine/core";
 import { KnowledgeBasePageEditor } from "@/components/knowledgeBase/KnowledgeBasePageEditor";
-import { useDb } from "@/hooks/useDb";
 import {
   IBlock,
   IBlockParameter,
@@ -20,6 +19,7 @@ import {
   IBlockRelation,
 } from "@/entities/ConstructorEntities";
 import { IKnowledgeBasePage } from "@/entities/KnowledgeBaseEntities";
+import { useDb } from "@/hooks/useDb";
 import { useDialog } from "@/providers/DialogProvider/DialogProvider";
 import classes from "./ParamTable.module.css"; // Создайте этот CSS модуль для кастомизации
 

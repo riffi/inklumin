@@ -7,13 +7,13 @@ import { GroupsModal } from "@/components/configurator/BlockEditForm/parts/Param
 import { ParamEditModal } from "@/components/configurator/BlockEditForm/parts/ParamManager/modal/ParamEditModal/ParamEditModal";
 import { ParamTable } from "@/components/configurator/BlockEditForm/parts/ParamManager/ParamTable/ParamTable";
 import { useBlockParams } from "@/components/configurator/BlockEditForm/useBlockParams";
-import { useDb } from "@/hooks/useDb";
 import {
   IBlock,
   IBlockParameter,
   IBlockParameterGroup,
   IBlockRelation,
 } from "@/entities/ConstructorEntities";
+import { useDb } from "@/hooks/useDb";
 
 // Added IBlockParameterGroup, though not directly used in this file, it's good for context with paramGroupList
 

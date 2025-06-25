@@ -1,6 +1,4 @@
-import React, {
-  useCallback,
-} from "react";
+import React, { useCallback } from "react";
 import {
   IconChevronDown,
   IconChevronRight,
@@ -71,7 +69,6 @@ const ChapterRowComponent = ({
     },
     [chapter.id, updateChapter, closeEditModal]
   );
-
 
   return (
     <>
@@ -149,14 +146,14 @@ const ChapterRowComponent = ({
               <Table highlightOnHover>
                 <Table.Tbody>
                   {scenes.map((scene, index, array) => (
-                  <SceneRow
-                    key={`scene-${scene.id}`}
-                    scene={scene}
-                    scenesInChapter={array}
-                    openScene={openScene}
-                    selectedSceneId={selectedSceneId}
-                    mode={mode}
-                    chapters={chapters}
+                    <SceneRow
+                      key={`scene-${scene.id}`}
+                      scene={scene}
+                      scenesInChapter={array}
+                      openScene={openScene}
+                      selectedSceneId={selectedSceneId}
+                      mode={mode}
+                      chapters={chapters}
                       scenes={scenes}
                     />
                   ))}
@@ -185,10 +182,7 @@ const ChapterRowComponent = ({
   );
 };
 
-const areEqual = (
-  prev: Readonly<ChapterRowProps>,
-  next: Readonly<ChapterRowProps>
-) =>
+const areEqual = (prev: Readonly<ChapterRowProps>, next: Readonly<ChapterRowProps>) =>
   prev.chapter === next.chapter &&
   prev.scenes === next.scenes &&
   prev.selectedSceneId === next.selectedSceneId &&

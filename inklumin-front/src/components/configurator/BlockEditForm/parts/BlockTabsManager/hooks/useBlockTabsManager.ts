@@ -1,8 +1,8 @@
 // useBlockTabsManager.ts
 import { useLiveQuery } from "dexie-react-hooks";
 import { notifications } from "@mantine/notifications";
-import { useDb } from "@/hooks/useDb";
 import { IBlock, IBlockTab } from "@/entities/ConstructorEntities";
+import { useDb } from "@/hooks/useDb";
 import { BlockTabRepository } from "@/repository/Block/BlockTabRepository";
 
 interface UseBlockTabsManagerProps {

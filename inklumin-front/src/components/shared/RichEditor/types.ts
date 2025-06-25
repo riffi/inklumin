@@ -17,7 +17,7 @@ export interface IWarning {
   kind: string;
   groupIndex: string;
   active: boolean;
-  suggestions: string[]
+  suggestions: string[];
 }
 export interface IClicheWarning extends IWarning {
   pattern: string;

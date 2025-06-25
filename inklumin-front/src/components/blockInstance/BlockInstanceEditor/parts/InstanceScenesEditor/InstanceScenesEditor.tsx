@@ -6,7 +6,8 @@ import {
   IconLink,
   IconSearch,
   IconUnlink,
-} from "@tabler/icons-react"; // Added IconSearch
+} from "@tabler/icons-react";
+// Added IconSearch
 
 import { useLiveQuery } from "dexie-react-hooks";
 import { useNavigate } from "react-router-dom";
@@ -23,7 +24,8 @@ import {
   TextInput,
   Title,
   UnstyledButton,
-} from "@mantine/core"; // Added TextInput
+} from "@mantine/core";
+// Added TextInput
 
 import { bookDb } from "@/entities/bookDb";
 import { IBlockInstanceSceneLink, IChapter, IScene } from "@/entities/BookEntities";

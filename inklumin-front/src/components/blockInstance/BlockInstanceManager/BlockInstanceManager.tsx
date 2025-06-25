@@ -45,9 +45,9 @@ import {
   BlockInstanceSortType,
   useUiSettingsStore,
 } from "@/stores/uiSettingsStore/uiSettingsStore";
+import { getBlockTitle } from "@/utils/configUtils";
 import { generateUUID } from "@/utils/UUIDUtils";
 import classes from "./BlockInstanceManager.module.css";
-import {getBlockTitle} from "@/utils/configUtils";
 
 export interface IBlockInstanceManagerProps {
   blockUuid: string;
@@ -287,7 +287,9 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
     if (!linkGroups || !instancesWithParams || !groupingParam) return linkGroups;
     return linkGroups.filter((g) =>
       instancesWithParams.some((inst) =>
-        inst.params.some((p) => p.blockParameterUuid === groupingParam.uuid && p.linkedBlockUuid === g.uuid)
+        inst.params.some(
+          (p) => p.blockParameterUuid === groupingParam.uuid && p.linkedBlockUuid === g.uuid
+        )
       )
     );
   }, [linkGroups, instancesWithParams, groupingParam]);

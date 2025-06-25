@@ -8,8 +8,12 @@ import { ParameterList } from "@/components/blockInstance/BlockInstanceEditor/pa
 import { FullParam } from "@/components/blockInstance/BlockInstanceEditor/types";
 import { bookDb } from "@/entities/bookDb";
 import { IBlockParameterInstance } from "@/entities/BookEntities";
-import { IBlockParameterDataType } from "@/entities/ConstructorEntities";
-import { IBlock, IBlockParameterGroup, IBlockRelation } from "@/entities/ConstructorEntities";
+import {
+  IBlock,
+  IBlockParameterDataType,
+  IBlockParameterGroup,
+  IBlockRelation,
+} from "@/entities/ConstructorEntities";
 import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";
 import {
   addParameterInstance,

@@ -3,8 +3,8 @@ import ReactMarkdown from "react-markdown";
 import { useParams } from "react-router-dom";
 import remarkGfm from "remark-gfm";
 import { Container, LoadingOverlay } from "@mantine/core";
-import { useDb } from "@/hooks/useDb";
 import { IKnowledgeBasePage } from "@/entities/KnowledgeBaseEntities";
+import { useDb } from "@/hooks/useDb";
 import { loadSystemKnowledgeBasePage } from "@/knowledge-base/loader";
 import { KnowledgeBaseRepository } from "@/repository/KnowledgeBaseRepository";
 

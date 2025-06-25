@@ -159,7 +159,6 @@ export const NoteEditPage = () => {
         finalUuid = note!.uuid;
       } else {
         if (!note) {
-
           console.error("Attempted to update a null note.");
           return;
         }
@@ -194,7 +193,6 @@ export const NoteEditPage = () => {
       } catch (error) {
         console.error("Failed to save note:", error);
       } finally {
-
       }
     },
     [note, isNewNote, navigate, selectedBookUuid]

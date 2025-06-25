@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { notifications } from "@mantine/notifications";
-import { useDb } from "@/hooks/useDb";
 import { BlockRelationType, IBlock, IBlockRelation } from "@/entities/ConstructorEntities";
+import { useDb } from "@/hooks/useDb";
 import { BlockRelationRepository } from "@/repository/Block/BlockRelationRepository";
 import { generateUUID } from "@/utils/UUIDUtils";
 

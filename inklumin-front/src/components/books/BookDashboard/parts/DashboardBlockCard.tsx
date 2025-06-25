@@ -9,7 +9,7 @@ import { IBlock, IBlockStructureKind } from "@/entities/ConstructorEntities";
 import { BlockInstanceRelationRepository } from "@/repository/BlockInstance/BlockInstanceRelationRepository";
 import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";
 import { BlockParameterInstanceRepository } from "@/repository/BlockInstance/BlockParameterInstanceRepository";
-import {getBlockTitle} from "@/utils/configUtils";
+import { getBlockTitle } from "@/utils/configUtils";
 
 interface BlockCardProps {
   block: IBlock;

@@ -1,10 +1,10 @@
 import { useState } from "react";
-import {IconArrowsDoubleSwNe, IconChecks, IconTextSpellcheck} from "@tabler/icons-react";
+import { IconArrowsDoubleSwNe, IconChecks, IconTextSpellcheck } from "@tabler/icons-react";
 import { Button } from "@mantine/core";
+import { RichTextEditor } from "@mantine/tiptap";
 import { YandexSpellerApi } from "@/api/yandexSpellerApi";
 import { spellingHighlighterKey } from "@/components/shared/RichEditor/plugins/SpellingHighlighterExtension";
 import { IWarningGroup } from "@/components/shared/RichEditor/types";
-import {RichTextEditor} from "@mantine/tiptap";
 
 interface CheckSpellingActionProps {
   editor: any;
@@ -52,14 +52,13 @@ export const CheckSpellingAction = ({
   };
 
   return (
-      <Button
-          onClick={handleClick}
-          loading={isLoading}
-          variant={isActive ? "filled" : "outline"}
-          leftSection={<IconTextSpellcheck size={16} />}
-      >
-        {isActive ? "Скрыть проверку оргографии" : "Проверить орфографию"}
-      </Button>
-  )
-
+    <Button
+      onClick={handleClick}
+      loading={isLoading}
+      variant={isActive ? "filled" : "outline"}
+      leftSection={<IconTextSpellcheck size={16} />}
+    >
+      {isActive ? "Скрыть проверку оргографии" : "Проверить орфографию"}
+    </Button>
+  );
 };

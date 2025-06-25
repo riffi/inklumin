@@ -1,8 +1,8 @@
 import { notifications } from "@mantine/notifications";
+import { ApiResponse } from "@/api/inkLuminApi/generatedTypes";
+import { inkLuminAPI } from "@/api/inkLuminApi/inkLuminApi";
 import { IWarningGroup, IWarningKind } from "@/components/shared/RichEditor/types";
 import { IBlockTitleForms } from "@/entities/ConstructorEntities";
-import { inkLuminAPI } from "@/api/inkLuminApi/inkLuminApi";
-import { ApiResponse } from "@/api/inkLuminApi/generatedTypes";
 import { generateUUID } from "@/utils/UUIDUtils";
 
 export class InkLuminApiError extends Error {
@@ -41,9 +41,7 @@ const fetchWithAuth = async <T>(
  */
 export const fetchAndPrepareTitleForms = async (phrase: string): Promise<IBlockTitleForms> => {
   try {
-    const formsData = await fetchWithAuth((token) =>
-      inkLuminAPI.getTitleForms(token, phrase)
-    );
+    const formsData = await fetchWithAuth((token) => inkLuminAPI.getTitleForms(token, phrase));
 
     return {
       nominative: formsData.nomn || phrase,
@@ -61,9 +59,7 @@ export const fetchAndPrepareTitleForms = async (phrase: string): Promise<IBlockT
 
 export const fetchRepeats = async (text: string): Promise<IWarningGroup[]> => {
   try {
-    const data = await fetchWithAuth((token) =>
-      inkLuminAPI.getRepeats(token, text, 10, 1)
-    );
+    const data = await fetchWithAuth((token) => inkLuminAPI.getRepeats(token, text, 10, 1));
 
     const groups: IWarningGroup[] = [];
     data.repeatData.forEach((rawGroup: any, index: number) => {
@@ -96,9 +92,7 @@ export const fetchRepeats = async (text: string): Promise<IWarningGroup[]> => {
 
 export const fetchCliches = async (text: string): Promise<IWarningGroup[]> => {
   try {
-    const data = await fetchWithAuth((token) =>
-      inkLuminAPI.getCliches(token, text)
-    );
+    const data = await fetchWithAuth((token) => inkLuminAPI.getCliches(token, text));
 
     const groups: IWarningGroup[] = [];
     data.data.forEach((warning: any, index: number) => {

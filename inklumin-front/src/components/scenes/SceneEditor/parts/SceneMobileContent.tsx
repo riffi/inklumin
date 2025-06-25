@@ -1,5 +1,5 @@
 import { IconDatabaseSmile, IconLink, IconReportAnalytics } from "@tabler/icons-react";
-import {ActionIcon, Box, Container, Flex, Group, Text} from "@mantine/core";
+import { ActionIcon, Box, Container, Flex, Group, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useKeyboardHeight } from "@/components/scenes/SceneEditor/hooks/useKeyboardHeight";
 import { SceneLinkManager } from "@/components/scenes/SceneEditor/parts/SceneLinkManager/SceneLinkManager";
@@ -113,7 +113,7 @@ export const SceneMobileContent = ({
             ? { top: 0, bottom: 0 }
             : {
                 top: 0,
-                bottom: (warningGroups?.length > 0 && !focusMode ? 130 : 80),
+                bottom: warningGroups?.length > 0 && !focusMode ? 130 : 80,
               }
         }
         focusMode={focusMode}
@@ -169,23 +169,24 @@ export const SceneMobileContent = ({
           >
             {managementPanel}
           </Box>
-          <Box style={{
-            position: "fixed",
-            bottom: keyboardHeight,
-            height: "30px",
-            width: "100%",
-            backgroundColor: "rgb(236,236,236)",
-            color: "black",
-            padding: "8px 16px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: "10px",
-            zIndex: 150,
-          }}>
+          <Box
+            style={{
+              position: "fixed",
+              bottom: keyboardHeight,
+              height: "30px",
+              width: "100%",
+              backgroundColor: "rgb(236,236,236)",
+              color: "black",
+              padding: "8px 16px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: "10px",
+              zIndex: 150,
+            }}
+          >
             <Text size="sm">
-              Символов: {scene?.totalSymbolCountWoSpaces} /{" "}
-              {scene?.totalSymbolCountWithSpaces}
+              Символов: {scene?.totalSymbolCountWoSpaces} / {scene?.totalSymbolCountWithSpaces}
             </Text>
           </Box>
         </Flex>

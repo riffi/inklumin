@@ -19,9 +19,9 @@ import { IBlock, IBlockStructureKind } from "@/entities/ConstructorEntities";
 import { useDialog } from "@/providers/DialogProvider/DialogProvider";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 import { BlockInstanceSceneLinkRepository } from "@/repository/BlockInstance/BlockInstanceSceneLinkRepository";
+import { getBlockTitle } from "@/utils/configUtils";
 import { SceneLinkManagerModal } from "../SceneLinkManagerModal";
 import { useSceneLinks } from "./hooks/useSceneLinks";
-import {getBlockTitle} from "@/utils/configUtils";
 
 interface ISceneLinkManagerProps {
   sceneId: number;
@@ -100,7 +100,7 @@ export const SceneLinkManager = (props: ISceneLinkManagerProps) => {
         <List spacing="md">
           {blocks.map((block) => {
             const linkedInstances = getLinkedInstances(block.uuid!);
-            const blockTitle = getBlockTitle(block)
+            const blockTitle = getBlockTitle(block);
 
             return (
               <Box key={block.uuid} mb="xl">

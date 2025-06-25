@@ -29,7 +29,7 @@ export const EditorToolBar = (props: IEditorToolBarProps) => {
                 top: props.mobileTop,
                 width: "100%",
                 zIndex: 1000,
-                backgroundColor: "#f8f9fa"
+                backgroundColor: "#f8f9fa",
               }
             : {
                 position: "sticky",

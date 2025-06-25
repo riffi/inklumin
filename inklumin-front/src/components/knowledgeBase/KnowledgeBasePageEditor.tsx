@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import MDEditor from "@uiw/react-md-editor";
 import { Button, Modal, Stack, TextInput } from "@mantine/core";
-import { useDb } from "@/hooks/useDb";
 import { IKnowledgeBasePage } from "@/entities/KnowledgeBaseEntities";
+import { useDb } from "@/hooks/useDb";
 import { KnowledgeBaseRepository } from "@/repository/KnowledgeBaseRepository";
 import { generateUUID } from "@/utils/UUIDUtils";
 

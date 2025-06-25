@@ -32,13 +32,10 @@ export const BlockEditForm = ({ blockUuid, bookUuid }: IBlockEditFormProps) => {
   const [activeTab, setActiveTab] = useState<BlockEditTab>(BlockEditTab.main);
   const handleTabChange = useCallback((value: string) => setActiveTab(value as BlockEditTab), []);
 
-  const {
-    saveBlock,
-    configuration,
-    block,
-    otherBlocks,
-    blockRelations,
-  } = useBlockEditForm(blockUuid, bookUuid);
+  const { saveBlock, configuration, block, otherBlocks, blockRelations } = useBlockEditForm(
+    blockUuid,
+    bookUuid
+  );
 
   useEffect(() => {
     setPageTitle(getBlockTitle(block));
