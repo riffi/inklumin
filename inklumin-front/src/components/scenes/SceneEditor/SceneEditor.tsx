@@ -16,165 +16,169 @@ import { KnowledgeBaseDrawer } from "./parts/KnowledgeBaseDrawer";
 import { SceneAnalysisDrawer } from "./parts/SceneAnalysisDrawer";
 import type { SceneEditorProps } from "./types";
 
-export const SceneEditor = ({ sceneId, chapter }: SceneEditorProps) => {
-  const navigate = useNavigate();
-  const { isMobile } = useMedia();
-
-  const { scene, saveScene } = useSceneEditor(sceneId);
-  const chapterData = useLiveQuery<IChapter | undefined>(() => {
-    const id = chapter?.id ?? scene?.chapterId;
-    return id ? ChapterRepository.getById(bookDb, id) : undefined;
-  }, [chapter?.id, scene?.chapterId]);
-  const handleChapterTitleChange = useCallback(
-    (title: string) => {
-      if (chapterData?.id) {
-        ChapterRepository.update(bookDb, chapterData.id, { title });
-      }
-    },
-    [chapterData?.id]
-  );
-
+// Extracted custom hook
+const useSceneEditorState = () => {
   const [selectedGroup, setSelectedGroup] = useState<IWarningGroup>();
   const [sceneBody, setSceneBody] = useState("");
   const [warningGroups, setWarningGroups] = useState<IWarningGroup[]>([]);
   const [focusMode, setFocusMode] = useState(false);
-
-  // State for Knowledge Base Drawer
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isAnalysisDrawerOpen, setIsAnalysisDrawerOpen] = useState(false);
 
   const toggleFocusMode = useCallback(() => setFocusMode((prev) => !prev), []);
-
-  // Functions for Knowledge Base Drawer
   const openKnowledgeBaseDrawer = useCallback(() => setIsDrawerOpen(true), []);
   const openAnalysisDrawer = useCallback(() => setIsAnalysisDrawerOpen(true), []);
+  const closeKnowledgeBaseDrawer = useCallback(() => setIsDrawerOpen(false), []);
+  const closeAnalysisDrawer = useCallback(() => setIsAnalysisDrawerOpen(false), []);
+
+  return {
+    selectedGroup,
+    setSelectedGroup,
+    sceneBody,
+    setSceneBody,
+    warningGroups,
+    setWarningGroups,
+    focusMode,
+    toggleFocusMode,
+    isDrawerOpen,
+    openKnowledgeBaseDrawer,
+    closeKnowledgeBaseDrawer,
+    isAnalysisDrawerOpen,
+    openAnalysisDrawer,
+    closeAnalysisDrawer,
+  };
+};
+
+// Extracted constants
+const FOCUS_MODE_SHORTCUTS = {
+  keys: ['F', 'А'], // English and Russian F
+  requireShift: true,
+  requireModifier: true,
+};
+
+// Extracted function
+const cleanTextForWordCount = (text: string): string => {
+  return text
+  .replace(/\u200B/g, "") // zero-width space
+  .replace(/\u00A0/g, " ") // non-breaking space → обычный пробел
+  .replace(/\s+$/g, "") // обрезать пробелы в конце
+  .replace(/\r?\n/g, ""); // не считать переводы строк
+};
+
+export const SceneEditor = ({sceneId, chapter}: SceneEditorProps) => {
+  const navigate = useNavigate();
+  const {isMobile} = useMedia();
+  const {scene, saveScene} = useSceneEditor(sceneId);
+  const editorState = useSceneEditorState();
+
+  const chapterData = useLiveQuery<IChapter | undefined>(() => {
+    const id = chapter?.id ?? scene?.chapterId;
+    return id ? ChapterRepository.getById(bookDb, id) : undefined;
+  }, [chapter?.id, scene?.chapterId]);
 
   const blocks = useLiveQuery<IBlock[]>(() => BlockRepository.getAll(bookDb), []);
 
-  const closeKnowledgeBaseDrawer = useCallback(() => {
-    setIsDrawerOpen(false);
-  }, []);
-  const closeAnalysisDrawer = useCallback(() => setIsAnalysisDrawerOpen(false), []);
+  const handleChapterTitleChange = useCallback(
+      (title: string) => {
+        if (chapterData?.id) {
+          ChapterRepository.update(bookDb, chapterData.id, {title});
+        }
+      },
+      [chapterData?.id]
+  );
+
+  const handleContentChange = useCallback(
+      (contentHTML: string, contentText: string) => {
+        if (!scene?.id || contentHTML === scene.body) return;
+
+        const cleanedText = cleanTextForWordCount(contentText);
+        const updatedScene = {
+          ...scene,
+          body: contentHTML,
+          totalSymbolCountWithSpaces: cleanedText.length,
+          totalSymbolCountWoSpaces: contentText.replace(/\s+/g, "").length,
+        };
+
+        saveScene(updatedScene, true);
+        editorState.setSceneBody(contentHTML);
+      },
+      [scene, saveScene, editorState.setSceneBody]
+  );
 
   // Global keyboard shortcut for focus mode
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (
-        (event.key === "F" && event.shiftKey && (event.ctrlKey || event.metaKey)) ||
-        (event.key === "А" && event.shiftKey && (event.ctrlKey || event.metaKey))
-      ) {
+      const isTargetKey = FOCUS_MODE_SHORTCUTS.keys.includes(event.key);
+      const hasRequiredModifiers = event.shiftKey && (event.ctrlKey || event.metaKey);
+
+      if (isTargetKey && hasRequiredModifiers) {
         event.preventDefault();
-        toggleFocusMode();
+        editorState.toggleFocusMode();
       }
     };
 
     document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [toggleFocusMode]); // Add toggleFocusMode to dependency array
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [editorState.toggleFocusMode]);
 
-  // Обработчик изменения контента в редакторе
-  const handleContentChange = useCallback(
-    (contentHTML, contentText) => {
-      if (!scene?.id || contentHTML === scene.body) return;
-      function cleanForWordCount(text) {
-        return text
-          .replace(/\u200B/g, "") // zero-width space
-          .replace(/\u00A0/g, " ") // non-breaking space → обычный пробел
-          .replace(/\s+$/g, "") // обрезать пробелы в конце
-          .replace(/\r?\n/g, ""); // не считать переводы строк
-      }
-
-      const cleanedText = cleanForWordCount(contentText);
-
-      const updatedScene = {
-        ...scene,
-        body: contentHTML,
-        totalSymbolCountWithSpaces: cleanedText.length,
-        totalSymbolCountWoSpaces: contentText.replace(/\s+/g, "").length,
-      };
-
-      saveScene(updatedScene, true);
-      setSceneBody(contentHTML);
-    },
-    [scene, saveScene]
-  );
   useEffect(() => {
-    setWarningGroups([]);
-  }, [sceneId]);
+    editorState.setWarningGroups([]);
+  }, [sceneId, editorState.setWarningGroups]);
 
-  // Обновление состояния редактора при изменении текста сцены
   useEffect(() => {
-    if (scene?.body !== undefined && scene.body !== sceneBody) {
-      setSceneBody(scene.body);
+    if (scene?.body !== undefined && scene.body !== editorState.sceneBody) {
+      editorState.setSceneBody(scene.body);
     }
-  }, [sceneId, scene?.id]);
+  }, [sceneId, scene?.id, scene?.body, editorState.sceneBody, editorState.setSceneBody]);
 
   if (!scene?.id) return null;
 
   if (scene?.id !== sceneId) {
     return (
-      <Box pos="relative" style={{ minHeight: "100dvh" }}>
-        <LoadingOverlay visible={true} overlayBlur={2} />
-      </Box>
+        <Box pos="relative" style={{minHeight: "100dvh"}}>
+          <LoadingOverlay visible={true} overlayBlur={2}/>
+        </Box>
     );
   }
 
+  const commonProps = {
+    chapter: chapterData,
+    onChapterTitleChange: handleChapterTitleChange,
+    sceneBody: editorState.sceneBody,
+    handleContentChange,
+    warningGroups: editorState.warningGroups,
+    setWarningGroups: editorState.setWarningGroups,
+    selectedGroup: editorState.selectedGroup,
+    setSelectedGroup: editorState.setSelectedGroup,
+    scene,
+    saveScene,
+    focusMode: editorState.focusMode,
+    toggleFocusMode: editorState.toggleFocusMode,
+    openKnowledgeBaseDrawer: editorState.openKnowledgeBaseDrawer,
+    openAnalysisDrawer: editorState.openAnalysisDrawer,
+  };
+
   return (
-    <>
-      {scene?.id === sceneId && (
-        <Box>
-          {isMobile ? (
-            <SceneMobileContent
-              chapter={chapterData}
-              onChapterTitleChange={handleChapterTitleChange}
-              sceneBody={sceneBody}
-              handleContentChange={handleContentChange}
-              warningGroups={warningGroups}
-              setWarningGroups={setWarningGroups}
-              selectedGroup={selectedGroup}
-              setSelectedGroup={setSelectedGroup}
-              scene={scene}
-              saveScene={saveScene}
-              focusMode={focusMode}
-              toggleFocusMode={toggleFocusMode}
-              openKnowledgeBaseDrawer={openKnowledgeBaseDrawer}
-              openAnalysisDrawer={openAnalysisDrawer}
-            />
-          ) : (
-            <SceneDesktopContent
-              chapter={chapterData}
-              onChapterTitleChange={handleChapterTitleChange}
-              scene={scene}
-              navigate={navigate}
-              saveScene={saveScene}
-              sceneBody={sceneBody}
-              handleContentChange={handleContentChange}
-              warningGroups={warningGroups}
-              setWarningGroups={setWarningGroups}
-              selectedGroup={selectedGroup}
-              setSelectedGroup={setSelectedGroup}
-              focusMode={focusMode}
-              toggleFocusMode={toggleFocusMode}
-              openKnowledgeBaseDrawer={openKnowledgeBaseDrawer}
-              openAnalysisDrawer={openAnalysisDrawer}
-            />
-          )}
-          <KnowledgeBaseDrawer
-            isOpen={isDrawerOpen}
-            onClose={closeKnowledgeBaseDrawer}
+      <Box>
+        {isMobile ? (
+            <SceneMobileContent {...commonProps} />
+        ) : (
+            <SceneDesktopContent {...commonProps} navigate={navigate}/>
+        )}
+
+        <KnowledgeBaseDrawer
+            isOpen={editorState.isDrawerOpen}
+            onClose={editorState.closeKnowledgeBaseDrawer}
             blocks={blocks}
             sceneId={scene.id}
             sceneBody={scene?.body}
-          />
-          <SceneAnalysisDrawer
-            isOpen={isAnalysisDrawerOpen}
-            onClose={closeAnalysisDrawer}
+        />
+
+        <SceneAnalysisDrawer
+            isOpen={editorState.isAnalysisDrawerOpen}
+            onClose={editorState.closeAnalysisDrawer}
             sceneBody={scene?.body}
-          />
-        </Box>
-      )}
-    </>
+        />
+      </Box>
   );
 };
