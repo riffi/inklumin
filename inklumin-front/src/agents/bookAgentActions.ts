@@ -36,7 +36,7 @@ export const createBlockInstance = async ({
   title: string;
   description?: string;
 }) => {
-  console.log("createBlockInstance", blockUuid, title, description);
+
   const instance = {
     uuid: crypto.randomUUID(),
     blockUuid,
@@ -78,7 +78,7 @@ export const saveParamInstance = async ({
     }
     return await BlockParameterInstanceRepository.getById(bookDb, id);
   }
-  if (!blockInstanceUuid || !blockParameterUuid || !blockParameterGroupUuid) return null;
+  if (!blockInstanceUuid || !blockParameterUuid || !blockParameterGroupUuid) {return null;}
   const paramDef = await BlockParameterRepository.getByUuid(bookDb, blockParameterUuid);
   const instance = {
     uuid: crypto.randomUUID(),

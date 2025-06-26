@@ -6,7 +6,6 @@ import { SceneEditorLayout } from "@/components/layout/SceneEditorLayout/SceneEd
 import { NoteEditPage } from "@/components/notes/NoteEditPage/NoteEditPage";
 import { NoteFolder } from "@/components/notes/NoteFolder/NoteFolder";
 import { NoteManager } from "@/components/notes/NoteManager/NoteManager";
-import { SceneLayout } from "@/components/scenes/SceneLayout/SceneLayout";
 import { BlockInstanceManagerPage } from "@/pages/books/BlockInstanceManagerPage";
 import { BlockInstancePage } from "@/pages/books/BlockInstancePage";
 import { BookAgentPage } from "@/pages/books/BookAgentPage";
@@ -69,7 +68,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/book-notes",
-        element: (<NoteManager bookNotesMode={true} />) as ReactNode,
+        element: (<NoteManager bookNotesMode />) as ReactNode,
       },
       {
         path: "/notes/folder/:folderUuid",

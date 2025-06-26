@@ -22,7 +22,7 @@ function AppContent() {
   useServerSync(user?.token);
 
   return (
-    <MantineProvider defaultColorScheme={"light"} datesLocale="ru">
+    <MantineProvider defaultColorScheme="light" datesLocale="ru">
       <Notifications />
       <DialogProvider>
         <PageTitleProvider>
