@@ -1,6 +1,6 @@
 import React from "react";
 import { IconPlus } from "@tabler/icons-react";
-import { Center, Group, LoadingOverlay, Paper, Table, Text } from "@mantine/core";
+import { Center, Group, LoadingOverlay, Paper, Stack, Text } from "@mantine/core";
 import { IChapter, ISceneWithInstances } from "@/entities/BookEntities";
 import { ChapterRow } from "./ChapterRow";
 import { SceneRow } from "./SceneRow";
@@ -113,8 +113,8 @@ const SceneTableComponent = ({
   }
 
   return (
-    <Table horizontalSpacing="sm" verticalSpacing="sm" layout={"auto"}>
-      <Table.Tbody>
+    <Paper withBorder  style={{ overflow: "hidden" }}>
+      <Stack gap={0}>
         {filteredChapters?.map((chapter) => (
           <ChapterRow
             key={`chapter-${chapter.id}`}
@@ -134,7 +134,6 @@ const SceneTableComponent = ({
               key={`scene-${scene.id}`}
               scene={scene}
               scenesInChapter={array}
-              // onDelete={handleDelete}
               openScene={openScene}
               selectedSceneId={selectedSceneId}
               mode={mode}
@@ -142,8 +141,8 @@ const SceneTableComponent = ({
               chapters={chapters}
             />
           ))}
-      </Table.Tbody>
-    </Table>
+      </Stack>
+    </Paper>
   );
 };
 

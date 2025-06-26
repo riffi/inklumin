@@ -99,7 +99,7 @@ export const SceneLayout = () => {
             position: 'fixed',
             top: 20,
             right: 20,
-            zIndex: 1000
+            zIndex: 100
           }}
           styles={{
             root: { height: 36 },

@@ -10,7 +10,7 @@ import {
   IconPlus,
   IconTrash,
 } from "@tabler/icons-react";
-import { ActionIcon, Box, Collapse, Menu, Table } from "@mantine/core";
+import { ActionIcon, Box, Collapse, Divider, Group, Menu, Stack, Text, useMantineTheme } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useScenes } from "@/components/scenes/SceneManager/useScenes";
 import { IChapter, IScene, ISceneWithInstances } from "@/entities/BookEntities";
@@ -41,6 +41,7 @@ const ChapterRowComponent = ({
   chapters,
   chapterOnly,
 }: ChapterRowProps) => {
+  const theme = useMantineTheme();
   const isCollapsed = useBookStore((state) => state.collapsedChapters.get(chapter.id) ?? false);
   const toggleChapterCollapse = useBookStore((state) => state.toggleChapterCollapse);
   const isExpanded = !isCollapsed;
@@ -73,107 +74,145 @@ const ChapterRowComponent = ({
 
   return (
     <>
-      <Table.Tr key={`chapter-${chapter.id}`}>
-        <Table.Td colSpan={2} style={{ padding: 0 }}>
-          <Box
-            style={{
-              display: "flex",
-              alignItems: "center",
-              padding: "10px 16px",
-              backgroundColor: chapterOnly ? "white" : "var(--mantine-color-gray-0)",
-              cursor: "pointer",
-            }}
-            onClick={() => {
-              if (chapterOnly) {
-                if (chapter.contentSceneId !== undefined) {
-                  openScene(chapter.contentSceneId, chapter);
-                }
-              } else {
-                toggleChapterCollapse(chapter.id);
+      <Box
+        style={{
+          borderBottom: !chapterOnly ? `1px solid ${theme.colors.gray[2]}` : undefined,
+        }}
+      >
+        <Box
+          style={{
+            display: "flex",
+            alignItems: "center",
+            padding: "16px 20px",
+            backgroundColor: chapterOnly
+              ? theme.colors.blue[0]
+              : theme.colors.gray[0],
+            cursor: "pointer",
+            transition: "background-color 0.15s ease",
+            borderRadius: chapterOnly ? "0" : "0",
+          }}
+          onClick={() => {
+            if (chapterOnly) {
+              if (chapter.contentSceneId !== undefined) {
+                openScene(chapter.contentSceneId, chapter);
               }
-            }}
-          >
-            {!chapterOnly && (
-              <ActionIcon variant="transparent" mr="sm">
-                {isExpanded ? <IconChevronDown size={16} /> : <IconChevronRight size={16} />}
-              </ActionIcon>
+            } else {
+              toggleChapterCollapse(chapter.id);
+            }
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = chapterOnly
+              ? theme.colors.blue[1]
+              : theme.colors.gray[1];
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = chapterOnly
+              ? theme.colors.blue[0]
+              : theme.colors.gray[0];
+          }}
+        >
+          {!chapterOnly && (
+            <ActionIcon variant="transparent" mr="sm" size="sm">
+              {isExpanded ? <IconChevronDown size={16} /> : <IconChevronRight size={16} />}
+            </ActionIcon>
+          )}
+
+          <Box mr="sm" c={chapterOnly ? theme.colors.blue[7] : theme.colors.gray[7]}>
+            {chapterOnly ? (
+              <IconNote size={20} />
+            ) : isExpanded ? (
+              <IconFolderOpen size={20} />
+            ) : (
+              <IconFolder size={20} />
             )}
-            {!chapterOnly && isExpanded ? <IconFolderOpen size={18} /> : <IconNote size={18} />}
-            <span
-              style={{
-                marginLeft: 8,
-                fontWeight: chapterOnly ? 400 : 600,
-                fontSize: "0.8rem",
-              }}
-            >
-              {chapter.order ? `${chapter.order}. ` : ""} {chapter.title}
-            </span>
-            <Box ml="auto">
-              {/* меню действий по аналогии со сценой */}
-              <Menu withinPortal shadow="md" position="left-start">
-                <Menu.Target>
-                  <ActionIcon variant="subtle" onClick={(e) => e.stopPropagation()}>
-                    <IconDotsVertical size={16} />
-                  </ActionIcon>
-                </Menu.Target>
-                <Menu.Dropdown>
-                  {!chapterOnly && (
-                    <Menu.Item
-                      icon={<IconPlus size={14} />}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onAddScene();
-                      }}
-                    >
-                      Добавить сцену
-                    </Menu.Item>
-                  )}
-                  <Menu.Item
-                    icon={<IconEdit size={14} />}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openEditModal();
-                    }}
-                  >
-                    Переименовать
-                  </Menu.Item>
-                  <Menu.Item
-                    icon={<IconTrash size={14} />}
-                    color="red"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openDeleteModal();
-                    }}
-                  >
-                    Удалить главу
-                  </Menu.Item>
-                </Menu.Dropdown>
-              </Menu>
-            </Box>
           </Box>
 
-          {!chapterOnly && (
-            <Collapse in={isExpanded}>
-              <Table highlightOnHover>
-                <Table.Tbody>
-                  {scenes.map((scene, index, array) => (
-                    <SceneRow
-                      key={`scene-${scene.id}`}
-                      scene={scene}
-                      scenesInChapter={array}
-                      openScene={openScene}
-                      selectedSceneId={selectedSceneId}
-                      mode={mode}
-                      chapters={chapters}
-                      scenes={scenes}
-                    />
-                  ))}
-                </Table.Tbody>
-              </Table>
-            </Collapse>
-          )}
-        </Table.Td>
-      </Table.Tr>
+          <Box style={{ flex: 1, minWidth: 0 }}>
+            <Text
+              fw={chapterOnly ? 500 : 600}
+              size="sm"
+              c={chapterOnly ? theme.colors.blue[8] : theme.colors.dark[8]}
+              style={{ lineHeight: 1.3 }}
+            >
+              {chapter.order ? `${chapter.order}. ` : ""}{chapter.title}
+            </Text>
+            {!chapterOnly && scenes.length > 0 && (
+              <Text size="xs" c="dimmed" mt={2}>
+                {scenes.length} {scenes.length === 1 ? 'сцена' : scenes.length < 5 ? 'сцены' : 'сцен'}
+              </Text>
+            )}
+          </Box>
+
+          <Menu withinPortal shadow="md" position="left-start">
+            <Menu.Target>
+              <ActionIcon
+                variant="subtle"
+                size="sm"
+                onClick={(e) => e.stopPropagation()}
+                style={{ opacity: 0.7 }}
+              >
+                <IconDotsVertical size={16} />
+              </ActionIcon>
+            </Menu.Target>
+            <Menu.Dropdown>
+              {!chapterOnly && (
+                <Menu.Item
+                  leftSection={<IconPlus size={14} />}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onAddScene();
+                  }}
+                >
+                  Добавить сцену
+                </Menu.Item>
+              )}
+              <Menu.Item
+                leftSection={<IconEdit size={14} />}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openEditModal();
+                }}
+              >
+                Переименовать
+              </Menu.Item>
+              <Menu.Item
+                leftSection={<IconTrash size={14} />}
+                color="red"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openDeleteModal();
+                }}
+              >
+                Удалить главу
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        </Box>
+
+        {!chapterOnly && (
+          <Collapse in={isExpanded}>
+            <Stack gap={0}>
+              {scenes.map((scene, index, array) => (
+                <React.Fragment key={`scene-${scene.id}`}>
+                  <SceneRow
+                    scene={scene}
+                    scenesInChapter={array}
+                    openScene={openScene}
+                    selectedSceneId={selectedSceneId}
+                    mode={mode}
+                    chapters={chapters}
+                    scenes={scenes}
+                    isNested={true}
+                  />
+                  {index < array.length - 1 && (
+                    <Divider color={theme.colors.gray[1]} />
+                  )}
+                </React.Fragment>
+              ))}
+            </Stack>
+          </Collapse>
+        )}
+      </Box>
 
       <EditChapterModal
         opened={openedEditModal}
