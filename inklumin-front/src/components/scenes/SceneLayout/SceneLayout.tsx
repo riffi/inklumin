@@ -52,12 +52,12 @@ export const SceneLayout = () => {
 
   const segmentedControlData = [
     {
-      label: <IconLayoutSidebar size={18} />,
-      value: 'manager'
+      label: <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}><IconLayoutSidebar size={18} /></Box>,
+      value: 'split'
     },
     {
-      label: <IconColumns size={18} />,
-      value: 'split'
+      label: <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}><IconColumns size={18} /></Box>,
+      value: 'manager'
     }
   ];
 
@@ -85,6 +85,10 @@ export const SceneLayout = () => {
             top: 20,
             right: 20,
             zIndex: 1000
+          }}
+          styles={{
+            root: { height: 36 },
+            label: { padding: '0 12px', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }
           }}
         />
         <SceneManager
@@ -118,6 +122,10 @@ export const SceneLayout = () => {
           top: 20,
           right: 20,
           zIndex: 1001
+        }}
+        styles={{
+          root: { height: 36 },
+          label: { padding: '0 12px', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }
         }}
       />
 
