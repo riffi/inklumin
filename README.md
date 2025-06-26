@@ -1,30 +1,30 @@
 # Inklumin Monorepository
 
-This repository contains the source code for the **Inklumin** platform. It is a monorepo that includes three independent projects:
+В репозитории хранится исходный код сервиса **Inklumin**. Это монорепозиторий, включающий следующие независимые проекты:
 
-- **`inklumin-front`** – the SoulWriter web client
+- **`inklumin-front`** – Фронт-энд сервиса
 - **`inklumin-back`** – Spring Boot REST API
-- **`inklumin-ml`** – Flask based helper service
+- **`inklumin-ml`** – API на Flask 
 
-Front-back interaction uses openapi.yaml
+Front-back интеграция использует openapi.yaml
 
-Each project can be developed and deployed separately. Below is a short overview of their purpose and how to run them.
+Каждый из проектов может разрабатываться и разворачиваться отдельно. Ниже краткое описание проектов, их назначения и инструкция запуска.
 
-## inklumin-front (SoulWriter)
-SoulWriter is a browser application that helps writers organise books, scenes and notes. It also features a configurable content system called "Blocks". Key features are outlined in the front-end README:
+## inklumin-front 
+InkLimin - браузерное приложение, позволяющее работать с книгами, сценами и заметками. Оно также позволяет вести конфигурировать и вести Базу Знаний книги. Ключевые функции описаны в front-end README:
 
 ```
 * Управление книгами
-* Управление сценами
-* Создание заметок
-* Настройка контента ("Blocks" и "Block Instances")
+* Управление сценами/главами
+* Управление заметками
+* Конфигурирование и наполнение базы знаний ("Blocks" и "Block Instances")
 * Расширенное редактирование текста
 ```
-【F:inklumin-front/README.md†L5-L18】
+【F:inklumin-front/README.md】
 
-The application uses React with Mantine UI, Zustand for state management and Dexie for local IndexedDB storage. Routing is handled by React Router DOM and rich text editing is powered by TipTap. Development and build are handled by Vite using TypeScript.
+Приложение использует React с Mantine UI, Zustand для стейт менеджмента и Dexie для работы с локальной базой IndexedDB. Роутинг управляется React Router DOM, редактирование текста производится при помощи TipTap. Развертывание и сборка приложения осуществляется Vite с ипользованием TypeScript.
 
-To start the client locally, укажите адреса сервисов через переменные окружения:
+Чтобы запустить клиент локально, укажите адреса сервисов через переменные окружения:
 
 ```bash
 cd inklumin-front
@@ -32,59 +32,9 @@ yarn install
 VITE_INKLUMIN_API_URL=http://localhost:8080/api yarn dev
 ```
 
-The dev server runs on port 5173 by default.
+Dev server запускается на порту 5173 по-умолчанию.
 
-## inklumin-back
-The back-end project is a Spring Boot application that exposes REST endpoints for authentication and user data. It relies on PostgreSQL and issues JWT tokens. Important components include the `User`, `UserBook` and `UserConfigData` entities and controllers for `/api/auth`, `/api/books` and `/api/user`.
-
-The server configuration resides in `src/main/resources/application.yml`:
-
-```
-server:
-  port: 8080
-spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/inklumin
-```
-【F:inklumin-back/src/main/resources/application.yml†L1-L9】
-
-Run the API with Maven:
-
-```bash
-cd inklumin-back
-./mvnw spring-boot:run
-```
-
-## inklumin-ml
-This directory contains a small Flask service providing text utilities such as morphological case generation and detection of word repeats or clichés. Endpoints require an API token and run on port 5123.
-
-The entry point `app.py` defines routes like `/get_cases`, `/find_repeats` and `/analyze_cliches`:
-
-```
-@app.route('/get_cases', methods=['POST'])
-@cross_origin()
-@token_required
-```
-【F:inklumin-ml/app.py†L34-L38】
-
-Start the service with:
-
-```bash
-cd inklumin-ml
-python app.py
-```
-
-## Repository structure
-```
-inklumin-front/   # React client application
-inklumin-back/    # Spring Boot REST API
-inklumin-ml/      # Flask based text analysis helpers
-repo.monorepo.code-workspace  # VS Code workspace file
-```
-
-Each project has its own dependencies and workflow. Refer to the directories for detailed instructions.
-
-## Установка Node.js и запуск сборки
+### Установка Node.js и запуск сборки
 
 На сервере Ubuntu требуется предварительная установка Node.js. Пример для версии 22.x:
 
@@ -110,6 +60,62 @@ node .yarn/releases/yarn-4.8.1.cjs build
 
 Или запустите скрипт `build.sh` в корне репозитория, предварительно задав переменную
 `VITE_INKLUMIN_API_URL`.
+
+## inklumin-back
+Бэкэнд - Spring Boot приложение, предоставляющее REST эндпоинты для авторизации и работы с пользовательскими данными.
+Часть эндпоинтов используется для проксирования запросов из front в ml
+Приложение использует PostgreSQL для хранения данных и выпускает JWT токены. 
+Ключевые компоненты используют Entity/Controller `User`, `UserBook` и `UserConfigData` для `/api/auth`, `/api/books` и `/api/user`.
+
+Конфигурация приложения храниться в `src/main/resources/application.yml`:
+
+```
+server:
+  port: 8080
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/inklumin
+```
+【F:inklumin-back/src/main/resources/application.yml】
+
+Запуск приложения при помощи Maven:
+
+```bash
+cd inklumin-back
+./mvnw spring-boot:run
+```
+
+## inklumin-ml
+Проект - небольшое Flask приложение, предоставляющее утилитарные функции для анализа текста, такие как морфологический разбор, склонение фраз и определение повторов и штампов в тексте.
+Приложение запускается на порту 5123.
+
+В `app.py` определены эндпоинты `/get_cases`, `/find_repeats` and `/analyze_cliches`:
+
+```
+@app.route('/get_cases', methods=['POST'])
+@cross_origin()
+@token_required
+```
+【F:inklumin-ml/app.py】
+
+Запуск приложения:
+
+```bash
+cd inklumin-ml
+python app.py
+```
+
+## Структура репозитория
+```
+inklumin-front/   # React client application
+inklumin-back/    # Spring Boot REST API
+inklumin-ml/      # Flask based text analysis helpers
+repo.monorepo.code-workspace  # VS Code workspace file
+```
+
+Каждый проект имеет свои зависимости и рабочий процесс. Подробные инструкции см. в каталогах.
+
+
 
 ## Запуск с помощью Docker
 
