@@ -35,11 +35,11 @@ export const EditorToolBar = (props: IEditorToolBarProps) => {
         <RichTextEditor.ControlsGroup>
           <RichTextEditor.Bold />
           <RichTextEditor.Italic />
-          <RichTextEditor.Underline />
-          <RichTextEditor.ClearFormatting />
 
           {!isMobile && (
             <>
+              <RichTextEditor.Underline />
+              <RichTextEditor.ClearFormatting />
               <RichTextEditor.Strikethrough />
             </>
           )}

@@ -26,6 +26,20 @@
   background-color: transparent;
 }
 
+ .mantine-RichTextEditor-control[aria-haspopup="true"]::after {
+   content: "▸";                /* маленький chevron */
+   font-size: 15px;
+   margin-left: 4px;
+   color: #adb5bd;
+   transition: transform .2s ease;
+ }
+
+ /* Поворачиваем стрелку, когда Drawer открыт */
+ .mantine-RichTextEditor-control[aria-haspopup="true"][aria-expanded="true"]::after {
+   transform: rotate(90deg);    /* теперь «вниз» */
+   color: #495057;              /* темнее для акцента */
+ }
+
 .mantine-RichTextEditor-controlsGroup{
   padding: 0px 5px;
   background-color: transparent;
@@ -57,13 +71,14 @@
   }
 
   .mantine-RichTextEditor-control {
-    padding: 5px;
+    padding: 0px;
+    margin: 4px;
     background-color: transparent;
   }
 
   .mantine-RichTextEditor-controlIcon {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
   }
 
   /* Отступ первой строки по требованию */

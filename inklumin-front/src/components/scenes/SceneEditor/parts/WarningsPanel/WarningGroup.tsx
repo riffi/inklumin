@@ -62,7 +62,7 @@ export const WarningGroup = (props: IWarningGroupProps) => {
                 Варианты:
               </Text>
               <Text size="xs">
-                <strong>{w.suggestions.join(", ")}</strong>
+                <strong>{w.suggestions?.join(", ")}</strong>
               </Text>
             </Group>
           </Stack>

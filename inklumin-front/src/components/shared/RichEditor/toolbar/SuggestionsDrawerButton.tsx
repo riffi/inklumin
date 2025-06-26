@@ -35,6 +35,9 @@ export const SuggestionsDrawerButton = ({
           editor.commands.blur();
           open();
         }}
+        active={opened}
+        aria-haspopup
+        aria-expanded={opened}
         title="Инструменты"
       >
         <IconBulb color="gray" />
