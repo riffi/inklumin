@@ -200,6 +200,7 @@ const ChapterRowComponent = ({
                     chapters={chapters}
                     scenes={scenes}
                     isNested={true}
+                    isSelected={scene.id === selectedSceneId}
                   />
                   {index < array.length - 1 && (
                     <Divider color={theme.colors.gray[1]} />
@@ -232,7 +233,8 @@ const ChapterRowComponent = ({
 const areEqual = (prev: Readonly<ChapterRowProps>, next: Readonly<ChapterRowProps>) =>
   prev.chapter === next.chapter &&
   prev.scenes === next.scenes &&
-  prev.selectedSceneId === next.selectedSceneId &&
+  (prev.selectedSceneId === prev.chapter.contentSceneId) ===
+  (next.selectedSceneId === next.chapter.contentSceneId) &&
   prev.mode === next.mode &&
   prev.chapterOnly === next.chapterOnly;
 

@@ -20,8 +20,15 @@ export const useBookStore = create<BookStore>()(
       toggleChapterCollapse: (chapterId) => {
         // Меняем состояние одной главы без затрагивания остальных
         set((state) => {
+          // Проверяем, изменится ли значение
+          const currentValue = state.collapsedChapters.get(chapterId) || false;
+          const newValue = !currentValue;
+
+          // Если значение не меняется, возвращаем текущее состояние
+          if (currentValue === newValue) return state;
+
           const map = new Map(state.collapsedChapters);
-          map.set(chapterId, !map.get(chapterId));
+          map.set(chapterId, newValue);
           return { collapsedChapters: map };
         });
       },
