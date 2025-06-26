@@ -3,7 +3,8 @@ import { IScene } from "@/entities/BookEntities";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 
 const desktopStyle = {
-  backgroundColor: "rgb(236,236,236)",
+  backgroundColor: "#f8f9fa",
+  border: "1px solid #f1f1f1",
   height: "30px",
   color: "black",
   padding: "8px 32px",

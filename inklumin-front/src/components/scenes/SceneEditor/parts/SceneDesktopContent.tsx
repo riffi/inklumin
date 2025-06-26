@@ -83,7 +83,6 @@ export const SceneDesktopContent = ({
             <Paper
               withBorder={!focusMode}
               p="lg"
-              radius="md"
               shadow="sm"
               style={{
                 maxWidth: focusMode ? "900px" : "900px",
