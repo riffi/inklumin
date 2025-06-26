@@ -203,14 +203,15 @@ export const SceneManager = (props: SceneManagerProps) => {
           top: isMobile ? 50 : 0,
           zIndex: 100,
           backgroundColor: "#FFFFFF",
-          paddingTop: "20px",
+          paddingTop: isMobile ? "12px" : "16px",
           borderBottom: "1px solid #E0E0E0",
+          paddingBottom: isMobile ? "6px" : "8px",
         }}
       >
 
 
-        <Group justify="space-between" mb="md" px="sm" wrap={isMobile ? "wrap" : "nowrap"}>
-          <Title order={3} visibleFrom={"sm"}>
+                  <Group justify="space-between" mb={isMobile ? "xs" : "md"} px="sm" wrap={isMobile ? "wrap" : "nowrap"}>
+          <Title order={isMobile ? 4 : 3} visibleFrom={"sm"}>
             {props.chapterOnly ? "Главы" : "Главы и сцены"}
           </Title>
           <Group>

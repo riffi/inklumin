@@ -19,6 +19,7 @@ import { DeleteConfirmationModal } from "../modals/DeleteConfirmationModal";
 import { EditChapterModal } from "../modals/EditChapterModal";
 import { useChapters } from "../useChapters";
 import { SceneRow } from "./SceneRow";
+import {useMedia} from "@/providers/MediaQueryProvider/MediaQueryProvider";
 
 interface ChapterRowProps {
   chapter: IChapter;
@@ -41,6 +42,7 @@ const ChapterRowComponent = ({
   chapters,
   chapterOnly,
 }: ChapterRowProps) => {
+  const isMobile = useMedia()
   const theme = useMantineTheme();
   const isCollapsed = useBookStore((state) => state.collapsedChapters.get(chapter.id) ?? false);
   const toggleChapterCollapse = useBookStore((state) => state.toggleChapterCollapse);
@@ -83,9 +85,9 @@ const ChapterRowComponent = ({
           style={{
             display: "flex",
             alignItems: "center",
-            padding: "16px 20px",
+            padding: isMobile ? "10px 12px" : "12px 16px",
             backgroundColor: chapterOnly
-              ? theme.colors.blue[0]
+              ? 'white'
               : theme.colors.gray[0],
             cursor: "pointer",
             transition: "background-color 0.15s ease",
@@ -107,40 +109,35 @@ const ChapterRowComponent = ({
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.backgroundColor = chapterOnly
-              ? theme.colors.blue[0]
+              ? 'white'
               : theme.colors.gray[0];
           }}
         >
           {!chapterOnly && (
-            <ActionIcon variant="transparent" mr="sm" size="sm">
-              {isExpanded ? <IconChevronDown size={16} /> : <IconChevronRight size={16} />}
+            <ActionIcon variant="transparent" mr={isMobile ? "xs" : "sm"} size={isMobile ? "xs" : "sm"}>
+              {isExpanded ? <IconChevronDown size={isMobile ? 14 : 16} /> : <IconChevronRight size={isMobile ? 14 : 16} />}
             </ActionIcon>
           )}
 
-          <Box mr="sm" c={chapterOnly ? theme.colors.blue[7] : theme.colors.gray[7]}>
+          <Box mr={isMobile ? "xs" : "sm"} c={chapterOnly ? theme.colors.gray[6] : theme.colors.gray[7]}>
             {chapterOnly ? (
-              <IconNote size={20} />
+              <IconNote size={isMobile ? 16 : 18} />
             ) : isExpanded ? (
-              <IconFolderOpen size={20} />
+              <IconFolderOpen size={isMobile ? 16 : 18} />
             ) : (
-              <IconFolder size={20} />
+              <IconFolder size={isMobile ? 16 : 18} />
             )}
           </Box>
 
           <Box style={{ flex: 1, minWidth: 0 }}>
             <Text
-              fw={chapterOnly ? 500 : 600}
-              size="sm"
-              c={chapterOnly ? theme.colors.blue[8] : theme.colors.dark[8]}
-              style={{ lineHeight: 1.3 }}
+              fw={chapterOnly ? 400 : 600}
+              size={isMobile ? "xs" : "sm"}
+              c={chapterOnly ? theme.colors.dark[8] : theme.colors.dark[8]}
+              style={{ lineHeight: 1.2 }}
             >
               {chapter.order ? `${chapter.order}. ` : ""}{chapter.title}
             </Text>
-            {!chapterOnly && scenes.length > 0 && (
-              <Text size="xs" c="dimmed" mt={2}>
-                {scenes.length} {scenes.length === 1 ? 'сцена' : scenes.length < 5 ? 'сцены' : 'сцен'}
-              </Text>
-            )}
           </Box>
 
           <Menu withinPortal shadow="md" position="left-start">

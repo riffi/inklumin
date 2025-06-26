@@ -105,7 +105,7 @@ const SceneRowComponent = ({
         ref={ref}
         onClick={handleClick}
         style={{
-          padding: isNested ? "12px 20px 12px 52px" : "12px 20px",
+          padding: isNested ? (isMobile ? "8px 12px 8px 12px" : "10px 12px 10px 16px") : (isMobile ? "8px 12px" : "10px 16px"),
           cursor: "pointer",
           backgroundColor: isSelected
             ? theme.colors.blue[0]
@@ -120,13 +120,13 @@ const SceneRowComponent = ({
           <Box style={{ flex: 1, minWidth: 0 }}>
             <Group gap="sm" mb={4}>
               <Box c={isSelected ? theme.colors.blue[7] : theme.colors.gray[6]}>
-                <IconNote size={16} />
+                <IconNote size={isMobile ? 14 : 16} />
               </Box>
               <Text
                 fw={isSelected ? 500 : 400}
-                size="sm"
+                size={isMobile ? "xs" : "sm"}
                 c={isSelected ? theme.colors.blue[8] : theme.colors.dark[7]}
-                style={{ lineHeight: 1.3 }}
+                style={{ lineHeight: 1.2 }}
               >
                 {scene.order ? `${scene.order}. ` : ""}
                 {scene.title}
@@ -134,7 +134,7 @@ const SceneRowComponent = ({
             </Group>
 
             {mode === "manager" && (
-              <Stack gap={6} ml={24}>
+              <Stack gap={isMobile ? 2 : 3} ml={isMobile ? 18 : 22}>
                 {scene?.blockInstances.map((sceneWithInstancesBlock) => (
                   <Group
                     key={`block-${sceneWithInstancesBlock.block.id}`}
@@ -152,16 +152,20 @@ const SceneRowComponent = ({
                         {sceneWithInstancesBlock.block.titleForms?.plural}:
                       </Text>
                     </Group>
-                    <Group gap={4}>
+                    <Group gap={isMobile ? 2 : 4}>
                       {sceneWithInstancesBlock.instances.map((instance) => (
                         <Badge
                           key={`instance-${instance.id}`}
-                          size="xs"
+                          size={isMobile ? "xs" : "xs"}
                           variant="light"
                           color="gray"
+                          styles={{
+                            root: { padding: isMobile ? '0 4px' : undefined },
+                            label: { fontSize: isMobile ? '9px' : undefined }
+                          }}
                         >
-                          {instance.title.length > 15
-                            ? `${instance.title.slice(0, 12)}…`
+                          {instance.title.length > (isMobile ? 15 : 15)
+                            ? `${instance.title.slice(0, isMobile ? 15 : 15)}…`
                             : instance.title}
                         </Badge>
                       ))}
