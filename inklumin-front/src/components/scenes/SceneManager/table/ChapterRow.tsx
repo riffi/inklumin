@@ -10,16 +10,26 @@ import {
   IconPlus,
   IconTrash,
 } from "@tabler/icons-react";
-import { ActionIcon, Box, Collapse, Divider, Group, Menu, Stack, Text, useMantineTheme } from "@mantine/core";
+import {
+  ActionIcon,
+  Box,
+  Collapse,
+  Divider,
+  Group,
+  Menu,
+  Stack,
+  Text,
+  useMantineTheme,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useScenes } from "@/components/scenes/SceneManager/useScenes";
 import { IChapter, IScene, ISceneWithInstances } from "@/entities/BookEntities";
+import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 import { useBookStore } from "@/stores/bookStore/bookStore";
 import { DeleteConfirmationModal } from "../modals/DeleteConfirmationModal";
 import { EditChapterModal } from "../modals/EditChapterModal";
 import { useChapters } from "../useChapters";
 import { SceneRow } from "./SceneRow";
-import {useMedia} from "@/providers/MediaQueryProvider/MediaQueryProvider";
 
 interface ChapterRowProps {
   chapter: IChapter;
@@ -42,7 +52,7 @@ const ChapterRowComponent = ({
   chapters,
   chapterOnly,
 }: ChapterRowProps) => {
-  const isMobile = useMedia()
+  const isMobile = useMedia();
   const theme = useMantineTheme();
   const isCollapsed = useBookStore((state) => state.collapsedChapters.get(chapter.id) ?? false);
   const toggleChapterCollapse = useBookStore((state) => state.toggleChapterCollapse);
@@ -86,9 +96,7 @@ const ChapterRowComponent = ({
             display: "flex",
             alignItems: "center",
             padding: isMobile ? "10px 12px" : "12px 16px",
-            backgroundColor: chapterOnly
-              ? 'white'
-              : theme.colors.gray[0],
+            backgroundColor: chapterOnly ? "white" : theme.colors.gray[0],
             cursor: "pointer",
             transition: "background-color 0.15s ease",
             borderRadius: chapterOnly ? "0" : "0",
@@ -108,18 +116,27 @@ const ChapterRowComponent = ({
               : theme.colors.gray[1];
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = chapterOnly
-              ? 'white'
-              : theme.colors.gray[0];
+            e.currentTarget.style.backgroundColor = chapterOnly ? "white" : theme.colors.gray[0];
           }}
         >
           {!chapterOnly && (
-            <ActionIcon variant="transparent" mr={isMobile ? "xs" : "sm"} size={isMobile ? "xs" : "sm"}>
-              {isExpanded ? <IconChevronDown size={isMobile ? 14 : 16} /> : <IconChevronRight size={isMobile ? 14 : 16} />}
+            <ActionIcon
+              variant="transparent"
+              mr={isMobile ? "xs" : "sm"}
+              size={isMobile ? "xs" : "sm"}
+            >
+              {isExpanded ? (
+                <IconChevronDown size={isMobile ? 14 : 16} />
+              ) : (
+                <IconChevronRight size={isMobile ? 14 : 16} />
+              )}
             </ActionIcon>
           )}
 
-          <Box mr={isMobile ? "xs" : "sm"} c={chapterOnly ? theme.colors.gray[6] : theme.colors.gray[7]}>
+          <Box
+            mr={isMobile ? "xs" : "sm"}
+            c={chapterOnly ? theme.colors.gray[6] : theme.colors.gray[7]}
+          >
             {chapterOnly ? (
               <IconNote size={isMobile ? 16 : 18} />
             ) : isExpanded ? (
@@ -136,7 +153,8 @@ const ChapterRowComponent = ({
               c={chapterOnly ? theme.colors.dark[8] : theme.colors.dark[8]}
               style={{ lineHeight: 1.2 }}
             >
-              {chapter.order ? `${chapter.order}. ` : ""}{chapter.title}
+              {chapter.order ? `${chapter.order}. ` : ""}
+              {chapter.title}
             </Text>
           </Box>
 
@@ -202,9 +220,7 @@ const ChapterRowComponent = ({
                     isNested={true}
                     isSelected={scene.id === selectedSceneId}
                   />
-                  {index < array.length - 1 && (
-                    <Divider color={theme.colors.gray[1]} />
-                  )}
+                  {index < array.length - 1 && <Divider color={theme.colors.gray[1]} />}
                 </React.Fragment>
               ))}
             </Stack>
@@ -234,7 +250,7 @@ const areEqual = (prev: Readonly<ChapterRowProps>, next: Readonly<ChapterRowProp
   prev.chapter === next.chapter &&
   prev.scenes === next.scenes &&
   (prev.selectedSceneId === prev.chapter.contentSceneId) ===
-  (next.selectedSceneId === next.chapter.contentSceneId) &&
+    (next.selectedSceneId === next.chapter.contentSceneId) &&
   prev.mode === next.mode &&
   prev.chapterOnly === next.chapterOnly;
 

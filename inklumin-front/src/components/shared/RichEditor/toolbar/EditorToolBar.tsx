@@ -26,7 +26,6 @@ export const EditorToolBar = (props: IEditorToolBarProps) => {
           isMobile
             ? {
                 top: props.mobileTop,
-
               }
             : {
                 top: props.desktopTop,
@@ -45,12 +44,11 @@ export const EditorToolBar = (props: IEditorToolBarProps) => {
             </>
           )}
         </RichTextEditor.ControlsGroup>
-        <div className={"mantine-RichTextEditor-divider"}/>
+        <div className={"mantine-RichTextEditor-divider"} />
 
         {props.children}
 
-        {!isMobile && <div className={"mantine-RichTextEditor-divider"}/>}
-
+        {!isMobile && <div className={"mantine-RichTextEditor-divider"} />}
 
         {!isMobile && (
           <>
@@ -138,10 +136,10 @@ export const EditorToolBar = (props: IEditorToolBarProps) => {
             </Menu>
           </>
         )}
-        <div className={"mantine-RichTextEditor-divider"}/>
+        <div className={"mantine-RichTextEditor-divider"} />
         <RichTextEditor.ControlsGroup>
-          <RichTextEditor.Undo/>
-          <RichTextEditor.Redo/>
+          <RichTextEditor.Undo />
+          <RichTextEditor.Redo />
         </RichTextEditor.ControlsGroup>
       </RichTextEditor.Toolbar>
     </>

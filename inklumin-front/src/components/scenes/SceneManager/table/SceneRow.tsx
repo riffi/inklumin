@@ -54,7 +54,7 @@ const SceneRowComponent = ({
 
   const isSelected = selectedSceneId === scene.id;
 
-  console.log('render SceneRowComponent');
+  console.log("render SceneRowComponent");
 
   const handleMoveUp = () => {
     const prevScene = scenesInChapter[currentIndex - 1];
@@ -108,7 +108,13 @@ const SceneRowComponent = ({
         ref={ref}
         onClick={handleClick}
         style={{
-          padding: isNested ? (isMobile ? "8px 12px 8px 12px" : "10px 12px 10px 16px") : (isMobile ? "8px 12px" : "10px 16px"),
+          padding: isNested
+            ? isMobile
+              ? "8px 12px 8px 12px"
+              : "10px 12px 10px 16px"
+            : isMobile
+              ? "8px 12px"
+              : "10px 16px",
           cursor: "pointer",
           backgroundColor: isSelected
             ? theme.colors.blue[0]
@@ -139,11 +145,7 @@ const SceneRowComponent = ({
             {mode === "manager" && (
               <Stack gap={isMobile ? 2 : 3} ml={isMobile ? 18 : 22}>
                 {scene?.blockInstances.map((sceneWithInstancesBlock) => (
-                  <Group
-                    key={`block-${sceneWithInstancesBlock.block.id}`}
-                    gap={6}
-                    wrap="wrap"
-                  >
+                  <Group key={`block-${sceneWithInstancesBlock.block.id}`} gap={6} wrap="wrap">
                     <Group gap={4}>
                       <IconViewer
                         icon={sceneWithInstancesBlock.block.icon}
@@ -163,8 +165,8 @@ const SceneRowComponent = ({
                           variant="light"
                           color="gray"
                           styles={{
-                            root: { padding: isMobile ? '0 4px' : undefined },
-                            label: { fontSize: isMobile ? '9px' : undefined }
+                            root: { padding: isMobile ? "0 4px" : undefined },
+                            label: { fontSize: isMobile ? "9px" : undefined },
                           }}
                         >
                           {instance.title.length > (isMobile ? 15 : 15)

@@ -113,7 +113,7 @@ const SceneTableComponent = ({
   }
 
   return (
-    <Paper  style={{ overflow: "hidden" }}>
+    <Paper style={{ overflow: "hidden" }}>
       <Stack gap={0}>
         {filteredChapters?.map((chapter) => (
           <ChapterRow

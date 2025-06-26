@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { IconLayoutSidebar, IconColumns } from "@tabler/icons-react";
+import { IconColumns, IconLayoutSidebar } from "@tabler/icons-react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Box, LoadingOverlay, SegmentedControl } from "@mantine/core";
@@ -35,11 +35,16 @@ export const SceneLayout = () => {
 
   // Автоматический выбор первой сцены при загрузке в режиме split
   useEffect(() => {
-    if (!isLoading && sceneLayoutMode === 'split' && !sceneId && scenesWithBlockInstances?.length > 0) {
+    if (
+      !isLoading &&
+      sceneLayoutMode === "split" &&
+      !sceneId &&
+      scenesWithBlockInstances?.length > 0
+    ) {
       // Сортируем сцены по порядку (order) и выбираем первую
       if (scenesWithBlockInstances.length > 0 && scenesWithBlockInstances[0].id) {
         const firstScene = scenesWithBlockInstances[0];
-        const sceneChapter = chapters?.find(c => c.id === firstScene.chapterId);
+        const sceneChapter = chapters?.find((c) => c.id === firstScene.chapterId);
         setSceneId(firstScene.id);
         if (sceneChapter) {
           setChapter(sceneChapter);
@@ -67,13 +72,21 @@ export const SceneLayout = () => {
 
   const segmentedControlData = [
     {
-      label: <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}><IconLayoutSidebar size={18} /></Box>,
-      value: 'split'
+      label: (
+        <Box style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <IconLayoutSidebar size={18} />
+        </Box>
+      ),
+      value: "split",
     },
     {
-      label: <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}><IconColumns size={18} /></Box>,
-      value: 'manager'
-    }
+      label: (
+        <Box style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <IconColumns size={18} />
+        </Box>
+      ),
+      value: "manager",
+    },
   ];
 
   if (isMobile) {
@@ -96,14 +109,20 @@ export const SceneLayout = () => {
           onChange={handleModeChange}
           data={segmentedControlData}
           style={{
-            position: 'fixed',
+            position: "fixed",
             top: 20,
             right: 20,
-            zIndex: 100
+            zIndex: 100,
           }}
           styles={{
             root: { height: 36 },
-            label: { padding: '0 12px', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }
+            label: {
+              padding: "0 12px",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            },
           }}
         />
         <SceneManager
@@ -133,14 +152,20 @@ export const SceneLayout = () => {
         onChange={handleModeChange}
         data={segmentedControlData}
         style={{
-          position: 'fixed',
+          position: "fixed",
           top: 20,
           right: 20,
-          zIndex: 1001
+          zIndex: 1001,
         }}
         styles={{
           root: { height: 36 },
-          label: { padding: '0 12px', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }
+          label: {
+            padding: "0 12px",
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          },
         }}
       />
 

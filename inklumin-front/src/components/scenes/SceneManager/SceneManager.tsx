@@ -208,9 +208,12 @@ export const SceneManager = (props: SceneManagerProps) => {
           paddingBottom: isMobile ? "6px" : "8px",
         }}
       >
-
-
-                  <Group justify="space-between" mb={isMobile ? "xs" : "md"} px="sm" wrap={isMobile ? "wrap" : "nowrap"}>
+        <Group
+          justify="space-between"
+          mb={isMobile ? "xs" : "md"}
+          px="sm"
+          wrap={isMobile ? "wrap" : "nowrap"}
+        >
           <Title order={isMobile ? 4 : 3} visibleFrom={"sm"}>
             {props.chapterOnly ? "Главы" : "Главы и сцены"}
           </Title>
