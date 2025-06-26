@@ -33,7 +33,7 @@ services:
     build:
       context: ./inklumin-front
       args:
-        INKLUMIN_API_URL: https://api.inclumin.ru/api
+        INKLUMIN_API_URL: https://api.inklumin.ru/api
     depends_on:
       - back
     ports:

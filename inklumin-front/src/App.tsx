@@ -1,7 +1,6 @@
 import "@mantine/core/styles.css";
 
 import { MantineProvider } from "@mantine/core";
-// import { theme } from './theme'; // Removed as it's not used in the provided App.tsx
 import { Router } from "./Router";
 
 import "@mantine/notifications/styles.css";
