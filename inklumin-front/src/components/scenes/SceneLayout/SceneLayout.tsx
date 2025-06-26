@@ -33,6 +33,21 @@ export const SceneLayout = () => {
     setIsLoading(isLoading);
   }, [scenes, scenesWithBlockInstances, chapters]);
 
+  // Автоматический выбор первой сцены при загрузке в режиме split
+  useEffect(() => {
+    if (!isLoading && sceneLayoutMode === 'split' && !sceneId && scenesWithBlockInstances?.length > 0) {
+      // Сортируем сцены по порядку (order) и выбираем первую
+      if (scenesWithBlockInstances.length > 0 && scenesWithBlockInstances[0].id) {
+        const firstScene = scenesWithBlockInstances[0];
+        const sceneChapter = chapters?.find(c => c.id === firstScene.chapterId);
+        setSceneId(firstScene.id);
+        if (sceneChapter) {
+          setChapter(sceneChapter);
+        }
+      }
+    }
+  }, [isLoading, sceneLayoutMode, sceneId, scenesWithBlockInstances, chapters]);
+
   const openScene = (sceneId: number, chapterParam?: IChapter) => {
     if (isMobile) {
       navigate(`/scene/card?id=${sceneId}`);
