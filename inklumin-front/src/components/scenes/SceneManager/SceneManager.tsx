@@ -207,24 +207,7 @@ export const SceneManager = (props: SceneManagerProps) => {
           borderBottom: "1px solid #E0E0E0",
         }}
       >
-        {props.mode === "manager" && (
-          <ActionIcon
-            onClick={props.onToggleMode}
-            variant="transparent"
-            style={{
-              position: "absolute",
-              left: -45,
-              top: -20,
-              zIndex: 100,
-              color: "#999",
-              backgroundColor: "#fff", // Цвет фона
-              borderBottomLeftRadius: "4px", // Радиус нижнего правого угла
-              borderTopLeftRadius: "4px", // Радиус верхнего правого угла
-            }}
-          >
-            <IconChevronLeft size={30} strokeWidth={1} />
-          </ActionIcon>
-        )}
+
 
         <Group justify="space-between" mb="md" px="sm" wrap={isMobile ? "wrap" : "nowrap"}>
           <Title order={3} visibleFrom={"sm"}>

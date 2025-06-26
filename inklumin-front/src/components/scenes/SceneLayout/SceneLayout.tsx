@@ -1,9 +1,8 @@
-// SceneLayout.tsx
 import React, { useEffect, useState } from "react";
-import { IconChevronRight } from "@tabler/icons-react";
+import { IconLayoutSidebar, IconColumns } from "@tabler/icons-react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ActionIcon, Box, LoadingOverlay } from "@mantine/core";
+import { Box, LoadingOverlay, SegmentedControl } from "@mantine/core";
 import { SceneEditor } from "@/components/scenes/SceneEditor/SceneEditor";
 import { useSceneLayout } from "@/components/scenes/SceneLayout/hooks/useSceneLayout";
 import { SceneManager } from "@/components/scenes/SceneManager/SceneManager";
@@ -47,9 +46,20 @@ export const SceneLayout = () => {
     }
   };
 
-  const toggleMode = () => {
-    setSceneLayoutMode(sceneLayoutMode === "manager" ? "split" : "manager");
+  const handleModeChange = (value: string) => {
+    setSceneLayoutMode(value as "manager" | "split");
   };
+
+  const segmentedControlData = [
+    {
+      label: <IconLayoutSidebar size={18} />,
+      value: 'manager'
+    },
+    {
+      label: <IconColumns size={18} />,
+      value: 'split'
+    }
+  ];
 
   if (isMobile) {
     return (
@@ -66,11 +76,21 @@ export const SceneLayout = () => {
   if (sceneLayoutMode === "manager") {
     return (
       <Box pos="relative">
+        <SegmentedControl
+          value={sceneLayoutMode}
+          onChange={handleModeChange}
+          data={segmentedControlData}
+          style={{
+            position: 'fixed',
+            top: 20,
+            right: 20,
+            zIndex: 1000
+          }}
+        />
         <SceneManager
           openScene={openScene}
           selectedSceneId={sceneId}
           mode={sceneLayoutMode}
-          onToggleMode={toggleMode}
           scenes={scenesWithBlockInstances}
           chapters={chapters}
           chapterOnly={chapterOnlyMode}
@@ -88,6 +108,19 @@ export const SceneLayout = () => {
         loaderProps={{ color: "blue", type: "bars" }}
         style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0 }}
       />
+
+      <SegmentedControl
+        value={sceneLayoutMode}
+        onChange={handleModeChange}
+        data={segmentedControlData}
+        style={{
+          position: 'fixed',
+          top: 20,
+          right: 20,
+          zIndex: 1001
+        }}
+      />
+
       <Box
         style={{
           width: "500px",
@@ -107,35 +140,13 @@ export const SceneLayout = () => {
             openScene={openScene}
             selectedSceneId={sceneId}
             mode={sceneLayoutMode}
-            onToggleMode={toggleMode}
             scenes={scenesWithBlockInstances}
             chapters={chapters}
             chapterOnly={chapterOnlyMode}
           />
         </Box>
       </Box>
-      <Box
-        style={{
-          overflowY: "auto",
-          display: "flex",
-        }}
-      >
-        <ActionIcon
-          onClick={toggleMode}
-          variant="transparent"
-          style={{
-            position: "fixed",
-            top: 20,
-            transform: "none", // Убираем вертикальное выравнивание
-            color: "#999", // Цвет иконки
-            backgroundColor: "#fff", // Цвет фона
-            borderBottomRightRadius: "4px", // Радиус нижнего правого угла
-            borderTopRightRadius: "4px", // Радиус верхнего правого угла
-          }}
-        >
-          <IconChevronRight size={30} strokeWidth={1} />
-        </ActionIcon>
-      </Box>
+
       <Box
         style={{
           flexGrow: 1,
