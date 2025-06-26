@@ -6,7 +6,7 @@ const desktopStyle = {
   backgroundColor: "#f8f9fa",
   border: "1px solid #f1f1f1",
   height: "30px",
-  color: "black",
+  color: "#787878",
   padding: "8px 32px",
   display: "flex",
   justifyContent: "center",
