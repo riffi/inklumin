@@ -26,7 +26,12 @@
   background-color: transparent;
 }
 
- .mantine-RichTextEditor-control[aria-haspopup="true"]::after {
+ .mantine-RichTextEditor-control[data-active="true"] {
+   background-color: rgb(55 88 117 / 8%);
+   color: var(--mantine-primary-color-light-color);
+ }
+
+ .mantine-RichTextEditor-control[aria-haspopup]::after {
    content: "▸";                /* маленький chevron */
    font-size: 15px;
    margin-left: 4px;
@@ -35,7 +40,7 @@
  }
 
  /* Поворачиваем стрелку, когда Drawer открыт */
- .mantine-RichTextEditor-control[aria-haspopup="true"][aria-expanded="true"]::after {
+ .mantine-RichTextEditor-control[aria-haspopup][aria-expanded="true"]::after {
    transform: rotate(90deg);    /* теперь «вниз» */
    color: #495057;              /* темнее для акцента */
  }
@@ -73,7 +78,6 @@
   .mantine-RichTextEditor-control {
     padding: 0px;
     margin: 4px;
-    background-color: transparent;
   }
 
   .mantine-RichTextEditor-controlIcon {

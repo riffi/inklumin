@@ -112,7 +112,7 @@ export const SceneLayout = () => {
             position: "fixed",
             top: 20,
             right: 20,
-            zIndex: 100,
+            zIndex: 99,
           }}
           styles={{
             root: { height: 36 },
@@ -155,7 +155,7 @@ export const SceneLayout = () => {
           position: "fixed",
           top: 20,
           right: 20,
-          zIndex: 1001,
+          zIndex: 99,
         }}
         styles={{
           root: { height: 36 },

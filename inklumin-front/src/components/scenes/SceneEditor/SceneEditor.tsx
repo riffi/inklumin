@@ -51,7 +51,7 @@ const useSceneEditorState = () => {
 
 // Extracted constants
 const FOCUS_MODE_SHORTCUTS = {
-  keys: ['F', 'А'], // English and Russian F
+  keys: ["F", "А"], // English and Russian F
   requireShift: true,
   requireModifier: true,
 };
@@ -59,16 +59,16 @@ const FOCUS_MODE_SHORTCUTS = {
 // Extracted function
 const cleanTextForWordCount = (text: string): string => {
   return text
-  .replace(/\u200B/g, "") // zero-width space
-  .replace(/\u00A0/g, " ") // non-breaking space → обычный пробел
-  .replace(/\s+$/g, "") // обрезать пробелы в конце
-  .replace(/\r?\n/g, ""); // не считать переводы строк
+    .replace(/\u200B/g, "") // zero-width space
+    .replace(/\u00A0/g, " ") // non-breaking space → обычный пробел
+    .replace(/\s+$/g, "") // обрезать пробелы в конце
+    .replace(/\r?\n/g, ""); // не считать переводы строк
 };
 
-export const SceneEditor = ({sceneId, chapter}: SceneEditorProps) => {
+export const SceneEditor = ({ sceneId, chapter }: SceneEditorProps) => {
   const navigate = useNavigate();
-  const {isMobile} = useMedia();
-  const {scene, saveScene} = useSceneEditor(sceneId);
+  const { isMobile } = useMedia();
+  const { scene, saveScene } = useSceneEditor(sceneId);
   const editorState = useSceneEditorState();
 
   const chapterData = useLiveQuery<IChapter | undefined>(() => {
@@ -79,30 +79,30 @@ export const SceneEditor = ({sceneId, chapter}: SceneEditorProps) => {
   const blocks = useLiveQuery<IBlock[]>(() => BlockRepository.getAll(bookDb), []);
 
   const handleChapterTitleChange = useCallback(
-      (title: string) => {
-        if (chapterData?.id) {
-          ChapterRepository.update(bookDb, chapterData.id, {title});
-        }
-      },
-      [chapterData?.id]
+    (title: string) => {
+      if (chapterData?.id) {
+        ChapterRepository.update(bookDb, chapterData.id, { title });
+      }
+    },
+    [chapterData?.id]
   );
 
   const handleContentChange = useCallback(
-      (contentHTML: string, contentText: string) => {
-        if (!scene?.id || contentHTML === scene.body) return;
+    (contentHTML: string, contentText: string) => {
+      if (!scene?.id || contentHTML === scene.body) return;
 
-        const cleanedText = cleanTextForWordCount(contentText);
-        const updatedScene = {
-          ...scene,
-          body: contentHTML,
-          totalSymbolCountWithSpaces: cleanedText.length,
-          totalSymbolCountWoSpaces: contentText.replace(/\s+/g, "").length,
-        };
+      const cleanedText = cleanTextForWordCount(contentText);
+      const updatedScene = {
+        ...scene,
+        body: contentHTML,
+        totalSymbolCountWithSpaces: cleanedText.length,
+        totalSymbolCountWoSpaces: contentText.replace(/\s+/g, "").length,
+      };
 
-        saveScene(updatedScene, true);
-        editorState.setSceneBody(contentHTML);
-      },
-      [scene, saveScene, editorState.setSceneBody]
+      saveScene(updatedScene, true);
+      editorState.setSceneBody(contentHTML);
+    },
+    [scene, saveScene, editorState.setSceneBody]
   );
 
   // Global keyboard shortcut for focus mode
@@ -135,9 +135,9 @@ export const SceneEditor = ({sceneId, chapter}: SceneEditorProps) => {
 
   if (scene?.id !== sceneId) {
     return (
-        <Box pos="relative" style={{minHeight: "100dvh"}}>
-          <LoadingOverlay visible={true} overlayBlur={2}/>
-        </Box>
+      <Box pos="relative" style={{ minHeight: "100dvh" }}>
+        <LoadingOverlay visible={true} overlayBlur={2} />
+      </Box>
     );
   }
 
@@ -159,26 +159,26 @@ export const SceneEditor = ({sceneId, chapter}: SceneEditorProps) => {
   };
 
   return (
-      <Box>
-        {isMobile ? (
-            <SceneMobileContent {...commonProps} />
-        ) : (
-            <SceneDesktopContent {...commonProps} navigate={navigate}/>
-        )}
+    <Box>
+      {isMobile ? (
+        <SceneMobileContent {...commonProps} />
+      ) : (
+        <SceneDesktopContent {...commonProps} navigate={navigate} />
+      )}
 
-        <KnowledgeBaseDrawer
-            isOpen={editorState.isDrawerOpen}
-            onClose={editorState.closeKnowledgeBaseDrawer}
-            blocks={blocks}
-            sceneId={scene.id}
-            sceneBody={scene?.body}
-        />
+      <KnowledgeBaseDrawer
+        isOpen={editorState.isDrawerOpen}
+        onClose={editorState.closeKnowledgeBaseDrawer}
+        blocks={blocks}
+        sceneId={scene.id}
+        sceneBody={scene?.body}
+      />
 
-        <SceneAnalysisDrawer
-            isOpen={editorState.isAnalysisDrawerOpen}
-            onClose={editorState.closeAnalysisDrawer}
-            sceneBody={scene?.body}
-        />
-      </Box>
+      <SceneAnalysisDrawer
+        isOpen={editorState.isAnalysisDrawerOpen}
+        onClose={editorState.closeAnalysisDrawer}
+        sceneBody={scene?.body}
+      />
+    </Box>
   );
 };

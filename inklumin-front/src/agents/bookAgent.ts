@@ -36,7 +36,9 @@ const tools: Record<string, Tool> = {
     },
     handler: async ({ id }) => {
       const scene = await SceneRepository.getById(bookDb, Number(id));
-      if (!scene) {return null;}
+      if (!scene) {
+        return null;
+      }
       return { id: scene.id, title: scene.title, body: scene.body };
     },
   },
@@ -119,7 +121,9 @@ const tools: Record<string, Tool> = {
     },
     handler: async ({ blockUuid }) => {
       const block = await BlockRepository.getByUuid(bookDb, blockUuid);
-      if (!block) {return null;}
+      if (!block) {
+        return null;
+      }
       const groups = await BlockParameterRepository.getParameterGroups(bookDb, blockUuid);
       const result = [] as any[];
       for (const g of groups) {
@@ -141,7 +145,9 @@ const tools: Record<string, Tool> = {
     },
     handler: async ({ instanceUuid }) => {
       const inst = await BlockInstanceRepository.getByUuid(bookDb, instanceUuid);
-      if (!inst) {return null;}
+      if (!inst) {
+        return null;
+      }
       const params = await BlockParameterInstanceRepository.getInstanceParams(bookDb, instanceUuid);
       return { ...inst, params };
     },
@@ -164,7 +170,9 @@ const tools: Record<string, Tool> = {
       const scenes = [] as any[];
       for (const link of links) {
         const scene = await SceneRepository.getById(bookDb, link.sceneId);
-        if (scene) {scenes.push({ id: scene.id, title: scene.title, order: scene.order });}
+        if (scene) {
+          scenes.push({ id: scene.id, title: scene.title, order: scene.order });
+        }
       }
       return scenes;
     },
@@ -192,7 +200,9 @@ export const bookAgent = async (
   while (true) {
     const response = await OpenRouterApi.fetchWithTools(prompt, defs, messages);
     const message = response.choices?.[0]?.message;
-    if (!message) {return "";}
+    if (!message) {
+      return "";
+    }
     if (message.content) {
       onMessage?.(message.content);
     }
@@ -205,7 +215,9 @@ export const bookAgent = async (
       for (const call of toolCalls) {
         const { name, arguments: args } = call.function as any;
         const tool = tools[name];
-        if (!tool) {continue;}
+        if (!tool) {
+          continue;
+        }
         let parsed: any = {};
         try {
           parsed = JSON.parse(args || "{}");

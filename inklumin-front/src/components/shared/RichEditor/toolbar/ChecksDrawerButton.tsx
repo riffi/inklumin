@@ -32,10 +32,11 @@ export const ChecksDrawerButton = ({
   return (
     <>
       <RichTextEditor.Control
-        active={opened}
+        active={repeatsActive || clichesActive || spellingActive}
         aria-haspopup
         aria-expanded={opened}
-        onClick={open} title="Проверки"
+        onClick={open}
+        title="Проверки"
       >
         <IconChecks color="gray" />
       </RichTextEditor.Control>

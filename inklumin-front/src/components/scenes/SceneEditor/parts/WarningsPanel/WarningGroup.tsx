@@ -52,20 +52,29 @@ export const WarningGroup = (props: IWarningGroupProps) => {
 
       <Group size="xs" spacing={2}>
         {props.warningGroup?.warnings?.map((w) => (
-          <Stack gap={5}>
-            <Text size="xs" lineClamp={1} style={{ wordBreak: "break-word" }}>
-              <span style={{ color: "#7c7c7c" }}>Неверное написание:</span>{" "}
-              <i style={{ fontSize: "15px" }}>{w.text}</i>
-            </Text>
-            <Group gap={5}>
+          <>
+            {w.kind === IWarningKind.SPELLING && (
+              <Stack gap={5}>
+                <Text size="xs" lineClamp={1} style={{ wordBreak: "break-word" }}>
+                  <span style={{ color: "#7c7c7c" }}>Неверное написание:</span>{" "}
+                  <i style={{ fontSize: "15px" }}>{w.text}</i>
+                </Text>
+                <Group gap={5}>
+                  <Text size="xs" style={{ color: "#7c7c7c" }}>
+                    Варианты:
+                  </Text>
+                  <Text size="xs">
+                    <strong>{w.suggestions?.join(", ")}</strong>
+                  </Text>
+                </Group>
+              </Stack>
+            )}
+            {w.kind !== IWarningKind.SPELLING && (
               <Text size="xs" style={{ color: "#7c7c7c" }}>
-                Варианты:
+                {w.text}
               </Text>
-              <Text size="xs">
-                <strong>{w.suggestions?.join(", ")}</strong>
-              </Text>
-            </Group>
-          </Stack>
+            )}
+          </>
         ))}
       </Group>
     </>

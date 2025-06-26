@@ -80,7 +80,6 @@ export const fetchRepeats = async (text: string): Promise<IWarningGroup[]> => {
 
     return groups;
   } catch (error) {
-
     notifications.show({
       title: "Ошибка запроса",
       message: error instanceof Error ? error.message : "Ошибка при проверке повторений",
@@ -116,7 +115,6 @@ export const fetchCliches = async (text: string): Promise<IWarningGroup[]> => {
 
     return groups;
   } catch (error) {
-
     notifications.show({
       title: "Ошибка запроса",
       message: error instanceof Error ? error.message : "Ошибка при проверке штампов",
