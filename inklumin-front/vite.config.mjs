@@ -15,8 +15,8 @@ export default defineConfig(({ command }) => ({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'src/components/layout/NavbarNested/parts/logo/logo.png', 'src/components/layout/NavbarNested/parts/logo/logo_collapsed.png'],
       manifest: {
-        name: 'IncLumin',
-        short_name: 'IncLumin',
+        name: 'InkLumin',
+        short_name: 'InkLumin',
         description: 'Приложение для писателя',
         theme_color: '#ffffff',
         icons: [
