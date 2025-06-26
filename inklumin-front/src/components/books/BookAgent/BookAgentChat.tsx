@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { IconNote } from "@tabler/icons-react";
 import moment from "moment";
 import ReactMarkdown from "react-markdown";
@@ -31,6 +31,7 @@ import { createBlock, createBlockInstance, saveParamInstance } from "@/agents/bo
 import { useApiSettingsStore } from "@/stores/apiSettingsStore/apiSettingsStore";
 
 export const BookAgentChat = () => {
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const [question, setQuestion] = useState("");
   const [messages, setMessages] = useState<AgentMessage[]>([]);
   const [loading, setLoading] = useState(false);
@@ -39,6 +40,15 @@ export const BookAgentChat = () => {
   const [noteContent, setNoteContent] = useState("");
   const { openRouterModels, currentOpenRouterModel, setCurrentOpenRouterModel } =
     useApiSettingsStore();
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // Прокручиваем вниз при изменении сообщений
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const handleAsk = async () => {
     if (!question.trim()) return;
@@ -253,6 +263,7 @@ export const BookAgentChat = () => {
             )}
           </Paper>
         ))}
+        <div ref={messagesEndRef} />
         <Select
           label="Модель OpenRouter"
           placeholder="Выберите модель"
