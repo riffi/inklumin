@@ -54,7 +54,6 @@ const SceneRowComponent = ({
 
   const isSelected = selectedSceneId === scene.id;
 
-  console.log("render SceneRowComponent");
 
   const handleMoveUp = () => {
     const prevScene = scenesInChapter[currentIndex - 1];
@@ -270,5 +269,6 @@ const rowEqual = (prev: Readonly<SceneRowProps>, next: Readonly<SceneRowProps>) 
   prev.isSelected === next.isSelected &&
   prev.mode === next.mode &&
   prev.isNested === next.isNested;
+
 
 export const SceneRow = React.memo(SceneRowComponent, rowEqual);

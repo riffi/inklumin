@@ -4,6 +4,7 @@ import { Center, Group, LoadingOverlay, Paper, Stack, Text } from "@mantine/core
 import { IChapter, ISceneWithInstances } from "@/entities/BookEntities";
 import { ChapterRow } from "./ChapterRow";
 import { SceneRow } from "./SceneRow";
+import {useBookStore} from "@/stores/bookStore/bookStore";
 
 interface SceneTableProps {
   openCreateModal: (chapterId: number) => void;
@@ -28,6 +29,14 @@ const SceneTableComponent = ({
   selectedInstanceUuid,
   chapterOnly,
 }: SceneTableProps) => {
+
+  const toggleChapterCollapse = useBookStore(
+      React.useCallback(
+          (state) => state.toggleChapterCollapse,
+          [],                 // селектор больше не меняется между рендерами
+      ),
+  );
+
   // Отфильтрованные сцены мемоизируются, чтобы избежать лишних вычислений
   const filteredScenes = React.useMemo(() => {
     if (!scenes) return [] as ISceneWithInstances[];
@@ -69,6 +78,8 @@ const SceneTableComponent = ({
       return hasScenes;
     });
   }, [chapters, filteredScenes, searchQuery, selectedInstanceUuid, chapterOnly]);
+
+  const collapsedChapters = useBookStore((s) => s.collapsedChapters);
 
   // Мемоизированная мапа сцен по главам
   const scenesByChapterId = React.useMemo(() => {
@@ -126,6 +137,8 @@ const SceneTableComponent = ({
             mode={mode}
             chapters={chapters}
             chapterOnly={chapterOnly}
+            isCollapsed={collapsedChapters.get(chapter.id) ?? false}
+            toggleChapterCollapse={toggleChapterCollapse}
           />
         ))}
         {!chapterOnly &&

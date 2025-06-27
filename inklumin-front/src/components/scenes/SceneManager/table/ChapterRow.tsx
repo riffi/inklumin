@@ -37,7 +37,9 @@ interface ChapterRowProps {
   chapters: IChapter[];
   onAddScene: () => void;
   openScene: (sceneId: number, chapter?: IChapter) => void;
+  isCollapsed: boolean;
   selectedSceneId?: number;
+  toggleChapterCollapse: (chapterId: number) => void;
   mode?: "manager" | "split";
   chapterOnly?: boolean;
 }
@@ -51,17 +53,24 @@ const ChapterRowComponent = ({
   mode,
   chapters,
   chapterOnly,
+  isCollapsed,
+  toggleChapterCollapse
 }: ChapterRowProps) => {
   const isMobile = useMedia();
   const theme = useMantineTheme();
-  const isCollapsed = useBookStore((state) => state.collapsedChapters.get(chapter.id) ?? false);
-  const toggleChapterCollapse = useBookStore((state) => state.toggleChapterCollapse);
+  // const isCollapsed = useBookStore(
+  //     React.useCallback(
+  //         (s) => s.collapsedChapters.get(chapter.id) ?? false,
+  //         [chapter.id],
+  //     ),
+  //     Object.is,          // гарантирует, что false !== true, но false === false
+  // );
+  //const isCollapsed = useBookStore((state) => state.collapsedChapters.get(chapter.id) ?? false);
   const isExpanded = !isCollapsed;
   const [openedEditModal, { open: openEditModal, close: closeEditModal }] = useDisclosure(false);
   const [openedDeleteModal, { open: openDeleteModal, close: closeDeleteModal }] =
     useDisclosure(false);
   const { deleteChapter, updateChapter } = useChapters(chapters);
-  const { deleteScene } = useScenes(scenes);
 
   const handleDeleteChapter = useCallback(async () => {
     try {
@@ -83,6 +92,7 @@ const ChapterRowComponent = ({
     },
     [chapter.id, updateChapter, closeEditModal]
   );
+  console.log("render chapter row")
 
   return (
     <>
@@ -247,11 +257,22 @@ const ChapterRowComponent = ({
 };
 
 const areEqual = (prev: Readonly<ChapterRowProps>, next: Readonly<ChapterRowProps>) =>
-  prev.chapter === next.chapter &&
+{
+  const includes = (prev.scenes?.map(scene => scene.id).includes(prev.selectedSceneId)) ||
+      (next.scenes?.map(scene => scene.id).includes(next.selectedSceneId))
+
+  const selectedSceneNotAffecting =  (
+      prev.selectedSceneId === next.selectedSceneId
+       || !includes
+  );
+
+  return prev.chapter === next.chapter &&
   prev.scenes === next.scenes &&
-  (prev.selectedSceneId === prev.chapter.contentSceneId) ===
-    (next.selectedSceneId === next.chapter.contentSceneId) &&
+      selectedSceneNotAffecting &&
   prev.mode === next.mode &&
-  prev.chapterOnly === next.chapterOnly;
+  prev.chapterOnly === next.chapterOnly &&
+  prev.isCollapsed === next.isCollapsed
+
+}
 
 export const ChapterRow = React.memo(ChapterRowComponent, areEqual);

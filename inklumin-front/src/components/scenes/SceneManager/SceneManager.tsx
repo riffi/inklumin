@@ -159,24 +159,24 @@ export const SceneManager = (props: SceneManagerProps) => {
   };
 
   const collapseAllChapters = () => {
-    const chapterIds = props.chapters?.map((chapter) => chapter.id) || [];
-    const store = useBookStore.getState();
-    const currentCollapsed = store.collapsedChapters;
-
-    chapterIds.forEach((id) => {
-      if (!currentCollapsed.get(id)) {
-        store.toggleChapterCollapse(id);
-      }
-    });
+    // const chapterIds = props.chapters?.map((chapter) => chapter.id) || [];
+    // const store = useBookStore.getState();
+    // const currentCollapsed = store.collapsedChapters;
+    //
+    // chapterIds.forEach((id) => {
+    //   if (!currentCollapsed.get(id)) {
+    //     store.toggleChapterCollapse(id);
+    //   }
+    // });
   };
 
   const expandAllChapters = () => {
-    const store = useBookStore.getState();
-    store.collapsedChapters.forEach((isCollapsed, id) => {
-      if (isCollapsed) {
-        store.toggleChapterCollapse(id);
-      }
-    });
+    // const store = useBookStore.getState();
+    // store.collapsedChapters.forEach((isCollapsed, id) => {
+    //   if (isCollapsed) {
+    //     store.toggleChapterCollapse(id);
+    //   }
+    // });
   };
 
   return (
