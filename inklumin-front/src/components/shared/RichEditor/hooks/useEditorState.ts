@@ -56,6 +56,7 @@ export const useEditorState = (
     {
       extensions: getEditorExtensions(focusMode), // Передаем focusMode сюда
       content: initialContent,
+      autofocus: true,
       editorProps: {
         handleDOMEvents: {
           copy: (view, event) => {
@@ -83,7 +84,9 @@ export const useEditorState = (
         }
       },
       onTransaction: ({ editor, transaction }) => {
+
         if (transaction.meta?.pointer) {
+          console.log('click ontransaction')
           editor.setEditable(true);
           editor.commands.focus();
         }

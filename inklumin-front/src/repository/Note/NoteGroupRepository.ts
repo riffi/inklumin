@@ -24,6 +24,11 @@ const getByTitle = async (db: typeof configDatabase, title: string) => {
   return db.notesGroups.where("title").equals(title).first();
 };
 
+// Поиск группы по коду вида
+const getByKindCode = async (db: typeof configDatabase, kindCode: string) => {
+  return db.notesGroups.where("kindCode").equals(kindCode).first();
+};
+
 const count = async (db: typeof configDatabase) => db.notesGroups.count();
 
 const create = async (
@@ -73,6 +78,7 @@ export const NoteGroupRepository = {
   getAll,
   getByUuid,
   getByTitle,
+  getByKindCode,
   getTopLevel,
   getChildren,
   count,

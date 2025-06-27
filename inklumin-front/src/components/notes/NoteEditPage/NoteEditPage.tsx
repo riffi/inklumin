@@ -127,15 +127,15 @@ export const NoteEditPage = () => {
         : selectedBookUuid;
 
       if (isNewNote) {
-        let quickNotesGroup = await NoteGroupRepository.getByTitle(
+        let quickNotesGroup = await NoteGroupRepository.getByKindCode(
           configDatabase,
-          "Быстрые заметки"
+          "expressNote"
         );
 
         if (!quickNotesGroup) {
           quickNotesGroup = await NoteGroupRepository.create(configDatabase, {
             title: "Быстрые заметки",
-            kindCode: "system",
+            kindCode: "expressNote",
             parentUuid: "topLevel",
           });
         }
@@ -273,7 +273,7 @@ export const NoteEditPage = () => {
     </>
   );
   return (
-    <Container size="xl" p="0">
+    <Container size="md" p="0">
       {loading && <LoadingOverlay visible />}{" "}
       {/* More subtle loading overlay when note is already displayed */}
       <Paper p={"md"}>

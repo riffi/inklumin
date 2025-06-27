@@ -115,6 +115,10 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
         className={`${props.focusMode ? "focus-mode-paragraphs" : ""} ${
           props.useIndent ? "use-indent" : ""
         }`}
+        onClick={() => {
+          editor?.setEditable(true)
+          editor?.commands.focus()
+        }}
         style={
           isMobile
             ? {
