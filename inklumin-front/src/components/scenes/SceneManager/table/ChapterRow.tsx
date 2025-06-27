@@ -37,9 +37,7 @@ interface ChapterRowProps {
   chapters: IChapter[];
   onAddScene: () => void;
   openScene: (sceneId: number, chapter?: IChapter) => void;
-  isCollapsed: boolean;
   selectedSceneId?: number;
-  toggleChapterCollapse: (chapterId: number) => void;
   mode?: "manager" | "split";
   chapterOnly?: boolean;
 }
@@ -53,19 +51,24 @@ const ChapterRowComponent = ({
   mode,
   chapters,
   chapterOnly,
-  isCollapsed,
-  toggleChapterCollapse
 }: ChapterRowProps) => {
   const isMobile = useMedia();
   const theme = useMantineTheme();
-  // const isCollapsed = useBookStore(
-  //     React.useCallback(
-  //         (s) => s.collapsedChapters.get(chapter.id) ?? false,
-  //         [chapter.id],
-  //     ),
-  //     Object.is,          // гарантирует, что false !== true, но false === false
-  // );
-  //const isCollapsed = useBookStore((state) => state.collapsedChapters.get(chapter.id) ?? false);
+  const isCollapsed = useBookStore(
+      React.useCallback(
+          (state) => state.collapsedChapters.get(chapter.id) ?? false,
+          [chapter.id] // зависимость только от ID главы
+      )
+  );
+
+  // Получаем функцию toggleChapterCollapse один раз
+  const toggleChapterCollapse = useBookStore((state) => state.toggleChapterCollapse);
+
+  // Мемоизируем обработчик клика
+  const handleToggleCollapse = useCallback(() => {
+    toggleChapterCollapse(chapter.id);
+  }, [chapter.id]);
+
   const isExpanded = !isCollapsed;
   const [openedEditModal, { open: openEditModal, close: closeEditModal }] = useDisclosure(false);
   const [openedDeleteModal, { open: openDeleteModal, close: closeDeleteModal }] =
@@ -117,7 +120,7 @@ const ChapterRowComponent = ({
                 openScene(chapter.contentSceneId, chapter);
               }
             } else {
-              toggleChapterCollapse(chapter.id);
+              handleToggleCollapse(chapter.id);
             }
           }}
           onMouseEnter={(e) => {
@@ -270,8 +273,7 @@ const areEqual = (prev: Readonly<ChapterRowProps>, next: Readonly<ChapterRowProp
   prev.scenes === next.scenes &&
       selectedSceneNotAffecting &&
   prev.mode === next.mode &&
-  prev.chapterOnly === next.chapterOnly &&
-  prev.isCollapsed === next.isCollapsed
+  prev.chapterOnly === next.chapterOnly;
 
 }
 

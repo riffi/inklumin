@@ -30,12 +30,7 @@ const SceneTableComponent = ({
   chapterOnly,
 }: SceneTableProps) => {
 
-  const toggleChapterCollapse = useBookStore(
-      React.useCallback(
-          (state) => state.toggleChapterCollapse,
-          [],                 // селектор больше не меняется между рендерами
-      ),
-  );
+
 
   // Отфильтрованные сцены мемоизируются, чтобы избежать лишних вычислений
   const filteredScenes = React.useMemo(() => {
@@ -137,8 +132,6 @@ const SceneTableComponent = ({
             mode={mode}
             chapters={chapters}
             chapterOnly={chapterOnly}
-            isCollapsed={collapsedChapters.get(chapter.id) ?? false}
-            toggleChapterCollapse={toggleChapterCollapse}
           />
         ))}
         {!chapterOnly &&
