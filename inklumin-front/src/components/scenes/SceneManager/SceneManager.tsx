@@ -283,7 +283,7 @@ export const SceneManager = (props: SceneManagerProps) => {
       </Box>
 
       <SceneTable
-        openCreateModal={handleOpenCreateModal}
+        onAddScene={handleOpenCreateModal}
         openScene={handleOpenScene}
         selectedSceneId={props.selectedSceneId}
         mode={props.mode}

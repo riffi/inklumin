@@ -35,7 +35,7 @@ interface ChapterRowProps {
   chapter: IChapter;
   scenes: ISceneWithInstances[];
   chapters: IChapter[];
-  onAddScene: () => void;
+  onAddScene: (chapterId: number) => void;
   openScene: (sceneId: number, chapter?: IChapter) => void;
   selectedSceneId?: number;
   mode?: "manager" | "split";
@@ -82,7 +82,7 @@ const ChapterRowComponent = ({
     } catch (error) {
       console.error("Failed to delete chapter:", error);
     }
-  }, [chapter.id, deleteChapter, closeDeleteModal]);
+  }, [chapter.id, deleteChapter]);
 
   const handleUpdateChapter = useCallback(
     async (newTitle: string) => {
@@ -93,7 +93,7 @@ const ChapterRowComponent = ({
         console.error("Failed to update chapter:", error);
       }
     },
-    [chapter.id, updateChapter, closeEditModal]
+    [chapter.id, updateChapter]
   );
   console.log("render chapter row")
 
@@ -188,7 +188,7 @@ const ChapterRowComponent = ({
                   leftSection={<IconPlus size={14} />}
                   onClick={(e) => {
                     e.stopPropagation();
-                    onAddScene();
+                    onAddScene(chapter.id);
                   }}
                 >
                   Добавить сцену

@@ -5,8 +5,6 @@ import { Button, Group, Modal, Select } from "@mantine/core";
 import { bookDb } from "@/entities/bookDb";
 import { IChapter } from "@/entities/BookEntities";
 import { ChapterRepository } from "@/repository/Scene/ChapterRepository";
-import { SceneService } from "@/services/sceneService";
-import { useChapters } from "../useChapters";
 
 interface MoveSceneModalProps {
   opened: boolean;
