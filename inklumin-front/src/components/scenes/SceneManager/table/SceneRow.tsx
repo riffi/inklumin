@@ -141,7 +141,7 @@ const SceneRowComponent = ({
               </Text>
             </Group>
 
-            {mode === "manager" && (
+
               <Stack gap={isMobile ? 2 : 3} ml={isMobile ? 18 : 22}>
                 {scene?.blockInstances.map((sceneWithInstancesBlock) => (
                   <Group key={`block-${sceneWithInstancesBlock.block.id}`} gap={6} wrap="wrap">
@@ -183,7 +183,6 @@ const SceneRowComponent = ({
                   </Text>
                 )}
               </Stack>
-            )}
           </Box>
 
           <Menu withinPortal shadow="md" position="left-start">

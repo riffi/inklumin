@@ -290,7 +290,7 @@ const areEqual = (prev: Readonly<ChapterRowProps>, next: Readonly<ChapterRowProp
   return prev.chapter === next.chapter &&
   prev.scenes === next.scenes &&
       selectedSceneNotAffecting &&
-  prev.mode === next.mode &&
+  // prev.mode === next.mode &&
   prev.chapterOnly === next.chapterOnly;
 
 }

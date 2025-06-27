@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { IconColumns, IconLayoutSidebar } from "@tabler/icons-react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Box, LoadingOverlay, SegmentedControl } from "@mantine/core";
+import {Box, Container, LoadingOverlay, SegmentedControl} from "@mantine/core";
 import { SceneEditor } from "@/components/scenes/SceneEditor/SceneEditor";
 import { useSceneLayout } from "@/components/scenes/SceneLayout/hooks/useSceneLayout";
 import { SceneManager } from "@/components/scenes/SceneManager/SceneManager";
@@ -53,22 +53,29 @@ export const SceneLayout = () => {
     }
   }, [isLoading, sceneLayoutMode, sceneId, scenesWithBlockInstances, chapters]);
 
-  const openScene = (sceneId: number, chapterParam?: IChapter) => {
-    if (isMobile) {
-      navigate(`/scene/card?id=${sceneId}`);
-    } else {
-      if (sceneLayoutMode === "manager") {
+  const openScene = useCallback(
+    (sceneId: number, chapterParam?: IChapter) => {
+      if (isMobile) {
         navigate(`/scene/card?id=${sceneId}`);
       } else {
-        setSceneId(sceneId);
-        setChapter(chapterParam);
+        const currentMode = useUiSettingsStore.getState().sceneLayoutMode;
+        if (currentMode === "manager") {
+          navigate(`/scene/card?id=${sceneId}`);
+        } else {
+          setSceneId(sceneId);
+          setChapter(chapterParam);
+        }
       }
-    }
-  };
+    },
+    [isMobile, navigate]
+  );
 
-  const handleModeChange = (value: string) => {
-    setSceneLayoutMode(value as "manager" | "split");
-  };
+  const handleModeChange = useCallback(
+    (value: string) => {
+      setSceneLayoutMode(value as "manager" | "split");
+    },
+    [setSceneLayoutMode]
+  );
 
   const segmentedControlData = [
     {
@@ -101,43 +108,8 @@ export const SceneLayout = () => {
     );
   }
 
-  if (sceneLayoutMode === "manager") {
-    return (
-      <Box pos="relative">
-        <SegmentedControl
-          value={sceneLayoutMode}
-          onChange={handleModeChange}
-          data={segmentedControlData}
-          style={{
-            position: "fixed",
-            top: 20,
-            right: 20,
-            zIndex: 99,
-          }}
-          styles={{
-            root: { height: 36 },
-            label: {
-              padding: "0 12px",
-              height: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            },
-          }}
-        />
-        <SceneManager
-          openScene={openScene}
-          selectedSceneId={sceneId}
-          mode={sceneLayoutMode}
-          scenes={scenesWithBlockInstances}
-          chapters={chapters}
-          chapterOnly={chapterOnlyMode}
-        />
-      </Box>
-    );
-  }
-
   return (
+    <Container fluid={sceneLayoutMode === "split"}>
     <Box display="flex">
       <LoadingOverlay
         visible={isLoading}
@@ -171,41 +143,44 @@ export const SceneLayout = () => {
 
       <Box
         style={{
-          width: "500px",
-          flexShrink: 0,
+          width: sceneLayoutMode === "split" ? "500px" : undefined,
+          flexShrink: sceneLayoutMode === "split" ? 0 : undefined,
           position: "relative",
           flex: "auto",
-          flexGrow: "0",
+          flexGrow: sceneLayoutMode === "split" ? "0" : undefined,
         }}
       >
         <Box
-          style={{
-            maxHeight: "calc(100vh - 50px)",
-            overflowY: "auto",
-          }}
+            style={{
+              maxHeight: "calc(100vh - 50px)",
+              overflowY: "auto",
+            }}
         >
           <SceneManager
-            openScene={openScene}
-            selectedSceneId={sceneId}
-            mode={sceneLayoutMode}
-            scenes={scenesWithBlockInstances}
-            chapters={chapters}
-            chapterOnly={chapterOnlyMode}
+              openScene={openScene}
+              selectedSceneId={sceneId}
+              mode={sceneLayoutMode}
+              scenes={scenesWithBlockInstances}
+              chapters={chapters}
+              chapterOnly={chapterOnlyMode}
           />
         </Box>
       </Box>
 
-      <Box
-        style={{
-          flexGrow: 1,
-          flex: "auto",
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
-        {sceneId ? <SceneEditor sceneId={sceneId} chapter={chapter} /> : <Placeholder />}
-      </Box>
+      {sceneLayoutMode === "split" && (
+        <Box
+          style={{
+            flexGrow: 1,
+            flex: "auto",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          {sceneId ? <SceneEditor sceneId={sceneId} chapter={chapter} /> : <Placeholder />}
+        </Box>
+      )}
     </Box>
+    </Container>
   );
 };
 
