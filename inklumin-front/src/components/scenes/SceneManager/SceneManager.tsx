@@ -114,23 +114,7 @@ export const SceneManager = (props: SceneManagerProps) => {
 
   const { createScene } = useScenes(props.scenes);
 
-  useEffect(() => {
-    const header = (
-      <Group gap="xs">
-        <Text fw={500}>Сцены и главы</Text>
-        <ActionIcon
-          component={Link}
-          to={`/knowledge-base/35683308-29ea-4e37-b3b6-1ad3fe7a9053`}
-          variant="subtle"
-          title="Справка"
-        >
-          <IconQuestionMark size="1rem" />
-        </ActionIcon>
-      </Group>
-    );
-    setTitleElement(header);
-    return () => setTitleElement(null);
-  }, []);
+
 
   useEffect(() => {
     const loadBlocks = async () => {
@@ -176,25 +160,98 @@ export const SceneManager = (props: SceneManagerProps) => {
   };
 
   const collapseAllChapters = () => {
-    // const chapterIds = props.chapters?.map((chapter) => chapter.id) || [];
-    // const store = useBookStore.getState();
-    // const currentCollapsed = store.collapsedChapters;
-    //
-    // chapterIds.forEach((id) => {
-    //   if (!currentCollapsed.get(id)) {
-    //     store.toggleChapterCollapse(id);
-    //   }
-    // });
+    const chapterIds = props.chapters?.map((chapter) => chapter.id) || [];
+    const store = useBookStore.getState();
+    const currentCollapsed = store.collapsedChapters;
+
+    chapterIds.forEach((id) => {
+      if (!currentCollapsed.get(id)) {
+        store.toggleChapterCollapse(id);
+      }
+    });
   };
 
   const expandAllChapters = () => {
-    // const store = useBookStore.getState();
-    // store.collapsedChapters.forEach((isCollapsed, id) => {
-    //   if (isCollapsed) {
-    //     store.toggleChapterCollapse(id);
-    //   }
-    // });
+    const store = useBookStore.getState();
+    store.collapsedChapters.forEach((isCollapsed, id) => {
+      if (isCollapsed) {
+        store.toggleChapterCollapse(id);
+      }
+    });
   };
+
+  const actionPanel = <Group justify="flex-end" align="center" wrap="nowrap">
+    <Text fw={700} size="sm" style={{ lineHeight: 1 }} c="gray.6" tt="uppercase">
+      {props.chapterOnly ? "Главы" : "Главы и сцены"}
+    </Text>
+
+    {isWide || isSearchVisible ? (
+        <TextInput
+            ref={searchInputRef}
+            placeholder="Поиск…"
+            leftSection={<IconSearch size={14} />}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.currentTarget.value)}
+            onBlur={() => !isWide && setIsSearchVisible(false)}
+            style={{ flex: 1, marginLeft: 8, marginRight: 8 }}
+        />
+    ) : (
+        <Tooltip label="Поиск (⌘+K)">
+          <ActionIcon onClick={() => setIsSearchVisible(true)} aria-label="Поиск">
+            <IconSearch size={16} />
+          </ActionIcon>
+        </Tooltip>
+    )}
+
+    <Menu withinPortal position="bottom-end">
+      <Menu.Target>
+        <Tooltip label="Создать">
+          <ActionIcon variant="filled" color="blue" aria-label="Создать">
+            <IconPlus size={16} />
+          </ActionIcon>
+        </Tooltip>
+      </Menu.Target>
+      <Menu.Dropdown>
+        <Menu.Item onClick={openChapterModal}>Новая глава</Menu.Item>
+        {!props.chapterOnly && (
+            <Menu.Item onClick={() => handleOpenCreateModal(null)}>Новая сцена</Menu.Item>
+        )}
+      </Menu.Dropdown>
+    </Menu>
+
+    <Menu withinPortal position="bottom-end">
+      <Menu.Target>
+        <Tooltip label="Ещё действия">
+          <ActionIcon variant="subtle" aria-label="Меню">
+            <IconCaretDownFilled size={16} />
+          </ActionIcon>
+        </Tooltip>
+      </Menu.Target>
+      <Menu.Dropdown>
+        <Menu.Item onClick={collapseAllChapters} disabled={!props.chapters?.length}>Свернуть всё</Menu.Item>
+        <Menu.Item onClick={expandAllChapters} disabled={!collapsedCount}>Развернуть всё</Menu.Item>
+        <Menu.Item onClick={openFilters}>Фильтры</Menu.Item>
+      </Menu.Dropdown>
+    </Menu>
+  </Group>
+
+  useEffect(() => {
+    const header = (
+        <Group gap="xs" justify={"space-between"}>
+          {actionPanel}
+          <ActionIcon
+              component={Link}
+              to={`/knowledge-base/35683308-29ea-4e37-b3b6-1ad3fe7a9053`}
+              variant="subtle"
+              title="Справка"
+          >
+            <IconQuestionMark size="1rem" />
+          </ActionIcon>
+        </Group>
+    );
+    setTitleElement(header);
+    return () => setTitleElement(null);
+  }, []);
 
   return (
     <Container
@@ -214,7 +271,7 @@ export const SceneManager = (props: SceneManagerProps) => {
         width: props.mode === "manager" ? "var(--container-size-md)" : undefined,
       }}
     >
-      <Box
+      {!isMobile && <Box
         style={{
           position: "sticky",
           top: isMobile ? 50 : 0,
@@ -225,61 +282,8 @@ export const SceneManager = (props: SceneManagerProps) => {
         }}
         p={isMobile ? 'sm' : 'md'}
       >
-        <Group justify="space-between" align="center" wrap="nowrap">
-          <Text fw={700} size="sm" style={{ lineHeight: 1 }} c="gray.6" tt="uppercase">
-            {props.chapterOnly ? "Главы" : "Главы и сцены"}
-          </Text>
-
-          {isWide || isSearchVisible ? (
-            <TextInput
-              ref={searchInputRef}
-              placeholder="Поиск…"
-              leftSection={<IconSearch size={14} />}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.currentTarget.value)}
-              onBlur={() => !isWide && setIsSearchVisible(false)}
-              style={{ flex: 1, marginLeft: 8, marginRight: 8 }}
-            />
-          ) : (
-            <Tooltip label="Поиск (⌘+K)">
-              <ActionIcon onClick={() => setIsSearchVisible(true)} aria-label="Поиск">
-                <IconSearch size={16} />
-              </ActionIcon>
-            </Tooltip>
-          )}
-
-          <Menu withinPortal position="bottom-end">
-            <Menu.Target>
-              <Tooltip label="Создать">
-                <ActionIcon variant="filled" color="blue" aria-label="Создать">
-                  <IconPlus size={16} />
-                </ActionIcon>
-              </Tooltip>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <Menu.Item onClick={openChapterModal}>Новая глава</Menu.Item>
-              {!props.chapterOnly && (
-                <Menu.Item onClick={() => handleOpenCreateModal(null)}>Новая сцена</Menu.Item>
-              )}
-            </Menu.Dropdown>
-          </Menu>
-
-          <Menu withinPortal position="bottom-end">
-            <Menu.Target>
-              <Tooltip label="Ещё действия">
-                <ActionIcon variant="subtle" aria-label="Меню">
-                  <IconCaretDownFilled size={16} />
-                </ActionIcon>
-              </Tooltip>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <Menu.Item onClick={collapseAllChapters} disabled={!props.chapters?.length}>Свернуть всё</Menu.Item>
-              <Menu.Item onClick={expandAllChapters} disabled={!collapsedCount}>Развернуть всё</Menu.Item>
-              <Menu.Item onClick={openFilters}>Фильтры</Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
-        </Group>
-      </Box>
+        {actionPanel}
+      </Box>}
 
       <SceneTable
         onAddScene={handleOpenCreateModal}
