@@ -106,14 +106,9 @@ const SceneRowComponent = ({
       <Box
         ref={ref}
         onClick={handleClick}
+        py="xs"
+        px="sm"
         style={{
-          padding: isNested
-            ? isMobile
-              ? "8px 12px 8px 12px"
-              : "10px 12px 10px 16px"
-            : isMobile
-              ? "8px 12px"
-              : "10px 16px",
           cursor: "pointer",
           backgroundColor: isSelected
             ? theme.colors.blue[0]

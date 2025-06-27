@@ -126,12 +126,12 @@ const ChapterRowComponent = ({
           style={{
             display: "flex",
             alignItems: "center",
-            padding: isMobile ? "10px 12px" : "12px 16px",
             backgroundColor: chapterOnly ? "white" : theme.colors.gray[0],
             cursor: "pointer",
             transition: "background-color 0.15s ease",
-            borderRadius: chapterOnly ? "0" : "0",
+            borderRadius: "0"
           }}
+          p={isMobile ? 'sm' : 'md'}
           onClick={() => {
             if (chapterOnly) {
               if (chapter.contentSceneId !== undefined) {
@@ -290,7 +290,6 @@ const areEqual = (prev: Readonly<ChapterRowProps>, next: Readonly<ChapterRowProp
   return prev.chapter === next.chapter &&
   prev.scenes === next.scenes &&
       selectedSceneNotAffecting &&
-  // prev.mode === next.mode &&
   prev.chapterOnly === next.chapterOnly;
 
 }
