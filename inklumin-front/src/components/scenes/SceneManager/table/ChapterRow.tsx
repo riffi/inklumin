@@ -15,21 +15,20 @@ import {
   Box,
   Collapse,
   Divider,
-  Group,
   Menu,
   Stack,
   Text,
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useScenes } from "@/components/scenes/SceneManager/useScenes";
-import { IChapter, IScene, ISceneWithInstances } from "@/entities/BookEntities";
+import { IChapter, ISceneWithInstances } from "@/entities/BookEntities";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 import { useBookStore } from "@/stores/bookStore/bookStore";
 import { DeleteConfirmationModal } from "../modals/DeleteConfirmationModal";
 import { EditChapterModal } from "../modals/EditChapterModal";
-import { useChapters } from "../useChapters";
 import { SceneRow } from "./SceneRow";
+import {SceneService} from "@/services/sceneService";
+import {notifications} from "@mantine/notifications";
 
 interface ChapterRowProps {
   chapter: IChapter;
@@ -73,7 +72,26 @@ const ChapterRowComponent = ({
   const [openedEditModal, { open: openEditModal, close: closeEditModal }] = useDisclosure(false);
   const [openedDeleteModal, { open: openDeleteModal, close: closeDeleteModal }] =
     useDisclosure(false);
-  const { deleteChapter, updateChapter } = useChapters(chapters);
+
+  const deleteChapter = useCallback(async (chapterId: number) => {
+    const result = await SceneService.deleteChapter(chapterId);
+    if (result.success) {
+      notifications.show({ title: "Успешно", message: "Глава удалена", color: "green" });
+      return true;
+    } else {
+      notifications.show({ title: "Ошибка", message: "Не удалось удалить главу", color: "red" });
+      return false;
+    }
+  }, []);
+
+  const updateChapter = useCallback(async (chapterId: number, title: string) => {
+    const result = await SceneService.updateChapter(chapterId, title);
+    if (result.success) {
+      notifications.show({ title: "Успех", message: "Глава успешно обновлена", color: "green" });
+    } else {
+      notifications.show({ title: "Ошибка", message: "Не удалось обновить главу", color: "red" });
+    }
+  }, []);
 
   const handleDeleteChapter = useCallback(async () => {
     try {
@@ -82,7 +100,7 @@ const ChapterRowComponent = ({
     } catch (error) {
       console.error("Failed to delete chapter:", error);
     }
-  }, [chapter.id, deleteChapter]);
+  }, [chapter.id]);
 
   const handleUpdateChapter = useCallback(
     async (newTitle: string) => {
@@ -93,7 +111,7 @@ const ChapterRowComponent = ({
         console.error("Failed to update chapter:", error);
       }
     },
-    [chapter.id, updateChapter]
+    [chapter.id]
   );
   console.log("render chapter row")
 
