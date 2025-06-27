@@ -11,14 +11,13 @@ import { IWarningGroup, IWarningKind } from "@/components/shared/RichEditor/type
 export const useWarningGroups = (
   editor: Editor | null,
   selectedGroup?: IWarningGroup,
-  onWarningsChange?: (warningGroups: IWarningGroup[]) => void,
   setSelectedGroup?: (group: IWarningGroup | undefined) => void
 ) => {
   const [warningGroups, setWarningGroups] = useState<IWarningGroup[]>([]);
   const internalUpdate = useRef(false); // Флаг для отслеживания внутренних изменений
 
   useEffect(() => {
-    if (!editor || !onWarningsChange) return;
+    if (!editor) return;
     const updateWarnings = ({ editor, transaction: tr }) => {
       const clicheMeta = tr.getMeta(clicheHighlighterKey);
       const repeatMeta = tr.getMeta(repeatHighlighterKey);
@@ -31,13 +30,13 @@ export const useWarningGroups = (
 
         const newWarningGroups = [...clicheGroups, ...repeatGroups, ...spellingGroups];
         setWarningGroups(newWarningGroups);
-        onWarningsChange(newWarningGroups);
+
       }
     };
 
     editor.on("transaction", updateWarnings);
     return () => editor.off("transaction", updateWarnings);
-  }, [editor, onWarningsChange]);
+  }, [editor]);
 
   // Обработчик изменений из плагинов
   useEffect(() => {
@@ -57,6 +56,7 @@ export const useWarningGroups = (
           ...(repeatHighlighterKey.getState(editor.state)?.warningGroups || []),
           ...(spellingHighlighterKey.getState(editor.state)?.warningGroups || []),
         ];
+
 
         const group = groups.find((g) => g.groupIndex === meta.groupIndex);
 

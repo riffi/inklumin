@@ -1,7 +1,7 @@
 // components/WarningsPanel/WarningIteration.tsx
 import { IconAlertCircle, IconCircle, IconInfoCircle, IconRepeat } from "@tabler/icons-react";
 import { Group, List, Paper, Text, ThemeIcon } from "@mantine/core";
-import { WarningGroup } from "@/components/scenes/SceneEditor/parts/WarningsPanel/WarningGroup";
+import { WarningGroup } from "@/components/shared/RichEditor/parts/WarningsPanel/WarningGroup";
 import { IWarning, IWarningGroup, IWarningKind } from "@/components/shared/RichEditor/types";
 import { NavigationButtons } from "./NavigationButtons";
 

@@ -201,7 +201,7 @@ export const SceneManager = (props: SceneManagerProps) => {
         style={{
           position: "sticky",
           top: isMobile ? 50 : 0,
-          zIndex: 100,
+          zIndex: 50,
           backgroundColor: "#FFFFFF",
           paddingTop: isMobile ? "12px" : "16px",
           borderBottom: "1px solid #E0E0E0",

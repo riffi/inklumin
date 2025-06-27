@@ -5,7 +5,6 @@ import { Box, LoadingOverlay } from "@mantine/core";
 import { useSceneEditor } from "@/components/scenes/SceneEditor/hooks/useSceneEditor";
 import { SceneDesktopContent } from "@/components/scenes/SceneEditor/parts/SceneDesktopContent";
 import { SceneMobileContent } from "@/components/scenes/SceneEditor/parts/SceneMobileContent";
-import { IWarningGroup } from "@/components/shared/RichEditor/types";
 import { bookDb } from "@/entities/bookDb";
 import type { IChapter } from "@/entities/BookEntities";
 import { IBlock } from "@/entities/ConstructorEntities";
@@ -18,9 +17,7 @@ import type { SceneEditorProps } from "./types";
 
 // Extracted custom hook
 const useSceneEditorState = () => {
-  const [selectedGroup, setSelectedGroup] = useState<IWarningGroup>();
   const [sceneBody, setSceneBody] = useState("");
-  const [warningGroups, setWarningGroups] = useState<IWarningGroup[]>([]);
   const [focusMode, setFocusMode] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isAnalysisDrawerOpen, setIsAnalysisDrawerOpen] = useState(false);
@@ -32,12 +29,8 @@ const useSceneEditorState = () => {
   const closeAnalysisDrawer = useCallback(() => setIsAnalysisDrawerOpen(false), []);
 
   return {
-    selectedGroup,
-    setSelectedGroup,
     sceneBody,
     setSceneBody,
-    warningGroups,
-    setWarningGroups,
     focusMode,
     toggleFocusMode,
     isDrawerOpen,
@@ -122,10 +115,6 @@ export const SceneEditor = ({ sceneId, chapter }: SceneEditorProps) => {
   }, [editorState.toggleFocusMode]);
 
   useEffect(() => {
-    editorState.setWarningGroups([]);
-  }, [sceneId, editorState.setWarningGroups]);
-
-  useEffect(() => {
     if (scene?.body !== undefined && scene.body !== editorState.sceneBody) {
       editorState.setSceneBody(scene.body);
     }
@@ -146,10 +135,6 @@ export const SceneEditor = ({ sceneId, chapter }: SceneEditorProps) => {
     onChapterTitleChange: handleChapterTitleChange,
     sceneBody: editorState.sceneBody,
     handleContentChange,
-    warningGroups: editorState.warningGroups,
-    setWarningGroups: editorState.setWarningGroups,
-    selectedGroup: editorState.selectedGroup,
-    setSelectedGroup: editorState.setSelectedGroup,
     scene,
     saveScene,
     focusMode: editorState.focusMode,

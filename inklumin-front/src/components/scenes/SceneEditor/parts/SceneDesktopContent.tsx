@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   IconArrowLeft,
   IconArrowUp,
@@ -14,11 +14,9 @@ import { useDisclosure, useWindowScroll } from "@mantine/hooks";
 import { useHeaderVisibility } from "@/components/scenes/SceneEditor/hooks/useHeaderVisibility";
 import { SceneLinkManager } from "@/components/scenes/SceneEditor/parts/SceneLinkManager/SceneLinkManager";
 import { SceneStatusPanel } from "@/components/scenes/SceneEditor/parts/SceneStatusPanel";
-import { WarningsPanel } from "@/components/scenes/SceneEditor/parts/WarningsPanel/WarningsPanel";
 import { InlineEdit } from "@/components/shared/InlineEdit/InlineEdit";
 import { InlineEdit2 } from "@/components/shared/InlineEdit2/InlineEdit2";
 import { RichEditor } from "@/components/shared/RichEditor/RichEditor";
-import type { IWarningGroup } from "@/components/shared/RichEditor/types";
 import { IChapter, IScene } from "@/entities/BookEntities";
 import { useBookStore } from "@/stores/bookStore/bookStore";
 import styles from "./SceneDesktopContent.module.css";
@@ -29,10 +27,6 @@ interface SceneDesktopContentProps {
   saveScene: (scene: any) => void; // Замените на ваш тип
   sceneBody: string;
   handleContentChange: (contentHTML: string, contentText: string) => void;
-  warningGroups: IWarningGroup[];
-  setWarningGroups: (warningGroups: IWarningGroup[]) => void;
-  selectedGroup?: IWarningGroup;
-  setSelectedGroup: (group?: IWarningGroup) => void;
   focusMode: boolean;
   toggleFocusMode: () => void;
   openKnowledgeBaseDrawer: () => void;
@@ -47,10 +41,6 @@ export const SceneDesktopContent = ({
   saveScene,
   sceneBody,
   handleContentChange,
-  warningGroups,
-  setWarningGroups,
-  selectedGroup,
-  setSelectedGroup,
   focusMode,
   toggleFocusMode,
   openKnowledgeBaseDrawer,
@@ -65,6 +55,7 @@ export const SceneDesktopContent = ({
   const [readOnly, setReadOnly] = useState(true);
   const [scroll, scrollTo] = useWindowScroll();
   const [showScrollButton, setShowScrollButton] = useState(false);
+  const warningsPanelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const showButton = scroll.y > 300;
@@ -150,10 +141,8 @@ export const SceneDesktopContent = ({
                 <RichEditor
                   initialContent={sceneBody}
                   onContentChange={handleContentChange}
-                  onWarningsChange={setWarningGroups}
-                  selectedGroup={selectedGroup}
-                  setSelectedGroup={setSelectedGroup}
                   onScroll={handleEditorScroll}
+                  warningsPanelContainer={warningsPanelRef.current}
                   desktopConstraints={{
                     top: "-20px",
                     bottom: "0",
@@ -196,18 +185,9 @@ export const SceneDesktopContent = ({
             {!focusMode && <SceneStatusPanel scene={scene} />}
           </Container>
         </Box>
-        <>
-          {warningGroups.length > 0 && !focusMode && (
-            <Box flex={2} style={{ position: "sticky", top: 16 }}>
-              <WarningsPanel
-                warningGroups={warningGroups}
-                onSelectGroup={setSelectedGroup}
-                selectedGroup={selectedGroup}
-                displayType="iteration"
-              />
-            </Box>
-          )}
-        </>
+        {!focusMode && (
+          <Box flex={2} style={{ position: "sticky", top: 16 }} ref={warningsPanelRef} />
+        )}
       </Flex>
       {!focusMode && (
         <SceneLinkManager

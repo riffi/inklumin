@@ -7,10 +7,12 @@ import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 
 import "./editor.override.css";
 
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { IconCheck, IconFocus } from "@tabler/icons-react";
+import { createPortal } from "react-dom";
 import { Button, Drawer } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { WarningsPanel } from "@/components/shared/RichEditor/parts/WarningsPanel/WarningsPanel";
 import { LoadingOverlayExtended } from "@/components/shared/overlay/LoadingOverlayExtended";
 import { useEditorState } from "@/components/shared/RichEditor/hooks/useEditorState";
 import { useWarningGroups } from "@/components/shared/RichEditor/hooks/useWarningGroups";
@@ -27,13 +29,12 @@ export interface ISceneRichTextEditorProps {
   initialContent?: string;
   onContentChange?: (contentHtml: string, contentText: string) => void;
   onWarningsChange?: (warningGroups: IWarningGroup[]) => void;
-  selectedGroup?: IWarningGroup;
   onScroll?: (scrollTop: number) => void;
   mobileConstraints?: IRichEditorConstraints;
   desktopConstraints?: IRichEditorConstraints;
-  setSelectedGroup?: (group: IWarningGroup | undefined) => void;
   focusMode: boolean;
   toggleFocusMode: () => void;
+  warningsPanelContainer?: HTMLElement | null;
   /** Включить отступ первой строки */
   useIndent?: boolean;
 }
@@ -63,6 +64,7 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
   const [repeatsActive, setRepeatsActive] = useState(false);
   const [clichesActive, setClichesActive] = useState(false);
   const [spellingActive, setSpellingActive] = useState(false);
+  const [warningsPanel, setWarningsPanel] = useState(null);
   const { isMobile } = useMedia();
 
   const onSelectionChange = (from: number, to: number) => {
@@ -72,22 +74,37 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
 
   const { editor } = useEditorState(
     props.initialContent || "",
-    props.focusMode, // Pass focusMode here
+    props.focusMode,
     props.onContentChange,
     onSelectionChange
   );
+  const [selectedGroup, setSelectedGroup] = useState<IWarningGroup>();
   const warningGroups = useWarningGroups(
     editor,
-    props.selectedGroup,
-    props.onWarningsChange,
-    props.setSelectedGroup
+    selectedGroup,
+    setSelectedGroup
   );
+
+  useEffect(() => {
+    const panel =
+        warningGroups?.length > 0 ? (
+            <WarningsPanel
+                warningGroups={warningGroups}
+                selectedGroup={selectedGroup}
+                onSelectGroup={setSelectedGroup}
+                displayType="iteration"
+            />
+        ) : null;
+    setWarningsPanel(panel)
+  }, [warningGroups, selectedGroup]);
+
 
   // Обработчик прокрутки
   const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
     props.onScroll?.(event.target.scrollTop);
     setScrollTop(event.target.scrollTop);
   };
+
 
   return (
     <>
@@ -255,6 +272,9 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
           ))}
         </div>
       </Drawer>
+      {props.warningsPanelContainer
+        ? warningsPanel && createPortal(warningsPanel, props.warningsPanelContainer)
+        : warningsPanel}
     </>
   );
 };

@@ -1,22 +1,17 @@
+import { useRef, useState } from "react";
 import { IconDatabaseSmile, IconLink, IconReportAnalytics } from "@tabler/icons-react";
 import { ActionIcon, Box, Container, Flex, Group, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useKeyboardHeight } from "@/components/scenes/SceneEditor/hooks/useKeyboardHeight";
 import { SceneLinkManager } from "@/components/scenes/SceneEditor/parts/SceneLinkManager/SceneLinkManager";
-import { WarningsPanel } from "@/components/scenes/SceneEditor/parts/WarningsPanel/WarningsPanel";
 import { InlineEdit2 } from "@/components/shared/InlineEdit2/InlineEdit2";
 import { RichEditor } from "@/components/shared/RichEditor/RichEditor";
-import type { IWarningGroup } from "@/components/shared/RichEditor/types";
 import { IChapter, IScene } from "@/entities/BookEntities";
 import { useBookStore } from "@/stores/bookStore/bookStore";
 
 interface SceneMobileContentProps {
   sceneBody: string;
   handleContentChange: (contentHTML: string, contentText: string) => void;
-  warningGroups: IWarningGroup[];
-  setWarningGroups: (warningGroups: IWarningGroup[]) => void;
-  selectedGroup?: IWarningGroup;
-  setSelectedGroup: (group?: IWarningGroup) => void;
   scene: IScene;
   saveScene: (dataToSave: IScene, silent: boolean) => void;
   focusMode: boolean;
@@ -30,10 +25,6 @@ interface SceneMobileContentProps {
 export const SceneMobileContent = ({
   sceneBody,
   handleContentChange,
-  warningGroups,
-  setWarningGroups,
-  selectedGroup,
-  setSelectedGroup,
   scene,
   saveScene,
   focusMode,
@@ -47,6 +38,8 @@ export const SceneMobileContent = ({
     useDisclosure(false);
   const keyboardHeight = useKeyboardHeight(true);
   const chapterOnlyMode = useBookStore((state) => state.selectedBook?.chapterOnlyMode === 1);
+  const warningsPanelRef = useRef<HTMLDivElement | null>(null);
+  const [hasWarnings, setHasWarnings] = useState(false);
 
   // Элемент панели управления сценой
   const managementPanel = (
@@ -107,19 +100,18 @@ export const SceneMobileContent = ({
       <RichEditor
         initialContent={sceneBody}
         onContentChange={handleContentChange}
-        onWarningsChange={setWarningGroups}
-        selectedGroup={selectedGroup}
-        setSelectedGroup={setSelectedGroup}
+        onWarningsChange={(groups) => setHasWarnings(groups.length > 0)}
         mobileConstraints={
           focusMode
             ? { top: 0, bottom: 0 }
             : {
                 top: 0,
-                bottom: warningGroups?.length > 0 && !focusMode ? 130 : 80,
+                bottom: hasWarnings ? 130 : 80,
               }
         }
         focusMode={focusMode}
         toggleFocusMode={toggleFocusMode}
+        warningsPanelContainer={warningsPanelRef.current}
         useIndent
       />
       {!focusMode && (
@@ -130,31 +122,23 @@ export const SceneMobileContent = ({
           wrap="wrap"
           style={{ height: "calc(100dvh - 80px)" }}
         >
-          {warningGroups.length > 0 && (
-            <Box flex="auto">
-              <Box
-                style={{
-                  position: "absolute",
-                  bottom: keyboardHeight > 0 ? -1000 : 0,
-                  height: "130px",
-                  left: 0,
-                  right: 0,
-                  zIndex: 200,
-                  transition: "bottom 0.3s ease",
-                  padding: "8px",
-                  backgroundColor: "white",
-                  boxShadow: "0 -2px 10px rgba(0,0,0,0.1)",
-                }}
-              >
-                <WarningsPanel
-                  warningGroups={warningGroups}
-                  onSelectGroup={setSelectedGroup}
-                  selectedGroup={selectedGroup}
-                  displayType="iteration"
-                />
-              </Box>
-            </Box>
-          )}
+          <Box flex="auto">
+            <Box
+              ref={warningsPanelRef}
+              style={{
+                position: "absolute",
+                bottom: keyboardHeight > 0 ? -1000 : 0,
+                height: "130px",
+                left: 0,
+                right: 0,
+                zIndex: 200,
+                transition: "bottom 0.3s ease",
+                padding: "8px",
+                backgroundColor: "white",
+                boxShadow: "0 -2px 10px rgba(0,0,0,0.1)",
+              }}
+            />
+          </Box>
           <Box
             style={{
               position: "fixed",
