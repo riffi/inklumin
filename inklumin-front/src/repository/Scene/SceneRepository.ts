@@ -201,7 +201,7 @@ export const recalculateGlobalOrder = async (
   }
 
   let currentGlobalOrder = 1;
-  const updates: Promise<any>[] = [];
+  const updates: { key: number; changes: Partial<IScene> }[] = [];
 
   // Process scenes within each chapter
   const sortedChapterIds = Object.keys(scenesByChapter)
@@ -234,9 +234,10 @@ export const recalculateGlobalOrder = async (
         scene.order !== currentGlobalOrder ||
         (movedSceneData && scene.id === movedSceneData.id)
       ) {
-        updates.push(
-          db.scenes.update(scene.id!, { order: currentGlobalOrder, chapterId: scene.chapterId })
-        );
+        updates.push({
+          key: scene.id!,
+          changes: { order: currentGlobalOrder, chapterId: scene.chapterId },
+        });
       }
       currentGlobalOrder++;
     }
@@ -246,13 +247,18 @@ export const recalculateGlobalOrder = async (
   // Sort chapterless scenes by their existing order if stable sort is desired
   for (const scene of chapterlessScenes) {
     if (scene.order !== currentGlobalOrder || (movedSceneData && scene.id === movedSceneData.id)) {
-      updates.push(db.scenes.update(scene.id!, { order: currentGlobalOrder, chapterId: null }));
+      updates.push({
+        key: scene.id!,
+        changes: { order: currentGlobalOrder, chapterId: null },
+      });
     }
     currentGlobalOrder++;
   }
 
   await db.transaction("rw", db.scenes, async () => {
-    await Promise.all(updates);
+    if (updates.length > 0) {
+      await db.scenes.bulkUpdate(updates);
+    }
   });
   await updateBookLocalUpdatedAt(db);
 };
