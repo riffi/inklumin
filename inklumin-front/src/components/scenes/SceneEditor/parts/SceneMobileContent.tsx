@@ -122,23 +122,12 @@ export const SceneMobileContent = ({
           wrap="wrap"
           style={{ height: "calc(100dvh - 80px)" }}
         >
-          <Box flex="auto">
-            <Box
-              ref={warningsPanelRef}
-              style={{
-                position: "absolute",
-                bottom: keyboardHeight > 0 ? -1000 : 0,
-                height: "130px",
-                left: 0,
-                right: 0,
-                zIndex: 200,
-                transition: "bottom 0.3s ease",
-                padding: "8px",
-                backgroundColor: "white",
-                boxShadow: "0 -2px 10px rgba(0,0,0,0.1)",
-              }}
-            />
-          </Box>
+          <Box
+            ref={warningsPanelRef}
+            style={{
+              bottom: keyboardHeight > 0 ? -1000 : 0,
+            }}
+          />
           <Box
             style={{
               position: "fixed",

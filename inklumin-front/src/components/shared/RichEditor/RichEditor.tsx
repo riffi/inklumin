@@ -94,7 +94,7 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
                 onSelectGroup={setSelectedGroup}
                 displayType="iteration"
             />
-        ) : null;
+        ) : <div style={{display:"none"}}/>;
     setWarningsPanel(panel)
   }, [warningGroups, selectedGroup]);
 
