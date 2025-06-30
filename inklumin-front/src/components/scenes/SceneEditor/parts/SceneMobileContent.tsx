@@ -16,7 +16,7 @@ interface SceneMobileContentProps {
   saveScene: (dataToSave: IScene, silent: boolean) => void;
   focusMode: boolean;
   toggleFocusMode: () => void;
-  openKnowledgeBaseDrawer: () => void;
+  openBlockInstanceAiFiller: () => void;
   openAnalysisDrawer: () => void;
   chapter?: IChapter;
   onChapterTitleChange?: (title: string) => void;
@@ -29,7 +29,7 @@ export const SceneMobileContent = ({
   saveScene,
   focusMode,
   toggleFocusMode,
-  openKnowledgeBaseDrawer,
+  openBlockInstanceAiFiller,
   openAnalysisDrawer,
   chapter,
   onChapterTitleChange,
@@ -69,7 +69,7 @@ export const SceneMobileContent = ({
       </ActionIcon>
       <ActionIcon
         variant="outline"
-        onClick={openKnowledgeBaseDrawer}
+        onClick={openBlockInstanceAiFiller}
         style={{
           display: "flex",
           flexGrow: 0,

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { ActionIcon, Box, Button, Checkbox, Drawer, Group, Stack, Text } from "@mantine/core";
 import { ParameterActions } from "@/components/blockInstance/BlockInstanceEditor/parts/InstanceParameterEditor/parts/ParameterActionsProps";
 import { ParameterEditVariantRenderer } from "@/components/blockInstance/BlockInstanceEditor/parts/InstanceParameterEditor/parts/ParameterEditVariantRenderer";
-import { KnowledgeBaseViewer } from "@/components/knowledgeBase/KnowledgeBaseViewer";
+import { UserDocViewer } from "@/components/userDoc/UserDocViewer";
 import { ParameterViewVariantRenderer } from "@/components/shared/blockParameter/ParameterViewVariantRenderer/ParameterViewVariantRenderer";
 import { bookDb } from "@/entities/bookDb";
 import { IBlockParameterInstance } from "@/entities/BookEntities";
@@ -14,9 +14,9 @@ import {
   IBlockParameterDataType,
   IBlockParameterPossibleValue,
 } from "@/entities/ConstructorEntities";
-import type { IKnowledgeBasePage } from "@/entities/KnowledgeBaseEntities";
+import type { IUserDocPage } from "@/entities/ConstructorEntities";
 import { useDialog } from "@/providers/DialogProvider/DialogProvider";
-import { KnowledgeBaseRepository } from "@/repository/KnowledgeBaseRepository";
+import { UserDocRepository } from "@/repository/UserDocRepository";
 import { useBookStore } from "@/stores/bookStore/bookStore";
 import { FullParam } from "../../../types";
 import classes from "../../../BlockInstanceEditor.module.css";
@@ -75,26 +75,25 @@ export const ParameterList = ({
   const [editingParamInstanceId, setEditingParamInstanceId] = useState<number | null>(null);
   const [editValue, setEditValue] = useState<string | number>(""); // Can be number for checkbox/numeric types
   const { showDialog } = useDialog();
-  const navigate = useNavigate(); // Assuming navigate might be used, kept from original context if needed elsewhere
 
   const { selectedBook } = useBookStore();
 
-  const knowledgeBasePages =
+  const userDocPages =
     useLiveQuery(async () => {
       const uuids = fullParams
-        .map((fp) => fp.parameter?.knowledgeBasePageUuid)
+        .map((fp) => fp.parameter?.userDocPageUuid)
         .filter((u): u is string => !!u);
-      if (uuids.length === 0) return [] as IKnowledgeBasePage[];
-      return bookDb.knowledgeBasePages.where("uuid").anyOf(uuids).toArray();
+      if (uuids.length === 0) return [] as IUserDocPage[];
+      return bookDb.userDocPages.where("uuid").anyOf(uuids).toArray();
     }, [fullParams]) || [];
 
-  const knowledgeBaseMap = useMemo(() => {
-    const map: Record<string, IKnowledgeBasePage> = {};
-    knowledgeBasePages.forEach((p) => {
+  const useDocPagesMap = useMemo(() => {
+    const map: Record<string, IUserDocPage> = {};
+    userDocPages.forEach((p) => {
       if (p.uuid) map[p.uuid] = p;
     });
     return map;
-  }, [knowledgeBasePages]);
+  }, [userDocPages]);
 
   const [kbDrawerOpen, setKbDrawerOpen] = useState(false);
   const [kbPageUuid, setKbPageUuid] = useState<string | null>(null);
@@ -161,11 +160,11 @@ export const ParameterList = ({
                     <Text fw={500} color={"dimmed"} style={{ fontSize: "0.8rem" }}>
                       {parameter.title}
                     </Text>
-                    {parameter.knowledgeBasePageUuid &&
-                      knowledgeBaseMap[parameter.knowledgeBasePageUuid] && (
+                    {parameter.userDocPageUuid &&
+                      useDocPagesMap[parameter.userDocPageUuid] && (
                         <ActionIcon
                           variant="subtle"
-                          onClick={() => openKbDrawer(parameter.knowledgeBasePageUuid!)}
+                          onClick={() => openKbDrawer(parameter?.userDocPageUuid!)}
                           title="Статья"
                         >
                           <IconQuestionMark size="1rem" />
@@ -308,11 +307,11 @@ export const ParameterList = ({
                     >
                       {parameter?.title}
                     </Text>
-                    {parameter?.knowledgeBasePageUuid &&
-                      knowledgeBaseMap[parameter.knowledgeBasePageUuid] && (
+                    {parameter?.userDocPageUuid &&
+                      useDocPagesMap[parameter.userDocPageUuid] && (
                         <ActionIcon
                           variant="subtle"
-                          onClick={() => openKbDrawer(parameter.knowledgeBasePageUuid!)}
+                          onClick={() => openKbDrawer(parameter?.userDocPageUuid!)}
                           title="Статья"
                         >
                           <IconQuestionMark size="1rem" />
@@ -406,9 +405,9 @@ export const ParameterList = ({
         onClose={() => setKbDrawerOpen(false)}
         size="xl"
         position="right"
-        title={kbPageUuid ? knowledgeBaseMap[kbPageUuid]?.title : undefined}
+        title={kbPageUuid ? useDocPagesMap[kbPageUuid]?.title : undefined}
       >
-        {kbPageUuid && <KnowledgeBaseViewer uuid={kbPageUuid} bookUuid={selectedBook?.uuid} />}
+        {kbPageUuid && <UserDocViewer uuid={kbPageUuid} bookUuid={selectedBook?.uuid} />}
       </Drawer>
     </>
   );

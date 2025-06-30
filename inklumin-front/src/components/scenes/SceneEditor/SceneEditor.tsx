@@ -11,7 +11,7 @@ import { IBlock } from "@/entities/ConstructorEntities";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 import { BlockRepository } from "@/repository/Block/BlockRepository";
 import { ChapterRepository } from "@/repository/Scene/ChapterRepository";
-import { KnowledgeBaseDrawer } from "./parts/KnowledgeBaseDrawer";
+import { BlockInstanceAiFiller } from "./parts/BlockInstanceAiFiller";
 import { SceneAnalysisDrawer } from "./parts/SceneAnalysisDrawer";
 import type { SceneEditorProps } from "./types";
 
@@ -23,9 +23,9 @@ const useSceneEditorState = () => {
   const [isAnalysisDrawerOpen, setIsAnalysisDrawerOpen] = useState(false);
 
   const toggleFocusMode = useCallback(() => setFocusMode((prev) => !prev), []);
-  const openKnowledgeBaseDrawer = useCallback(() => setIsDrawerOpen(true), []);
+  const openBlockInstanceAiFiller = useCallback(() => setIsDrawerOpen(true), []);
   const openAnalysisDrawer = useCallback(() => setIsAnalysisDrawerOpen(true), []);
-  const closeKnowledgeBaseDrawer = useCallback(() => setIsDrawerOpen(false), []);
+  const closeBlockInstanceAiFiller = useCallback(() => setIsDrawerOpen(false), []);
   const closeAnalysisDrawer = useCallback(() => setIsAnalysisDrawerOpen(false), []);
 
   return {
@@ -34,8 +34,8 @@ const useSceneEditorState = () => {
     focusMode,
     toggleFocusMode,
     isDrawerOpen,
-    openKnowledgeBaseDrawer,
-    closeKnowledgeBaseDrawer,
+    openBlockInstanceAiFiller,
+    closeBlockInstanceAiFiller,
     isAnalysisDrawerOpen,
     openAnalysisDrawer,
     closeAnalysisDrawer,
@@ -139,7 +139,7 @@ export const SceneEditor = ({ sceneId, chapter }: SceneEditorProps) => {
     saveScene,
     focusMode: editorState.focusMode,
     toggleFocusMode: editorState.toggleFocusMode,
-    openKnowledgeBaseDrawer: editorState.openKnowledgeBaseDrawer,
+    openBlockInstanceAiFiller: editorState.openBlockInstanceAiFiller,
     openAnalysisDrawer: editorState.openAnalysisDrawer,
   };
 
@@ -151,9 +151,9 @@ export const SceneEditor = ({ sceneId, chapter }: SceneEditorProps) => {
         <SceneDesktopContent {...commonProps} navigate={navigate} />
       )}
 
-      <KnowledgeBaseDrawer
+      <BlockInstanceAiFiller
         isOpen={editorState.isDrawerOpen}
-        onClose={editorState.closeKnowledgeBaseDrawer}
+        onClose={editorState.closeBlockInstanceAiFiller}
         blocks={blocks}
         sceneId={scene.id}
         sceneBody={scene?.body}

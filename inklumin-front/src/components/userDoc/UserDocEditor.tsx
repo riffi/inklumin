@@ -1,28 +1,28 @@
 import { useEffect, useState } from "react";
 import MDEditor from "@uiw/react-md-editor";
 import { Button, Modal, Stack, TextInput } from "@mantine/core";
-import { IKnowledgeBasePage } from "@/entities/KnowledgeBaseEntities";
+import { IUserDocPage } from "@/entities/ConstructorEntities";
 import { useDb } from "@/hooks/useDb";
-import { KnowledgeBaseRepository } from "@/repository/KnowledgeBaseRepository";
+import { UserDocRepository } from "@/repository/UserDocRepository";
 import { generateUUID } from "@/utils/UUIDUtils";
 
-interface KnowledgeBasePageEditorProps {
+interface UserDocEditorProps {
   opened: boolean;
   onClose: () => void;
   pageUuid?: string;
   configurationUuid?: string;
   bookUuid?: string;
-  onSave?: (page: IKnowledgeBasePage) => void;
+  onSave?: (page: IUserDocPage) => void;
 }
 
-export const KnowledgeBasePageEditor = ({
+export const UserDocEditor = ({
   opened,
   onClose,
   pageUuid,
   configurationUuid,
   bookUuid,
   onSave,
-}: KnowledgeBasePageEditorProps) => {
+}: UserDocEditorProps) => {
   const db = useDb(bookUuid);
   const [title, setTitle] = useState("");
   const [markdown, setMarkdown] = useState("");
@@ -31,7 +31,7 @@ export const KnowledgeBasePageEditor = ({
     if (!opened) return;
     const load = async () => {
       if (pageUuid) {
-        const page = await KnowledgeBaseRepository.getByUuid(db, pageUuid);
+        const page = await UserDocRepository.getByUuid(db, pageUuid);
         if (page) {
           setTitle(page.title);
           setMarkdown(page.markdown);
@@ -45,14 +45,14 @@ export const KnowledgeBasePageEditor = ({
   }, [opened, pageUuid, db]);
 
   const handleSave = async () => {
-    const data: IKnowledgeBasePage = {
+    const data: IUserDocPage = {
       uuid: pageUuid || generateUUID(),
       title,
       markdown,
       configurationUuid: bookUuid ? undefined : configurationUuid,
       bookUuid,
     };
-    await KnowledgeBaseRepository.save(db, data);
+    await UserDocRepository.save(db, data);
     onSave?.(data);
     onClose();
   };

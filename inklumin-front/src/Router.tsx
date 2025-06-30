@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { KnowledgeBaseViewer } from "@/components/knowledgeBase/KnowledgeBaseViewer";
+import { UserDocViewer } from "@/components/userDoc/UserDocViewer";
 import { BaseLayout } from "@/components/layout/BaseLayout/BaseLayout";
 import { SceneEditorLayout } from "@/components/layout/SceneEditorLayout/SceneEditorLayout";
 import { NoteEditPage } from "@/components/notes/NoteEditPage/NoteEditPage";
@@ -20,6 +20,7 @@ import { SceneCard } from "@/pages/scenes/SceneCard";
 import { ScenesPage } from "@/pages/scenes/ScenesPage";
 import { SettingsPage } from "@/pages/settings/SettingsPage";
 import { DbViewer } from "@/pages/tech/DbViewer";
+import { DocViewerPage } from "@/pages/docs/DocViewerPage";
 
 const router = createBrowserRouter([
   {
@@ -84,7 +85,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/knowledge-base/:uuid",
-        element: (<KnowledgeBaseViewer />) as ReactNode,
+        element: (<UserDocViewer />) as ReactNode,
       },
       {
         path: "/db-viewer",
@@ -101,6 +102,10 @@ const router = createBrowserRouter([
       {
         path: "/book/settings",
         element: (<BookSettingsPage />) as ReactNode,
+      },
+      {
+        path: "/docs/*",
+        element: (<DocViewerPage />) as ReactNode,
       },
     ],
   },

@@ -82,7 +82,7 @@ export interface IBlock {
   customIconBase64?: string; // Кастомная иконка в формате base64
   showInSceneList: number; // Отображать ли в списке сцен
   showInMainMenu: number;
-  knowledgeBasePageUuid?: string; // Ссылка на страницу базы знаний
+  userDocPageUuid?: string; // Ссылка на страницу базы знаний
 }
 
 export interface IBlockParameterGroup {
@@ -109,7 +109,7 @@ export interface IBlockParameter {
   orderNumber: number; // Порядковый номер
   allowMultiple?: number;
   useForInstanceGrouping?: number;
-  knowledgeBasePageUuid?: string; // Ссылка на страницу базы знаний
+  userDocPageUuid?: string; // Ссылка на страницу базы знаний
 }
 
 export interface IBlockParameterWithBlockTitle extends IBlockParameter {
@@ -170,3 +170,13 @@ export interface IGlobalSettings {
 export interface IOpenRouterModel {
   modelName: string;
 }
+
+export interface IUserDocPage {
+  id?: number;
+  uuid?: string;
+  title: string;
+  markdown: string;
+  configurationUuid?: string;
+  bookUuid?: string;
+}
+

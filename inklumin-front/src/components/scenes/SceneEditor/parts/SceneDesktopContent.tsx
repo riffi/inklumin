@@ -29,7 +29,7 @@ interface SceneDesktopContentProps {
   handleContentChange: (contentHTML: string, contentText: string) => void;
   focusMode: boolean;
   toggleFocusMode: () => void;
-  openKnowledgeBaseDrawer: () => void;
+  openBlockInstanceAiFiller: () => void;
   openAnalysisDrawer: () => void;
   chapter?: IChapter;
   onChapterTitleChange?: (title: string) => void;
@@ -43,7 +43,7 @@ export const SceneDesktopContent = ({
   handleContentChange,
   focusMode,
   toggleFocusMode,
-  openKnowledgeBaseDrawer,
+  openBlockInstanceAiFiller,
   openAnalysisDrawer,
   chapter,
   onChapterTitleChange,
@@ -122,7 +122,7 @@ export const SceneDesktopContent = ({
                         </Menu.Item>
                         <Menu.Item
                           leftSection={<IconDatabaseSmile size={14} />}
-                          onClick={openKnowledgeBaseDrawer}
+                          onClick={openBlockInstanceAiFiller}
                         >
                           Наполнить базу знаний
                         </Menu.Item>

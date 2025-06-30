@@ -248,14 +248,14 @@ const saveParam = async (db: BlockAbstractDb, blockUuid: string, param: IBlockPa
       ...param,
       uuid: param.uuid || generateUUID(),
       blockUuid,
-      knowledgeBasePageUuid: param.knowledgeBasePageUuid ?? undefined,
+      userDocPageUuid: param.userDocPageUuid ?? undefined,
     };
     await db.blockParameters.add(newParam);
   } else {
     const prevData = await db.blockParameters.get(param.id);
     const updated: IBlockParameter = {
       ...param,
-      knowledgeBasePageUuid: param.knowledgeBasePageUuid ?? undefined,
+      userDocPageUuid: param.userDocPageUuid ?? undefined,
     };
     await db.blockParameters.update(param.id, updated);
 

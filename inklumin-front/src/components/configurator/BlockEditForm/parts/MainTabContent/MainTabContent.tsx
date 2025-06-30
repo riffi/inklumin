@@ -16,7 +16,7 @@ import {
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { InkLuminApiError, InkLuminMlApi } from "@/api/inkLuminMlApi";
-import { KnowledgeBasePageEditor } from "@/components/knowledgeBase/KnowledgeBasePageEditor";
+import { UserDocEditor } from "@/components/userDoc/UserDocEditor";
 import { IconSelector } from "@/components/shared/IconSelector/IconSelector";
 import { IconViewer } from "@/components/shared/IconViewer/IconViewer";
 import { InlineEdit2 } from "@/components/shared/InlineEdit2/InlineEdit2";
@@ -28,7 +28,8 @@ import {
   IBlockTitleForms,
   IIconKind,
 } from "@/entities/ConstructorEntities";
-import { IKnowledgeBasePage } from "@/entities/KnowledgeBaseEntities";
+
+
 
 interface MainTabContentProps {
   block: IBlock;
@@ -46,8 +47,8 @@ export const MainTabContent = ({ block, onSave, bookUuid }: MainTabContentProps)
   const [kbOpened, setKbOpened] = useState(false);
   const [titleFormsLoading, setTitleFormsLoading] = useState(false);
 
-  const handleSavePage = async (page: IKnowledgeBasePage) => {
-    await onSave({ ...block, knowledgeBasePageUuid: page.uuid });
+  const handleSavePage = async (page: IUserDocPage) => {
+    await onSave({ ...block, userDocPageUuid: page.uuid });
   };
 
   const handleBlockPropertyChange = async (changedProps: Partial<IBlock>) => {
@@ -304,10 +305,10 @@ export const MainTabContent = ({ block, onSave, bookUuid }: MainTabContentProps)
       </Card>
 
       {block && (
-        <KnowledgeBasePageEditor
+        <UserDocEditor
           opened={kbOpened}
           onClose={() => setKbOpened(false)}
-          pageUuid={block.knowledgeBasePageUuid}
+          pageUuid={block.userDocPageUuid}
           configurationUuid={block.configurationUuid}
           bookUuid={bookUuid}
           onSave={handleSavePage}

@@ -11,7 +11,7 @@ import {
   IScene,
   ISceneBody,
 } from "@/entities/BookEntities";
-import { IKnowledgeBasePage } from "@/entities/KnowledgeBaseEntities";
+import { IUserDocPage } from "@/entities/ConstructorEntities";
 
 const bookSchema = {
   ...baseSchema,
@@ -41,7 +41,7 @@ export class BookDB extends BlockAbstractDb {
   blockInstanceGroups!: Dexie.Table<IBlockInstanceGroup, number>;
   blockParameterInstances!: Dexie.Table<IBlockParameterInstance, number>;
   blockInstanceSceneLinks!: Dexie.Table<IBlockInstanceSceneLink, number>;
-  knowledgeBasePages!: Dexie.Table<IKnowledgeBasePage, number>;
+  userDocPages!: Dexie.Table<IUserDocPage, number>;
   constructor(dbName: string) {
     super(dbName);
     this.version(9)

@@ -7,6 +7,7 @@ import {
   IBlockRelation,
   IBlockTab,
   IBookConfiguration,
+  IUserDocPage
 } from "@/entities/ConstructorEntities";
 
 export const baseSchema = {
@@ -19,7 +20,7 @@ export const baseSchema = {
   blockParameterPossibleValues: "++id, &uuid, parameterUuid, value",
   blocksRelations: "++id, &uuid, sourceBlockUuid, targetBlockUuid, configurationUuid",
   blockTabs: "++id, &uuid, blockUuid, title, relationUuid",
-  knowledgeBasePages: "++id, &uuid, configurationUuid, bookUuid",
+  userDocPages: "++id, &uuid, configurationUuid, bookUuid",
 };
 
 export class BlockAbstractDb extends Dexie {
@@ -30,6 +31,7 @@ export class BlockAbstractDb extends Dexie {
   blockParameterPossibleValues!: Dexie.Table<IBlockParameterPossibleValue, number>;
   blocksRelations!: Dexie.Table<IBlockRelation, number>;
   blockTabs!: Dexie.Table<IBlockTab, number>;
+  userDocPages!: Dexie.Table<IUserDocPage, number>;
 
   constructor(dbName: string) {
     super(dbName);

@@ -1,34 +1,34 @@
 import { BlockAbstractDb } from "@/entities/BlockAbstractDb";
-import { IKnowledgeBasePage } from "@/entities/KnowledgeBaseEntities";
+import { IUserDocPage } from "@/entities/ConstructorEntities";
 import { generateUUID } from "@/utils/UUIDUtils";
 
 const getByUuid = async (db: BlockAbstractDb, uuid: string) => {
-  return db.knowledgeBasePages.where("uuid").equals(uuid).first();
+  return db.userDocPages.where("uuid").equals(uuid).first();
 };
 
 const getAll = async (db: BlockAbstractDb) => {
-  return db.knowledgeBasePages.toArray();
+  return db.userDocPages.toArray();
 };
 
-const create = async (db: BlockAbstractDb, page: IKnowledgeBasePage) => {
-  const data: IKnowledgeBasePage = {
+const create = async (db: BlockAbstractDb, page: IUserDocPage) => {
+  const data: IUserDocPage = {
     ...page,
     uuid: page.uuid || generateUUID(),
   };
-  const id = await db.knowledgeBasePages.add(data);
+  const id = await db.userDocPages.add(data);
   return { ...data, id };
 };
 
-const update = async (db: BlockAbstractDb, page: IKnowledgeBasePage) => {
+const update = async (db: BlockAbstractDb, page: IUserDocPage) => {
   if (!page.id) {
     const existing = await getByUuid(db, page.uuid!);
     if (existing) page.id = existing.id;
   }
-  await db.knowledgeBasePages.put(page);
+  await db.userDocPages.put(page);
   return page;
 };
 
-const save = async (db: BlockAbstractDb, page: IKnowledgeBasePage) => {
+const save = async (db: BlockAbstractDb, page: IUserDocPage) => {
   if (!page.uuid) {
     return create(db, page);
   }
@@ -40,10 +40,10 @@ const save = async (db: BlockAbstractDb, page: IKnowledgeBasePage) => {
 };
 
 const remove = async (db: BlockAbstractDb, uuid: string) => {
-  await db.knowledgeBasePages.where("uuid").equals(uuid).delete();
+  await db.userDocPages.where("uuid").equals(uuid).delete();
 };
 
-export const KnowledgeBaseRepository = {
+export const UserDocRepository = {
   getByUuid,
   getAll,
   create,

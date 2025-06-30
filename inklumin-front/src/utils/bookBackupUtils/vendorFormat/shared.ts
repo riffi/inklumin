@@ -63,6 +63,6 @@ export function buildBackupData(
     blockTabs: [],
     blockInstanceSceneLinks: [],
     blockInstanceGroups: [],
-    knowledgeBasePages: [],
+    userDocPages: [],
   };
 }

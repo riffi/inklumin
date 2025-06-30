@@ -22,7 +22,7 @@ export interface BackupData {
   blockTabs: any[];
   blockInstanceSceneLinks: any[];
   blockInstanceGroups: any[];
-  knowledgeBasePages: any[];
+  userDocPages: any[];
 }
 
 export const collectBookBackupData = async (bookUuid: string): Promise<BackupData> => {
@@ -48,7 +48,7 @@ export const collectBookBackupData = async (bookUuid: string): Promise<BackupDat
     blockTabs: await db.blockTabs.toArray(),
     blockInstanceSceneLinks: await BlockInstanceSceneLinkRepository.getAllLinks(db),
     blockInstanceGroups: await db.blockInstanceGroups.toArray(),
-    knowledgeBasePages: await db.knowledgeBasePages.toArray(),
+    userDocPages: await db.userDocPages.toArray(),
   };
 };
 
@@ -127,7 +127,7 @@ export const importBookData = async (backupData: BackupData): Promise<void> => {
   otherPromises.push(db.blocksRelations.bulkAdd(backupData.blocksRelations || []));
   otherPromises.push(db.blockTabs.bulkAdd(backupData.blockTabs || []));
   otherPromises.push(db.blockInstanceGroups.bulkAdd(backupData.blockInstanceGroups || []));
-  otherPromises.push(db.knowledgeBasePages.bulkAdd(backupData.knowledgeBasePages || []));
+  otherPromises.push(db.userDocPages.bulkAdd(backupData.userDocPages || []));
   otherPromises.push(
     BlockInstanceSceneLinkRepository.bulkAddLinks(db, backupData.blockInstanceSceneLinks || [])
   );

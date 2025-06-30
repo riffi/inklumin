@@ -1,6 +1,6 @@
 import { notifications } from "@mantine/notifications";
 import { IBlock } from "@/entities/ConstructorEntities";
-import { KnowledgeBaseEntity } from "@/entities/KnowledgeBaseEntities";
+import { AiBlockInstanceEntity } from "@/entities/AiBlockInstanceEntities";
 import { getOpenRouterKey, useApiSettingsStore } from "@/stores/apiSettingsStore/apiSettingsStore";
 
 const fetchCompletions = async (prompt: string) => {
@@ -190,10 +190,10 @@ const fetchSceneAnalysis = async (sceneContent: string) => {
   }
 };
 
-const fetchKnowledgeBaseEntities = async (
+const fetchAiBlockInstanceEntities = async (
   sceneContent: string,
   block: IBlock
-): Promise<KnowledgeBaseEntity[]> => {
+): Promise<AiBlockInstanceEntity[]> => {
   const prompt = `Проанализируй  текст сцены
 
 Найди в тексте все сущности типа "${block.title}" (описание: "${block.description}").
@@ -263,7 +263,7 @@ ${sceneContent}
       }
     }
 
-    return parsedResult as KnowledgeBaseEntity[];
+    return parsedResult as AiBlockInstanceEntity[];
   } catch (error: any) {
     console.error("Ошибка при получении или обработке сущностей базы знаний:", error);
     notifications.show({
@@ -308,6 +308,6 @@ export const OpenRouterApi = {
   fetchSpellingCorrection,
   fetchRhymes,
   fetchSceneAnalysis,
-  fetchKnowledgeBaseEntities,
+  fetchAiBlockInstanceEntities,
   fetchSceneProblems,
 };

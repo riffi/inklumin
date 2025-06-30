@@ -33,7 +33,7 @@ import { ChildInstancesTable } from "@/components/blockInstance/BlockInstanceEdi
 import { InstanceParameterEditor } from "@/components/blockInstance/BlockInstanceEditor/parts/InstanceParameterEditor/InstanceParameterEditor";
 import { InstanceRelationsEditor } from "@/components/blockInstance/BlockInstanceEditor/parts/InstanceRelationsEditor/InstanceRelationsEditor";
 import { ReferencedInstanceEditor } from "@/components/blockInstance/BlockInstanceEditor/parts/ReferencedInstanceEditor/ReferencedInstanceEditor";
-import { KnowledgeBaseViewer } from "@/components/knowledgeBase/KnowledgeBaseViewer";
+import { UserDocViewer } from "@/components/userDoc/UserDocViewer";
 import { InstanceMindMap } from "@/components/mindMap/InstanceMindMap/InstanceMindMap";
 import { IconSelector } from "@/components/shared/IconSelector/IconSelector";
 import { IconViewer } from "@/components/shared/IconViewer/IconViewer";
@@ -43,7 +43,7 @@ import { bookDb } from "@/entities/bookDb";
 import { IBlock, IBlockStructureKind, IBlockTabKind } from "@/entities/ConstructorEntities";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 import { usePageTitle } from "@/providers/PageTitleProvider/PageTitleProvider";
-import { KnowledgeBaseRepository } from "@/repository/KnowledgeBaseRepository";
+import { UserDocRepository } from "@/repository/UserDocRepository";
 import { useBookStore } from "@/stores/bookStore/bookStore";
 import { useUiSettingsStore } from "@/stores/uiSettingsStore/uiSettingsStore";
 import { relationUtils } from "@/utils/relationUtils";
@@ -82,10 +82,10 @@ export const BlockInstanceEditor = (props: IBlockInstanceEditorProps) => {
     updateBlockInstanceIcon,
   } = useBlockInstanceEditor(props.blockInstanceUuid);
 
-  const knowledgeBasePage = useLiveQuery(() => {
-    if (!block?.knowledgeBasePageUuid) return null;
-    return KnowledgeBaseRepository.getByUuid(bookDb, block.knowledgeBasePageUuid);
-  }, [block?.knowledgeBasePageUuid]);
+  const userDocPage = useLiveQuery(() => {
+    if (!block?.userDocPageUuid) return null;
+    return UserDocRepository.getByUuid(bookDb, block.userDocPageUuid);
+  }, [block?.userDocPageUuid]);
 
   const header = (
     <Group>
@@ -107,7 +107,7 @@ export const BlockInstanceEditor = (props: IBlockInstanceEditorProps) => {
       >
         {blockInstance?.title || ""}
       </Title>
-      {knowledgeBasePage && (
+      {userDocPage && (
         <ActionIcon variant="subtle" onClick={() => setKbDrawerOpen(true)} title="Статья">
           <IconQuestionMark size={isMobile ? "1rem" : "1.2rem"} />
         </ActionIcon>
@@ -395,10 +395,10 @@ export const BlockInstanceEditor = (props: IBlockInstanceEditorProps) => {
         onClose={() => setKbDrawerOpen(false)}
         size="xl"
         position="right"
-        title={knowledgeBasePage?.title}
+        title={userDocPage?.title}
       >
-        {knowledgeBasePage && (
-          <KnowledgeBaseViewer uuid={knowledgeBasePage.uuid!} bookUuid={selectedBook?.uuid} />
+        {userDocPage && (
+          <UserDocViewer uuid={userDocPage.uuid!} bookUuid={selectedBook?.uuid} />
         )}
       </Drawer>
     </>

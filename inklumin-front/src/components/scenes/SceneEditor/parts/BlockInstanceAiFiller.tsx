@@ -24,12 +24,12 @@ import { bookDb } from "@/entities/bookDb"; // To query blockInstances and block
 import type { IBlockInstance, IBlockInstanceSceneLink } from "@/entities/BookEntities";
 import { IBlock } from "@/entities/ConstructorEntities"; // Ensure IBlock is imported
 
-import { KnowledgeBaseEntity, KnowledgeBaseEntityDisplay } from "@/entities/KnowledgeBaseEntities";
+import { AiBlockInstanceEntity, AiBlockInstanceEntityExt } from "@/entities/AiBlockInstanceEntities";
 import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";
 import { BlockInstanceSceneLinkRepository } from "@/repository/BlockInstance/BlockInstanceSceneLinkRepository";
 import { generateUUID } from "@/utils/UUIDUtils";
 
-interface KnowledgeBaseDrawerProps {
+interface BlockInstanceAiFillerProps {
   isOpen: boolean;
   onClose: () => void;
   blocks: IBlock[]; // Keep blocks from props
@@ -37,15 +37,15 @@ interface KnowledgeBaseDrawerProps {
   sceneBody: string | null | undefined; // Add this
 }
 
-export const KnowledgeBaseDrawer = ({
+export const BlockInstanceAiFiller = ({
   isOpen,
   onClose,
   blocks, // blocks is now a direct prop
   sceneId, // sceneId is now a direct prop
   sceneBody, // Add this
-}: KnowledgeBaseDrawerProps) => {
+}: BlockInstanceAiFillerProps) => {
   const [selectedBlock, setSelectedBlock] = useState<IBlock | null>(null);
-  const [apiEntities, setApiEntities] = useState<KnowledgeBaseEntity[]>([]);
+  const [apiEntities, setApiEntities] = useState<AiBlockInstanceEntity[]>([]);
   const [isGeneratingEntities, setIsGeneratingEntities] = useState(false);
   const [entitySelection, setEntitySelection] = useState<Record<string, string | null>>({});
 
@@ -67,7 +67,7 @@ export const KnowledgeBaseDrawer = ({
     );
   }, [selectedBlock]);
 
-  const knowledgeBaseEntities: KnowledgeBaseEntityDisplay[] = apiEntities.map((entity) => {
+  const blockInstanceAiEntities: AiBlockInstanceEntityExt[] = apiEntities.map((entity) => {
     const selectedUuid = entitySelection[entity.title] ?? null;
     const existingInstance = selectedUuid
       ? existingInstances?.find((inst) => inst.uuid === selectedUuid)
@@ -94,7 +94,7 @@ export const KnowledgeBaseDrawer = ({
     [blocks]
   );
 
-  const handleGenerateKnowledgeBase = useCallback(async () => {
+  const handleAiGenerateInstances = useCallback(async () => {
     if (!selectedBlock || !sceneId) {
       notifications.show({
         title: "Ошибка",
@@ -117,7 +117,7 @@ export const KnowledgeBaseDrawer = ({
     setIsGeneratingEntities(true);
 
     try {
-      const apiEntitiesList = await OpenRouterApi.fetchKnowledgeBaseEntities(
+      const apiEntitiesList = await OpenRouterApi.fetchAiBlockInstanceEntities(
         sceneBody,
         selectedBlock
       ); // Use sceneBody prop
@@ -144,7 +144,7 @@ export const KnowledgeBaseDrawer = ({
     }
   }, [selectedBlock, sceneId, sceneBody]); // Add sceneBody to dependencies
 
-  const handleBindEntityToScene = async (entity: KnowledgeBaseEntityDisplay) => {
+  const handleBindEntityToScene = async (entity: AiBlockInstanceEntityExt) => {
     const instanceUuid = entitySelection[entity.title] ?? entity.instanceUuid;
     const existingLink = await BlockInstanceSceneLinkRepository.getLinksByBlockInstance(
       bookDb,
@@ -182,7 +182,7 @@ export const KnowledgeBaseDrawer = ({
     }
   };
   const handleAddEntity = useCallback(
-    async (entity: KnowledgeBaseEntityDisplay) => {
+    async (entity: AiBlockInstanceEntityExt) => {
       if (!selectedBlock) {
         notifications.show({
           title: "Ошибка",
@@ -229,7 +229,7 @@ export const KnowledgeBaseDrawer = ({
         });
       }
     },
-    [selectedBlock, sceneId, knowledgeBaseEntities, handleGenerateKnowledgeBase, entitySelection]
+    [selectedBlock, sceneId, blockInstanceAiEntities, handleAiGenerateInstances, entitySelection]
   );
 
   return (
@@ -245,7 +245,7 @@ export const KnowledgeBaseDrawer = ({
         {" "}
         {/* For LoadingOverlay context */}
         <LoadingOverlay
-          visible={isGeneratingEntities && knowledgeBaseEntities.length === 0}
+          visible={isGeneratingEntities && blockInstanceAiEntities.length === 0}
           overlayProps={{ blur: 2 }}
         />
         <Select
@@ -259,7 +259,7 @@ export const KnowledgeBaseDrawer = ({
         />
         <Space h="md" />
         <Button
-          onClick={handleGenerateKnowledgeBase}
+          onClick={handleAiGenerateInstances}
           disabled={!selectedBlock || isGeneratingEntities}
           loading={isGeneratingEntities}
         >
@@ -269,12 +269,12 @@ export const KnowledgeBaseDrawer = ({
         <ScrollArea style={{ height: "calc(100vh - 350px)" }}>
           {" "}
           {/* Adjusted height */}
-          {knowledgeBaseEntities.length === 0 && !isGeneratingEntities && (
+          {blockInstanceAiEntities.length === 0 && !isGeneratingEntities && (
             <Text c="dimmed" ta="center">
               Сущности не найдены или еще не сгенерированы.
             </Text>
           )}
-          {knowledgeBaseEntities.map((entity, index) => (
+          {blockInstanceAiEntities.map((entity, index) => (
             <Card
               key={index}
               shadow="sm"

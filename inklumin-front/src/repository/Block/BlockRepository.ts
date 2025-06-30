@@ -61,7 +61,7 @@ const create = async (
   // Persist knowledge base link if provided
   const blockToSave: IBlock = {
     ...block,
-    knowledgeBasePageUuid: block.knowledgeBasePageUuid ?? undefined,
+    userDocPageUuid: block.userDocPageUuid ?? undefined,
   };
   const blockId = await db.blocks.add(blockToSave);
   const persistedBlockData = await db.blocks.get(blockId);
@@ -120,7 +120,7 @@ const update = async (
   }
   const blockToUpdate: IBlock = {
     ...block,
-    knowledgeBasePageUuid: block.knowledgeBasePageUuid ?? undefined,
+    userDocPageUuid: block.userDocPageUuid ?? undefined,
   };
   db.blocks.update(block.id, blockToUpdate);
   if (isBookDb) {

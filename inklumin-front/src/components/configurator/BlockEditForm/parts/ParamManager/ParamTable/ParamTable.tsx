@@ -9,7 +9,7 @@ import {
   IconTrash,
 } from "@tabler/icons-react";
 import { ActionIcon, Badge, Box, Button, Group, Menu, Space, Table, Text } from "@mantine/core";
-import { KnowledgeBasePageEditor } from "@/components/knowledgeBase/KnowledgeBasePageEditor";
+import { UserDocEditor } from "@/components/userDoc/UserDocEditor";
 import {
   IBlock,
   IBlockParameter,
@@ -18,7 +18,8 @@ import {
   IBlockParameterGroup,
   IBlockRelation,
 } from "@/entities/ConstructorEntities";
-import { IKnowledgeBasePage } from "@/entities/KnowledgeBaseEntities";
+import { IUserDocPage } from "@/entities/ConstructorEntities";
+
 import { useDb } from "@/hooks/useDb";
 import { useDialog } from "@/providers/DialogProvider/DialogProvider";
 import classes from "./ParamTable.module.css"; // Создайте этот CSS модуль для кастомизации
@@ -70,10 +71,10 @@ export const ParamTable = ({
       });
   }, [bookUuid, blockUuid]);
 
-  const handleSavePage = async (page: IKnowledgeBasePage) => {
+  const handleSavePage = async (page: IUserDocPage) => {
     const db = useDb(bookUuid);
     if (kbParam?.id) {
-      await db.blockParameters.update(kbParam.id, { knowledgeBasePageUuid: page.uuid });
+      await db.blockParameters.update(kbParam.id, { userDocPageUuid: page.uuid });
     }
   };
 
@@ -226,10 +227,10 @@ export const ParamTable = ({
         )}
       </Table>
       {kbParam && (
-        <KnowledgeBasePageEditor
+        <UserDocEditor
           opened={editorOpened}
           onClose={() => setEditorOpened(false)}
-          pageUuid={kbParam.knowledgeBasePageUuid}
+          pageUuid={kbParam.userDocPageUuid}
           configurationUuid={configurationUuid}
           bookUuid={bookUuid}
           onSave={handleSavePage}
