@@ -3,20 +3,18 @@ services:
   db:
     image: postgres:15
     environment:
-      POSTGRES_DB: inklumin
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - db-data:/var/lib/postgresql/data
-    ports:
-      - "5433:5432"
 
   back:
     build: ./inklumin-back
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/inklumin
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       ML_SERVICE_URL: http://ml:5123
     depends_on:
       - db
