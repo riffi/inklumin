@@ -225,8 +225,8 @@ export const NoteEditPage = () => {
   const bookSelectSection =
     showBookSelect || selectedBookUuid ? (
       <Select
-        label="Книга"
-        placeholder="Выберите книгу"
+        label="Произведение"
+        placeholder="Выберите произведение"
         data={books.map((book) => ({ value: book.uuid, label: book.title }))}
         value={selectedBookUuid}
         onChange={handleBookSelectChange}
@@ -236,7 +236,7 @@ export const NoteEditPage = () => {
     ) : (
       <Group mb="md">
         <Anchor onClick={handleBookLinkClick} style={{ cursor: "pointer" }}>
-          Привязать к книге
+          Привязать к произведению
         </Anchor>
       </Group>
     );

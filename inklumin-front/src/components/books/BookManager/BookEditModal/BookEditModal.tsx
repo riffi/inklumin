@@ -14,6 +14,21 @@ interface BookEditModalProps {
   kind?: string;
 }
 
+const getTitle = (uuid: string, kind: string) => {
+  if (kind === 'material'){
+    if (uuid){
+      return "Редактирование информации о материале"
+    }
+    return "Добавление нового материала"
+  }
+  if (kind === 'book'){
+    if (uuid){
+      return "Редактирование информации о произведении"
+    }
+    return "Добавление нового произведения"
+  }
+}
+
 export const BookEditModal = ({
   isOpen,
   onClose,
@@ -31,7 +46,7 @@ export const BookEditModal = ({
 
   return (
     <Modal
-      title={initialData?.uuid ? "Редактирование книги" : "Добавление новой книги"}
+      title={getTitle(initialData?.uuid, initialData?.kind)}
       opened={isOpen}
       onClose={onClose}
       size="md"

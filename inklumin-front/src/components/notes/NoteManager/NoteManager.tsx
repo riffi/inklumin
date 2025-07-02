@@ -169,7 +169,7 @@ export const NoteManager = ({ bookNotesMode = false }: NoteManagerProps) => {
         setCurrentNote({});
       } else {
         notifications.show({
-          message: "Не удалось найти или создать папку для заметок книги.",
+          message: "Не удалось найти или создать папку для заметок произведения.",
           color: "red",
         });
       }

@@ -30,7 +30,7 @@ export const saveBookToServer = async (bookUuid: string, token: string) => {
     });
 
     if (response.success) {
-      notifications.show({ message: "Книга успешно сохранена на сервер", color: "green" });
+      notifications.show({ message: "Произведение успешно сохранено на сервер", color: "green" });
       if (response.data?.updatedAt) {
         await BookRepository.update(configDatabase, bookUuid, {
           serverUpdatedAt: response.data.updatedAt,
@@ -69,7 +69,7 @@ export const loadBookFromServer = async (bookUuid: string, token: string) => {
     }
 
     await importBookData(backupData);
-    notifications.show({ message: "Книга успешно загружена с сервера", color: "green" });
+    notifications.show({ message: "Произведение успешно загружена с сервера", color: "green" });
     return true;
   } catch (error: any) {
     notifications.show({
@@ -107,10 +107,10 @@ export const getServerBooksList = async (token: string) => {
 
       return serverBooks;
     }
-    throw new Error(response.message || "Ошибка получения списка книг");
+    throw new Error(response.message || "Ошибка получения списка произведений");
   } catch (error: any) {
     notifications.show({
-      message: `Ошибка получения списка книг с сервера: ${error.message || ""}`,
+      message: `Ошибка получения списка произведений с сервера: ${error.message || ""}`,
       color: "red",
     });
     return [];

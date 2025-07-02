@@ -142,7 +142,7 @@ export const BookSettingsForm = ({
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <TextInput
           withAsterisk
-          label="Название книги"
+          label="Название произведения"
           placeholder="Введите название"
           {...form.getInputProps("title")}
         />

@@ -46,7 +46,7 @@ export const importBookBackup = async (file: File) => {
           await importBookData(backupData);
 
           notifications.show({
-            message: "Книга успешно импортирована",
+            message: "Произведение успешно импортировано",
             color: "green",
           });
           resolve(true);

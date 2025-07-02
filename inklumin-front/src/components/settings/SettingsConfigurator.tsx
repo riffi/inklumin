@@ -24,7 +24,7 @@ export const SettingsConfigurator = () => {
               Управление заметками
             </Tabs.Tab>
             <Tabs.Tab value="books" icon={<span>📚</span>}>
-              Управление книгами
+              Произведения и материалы
             </Tabs.Tab>
           </Tabs.List>
 

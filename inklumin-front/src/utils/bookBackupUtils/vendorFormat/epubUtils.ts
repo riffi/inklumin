@@ -285,7 +285,7 @@ export const importEpubFile = async (file: File): Promise<boolean> => {
           color: "info",
         });
 
-        // Импортируем данные книги
+        // Импортируем данные произведение
         return resolve(true);
       } catch (error) {
         console.error("Error processing EPUB:", error);

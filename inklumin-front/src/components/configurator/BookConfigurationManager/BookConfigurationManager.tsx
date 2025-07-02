@@ -109,7 +109,7 @@ export const BookConfigurationManager = () => {
   return (
     <>
       <Container fluid>
-        <h1>Конфигурации книг</h1>
+        <h1>Конфигурации</h1>
         <Breadcrumbs separator="→" separatorMargin="md" mt="xs">
           {breadCrumbs}
         </Breadcrumbs>

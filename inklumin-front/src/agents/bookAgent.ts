@@ -46,7 +46,7 @@ const tools: Record<string, Tool> = {
     definition: {
       name: "listScenes",
       description:
-        "Возвращает **уже отсортированный** список сцен книги. " +
+        "Возвращает **уже отсортированный** список сцен произведения. " +
         "Сцены расположены в порядке возрастания поля `order` (порядковый номер), " +
         "а не `id`.",
       parameters: { type: "object", properties: {} },
@@ -101,7 +101,7 @@ const tools: Record<string, Tool> = {
   listBlocks: {
     definition: {
       name: "listBlocks",
-      description: "Получить список блоков книги",
+      description: "Получить список блоков произведения",
       parameters: { type: "object", properties: {} },
     },
     handler: async () => {

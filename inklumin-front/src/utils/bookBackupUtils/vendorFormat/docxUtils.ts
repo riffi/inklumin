@@ -1,4 +1,4 @@
-// Утилиты для импорта книги из DOCX.
+// Утилиты для импорта произведения из DOCX.
 // Функции отвечают за разбор документа и преобразование его в внутренний формат.
 import JSZip from "jszip";
 import moment from "moment";
@@ -191,7 +191,7 @@ async function buildScenesAndChapters(
 /**
  * Основная точка входа для импорта DOCX-файла.
  * Архив распаковывается, извлекаются данные о книге и тексте,
- * после чего книга сохраняется во внутреннюю БД.
+ * после чего произведение сохраняется во внутреннюю БД.
  */
 export const importDocxFile = async (file: File): Promise<boolean> => {
   return new Promise((resolve) => {
@@ -242,7 +242,7 @@ export const importDocxFile = async (file: File): Promise<boolean> => {
           configurationTitle: "",
           cover: undefined,
           kind: "book",
-          description: `Книга импортирована из (${file.name})`,
+          description: `Произведение импортировано из (${file.name})`,
           chapterOnlyMode: 1,
           localUpdatedAt: moment().toISOString(true),
           syncState: "localChanges",

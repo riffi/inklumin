@@ -21,20 +21,20 @@ export const BookBackupTab = () => {
   const { user } = useAuth();
   const token = user?.token;
 
-  // Загрузка локальных книг
+  // Загрузка локальных произведений
   const loadLocalBooks = async () => {
     try {
       const books = await BookRepository.getAll(configDatabase);
       setLocalBooks(books.map((book) => ({ value: book.uuid, label: book.title })));
     } catch (error) {
       notifications.show({
-        message: "Ошибка загрузки локальных книг",
+        message: "Ошибка загрузки локальных произведений",
         color: "red",
       });
     }
   };
 
-  // Загрузка списка книг с сервера
+  // Загрузка списка произведений с сервера
   const loadServerBooks = async () => {
     if (!token) return;
 
@@ -49,7 +49,7 @@ export const BookBackupTab = () => {
       );
     } catch (error) {
       notifications.show({
-        message: "Ошибка загрузки списка книг с сервера",
+        message: "Ошибка загрузки списка произведений с сервера",
         color: "red",
       });
     } finally {
@@ -66,7 +66,7 @@ export const BookBackupTab = () => {
 
   const handleExport = async () => {
     if (!selectedBook) {
-      notifications.show({ message: "Выберите книгу", color: "red" });
+      notifications.show({ message: "Выберите произведение", color: "red" });
       return;
     }
     setLoading(true);
@@ -76,7 +76,7 @@ export const BookBackupTab = () => {
 
   const handleSaveToServer = async () => {
     if (!selectedBook) {
-      notifications.show({ message: "Выберите книгу", color: "red" });
+      notifications.show({ message: "Выберите произведение", color: "red" });
       return;
     }
     if (!token) {
@@ -87,14 +87,14 @@ export const BookBackupTab = () => {
     setLoading(true);
     const success = await saveBookToServer(selectedBook, token);
     if (success) {
-      await loadServerBooks(); // Обновляем список книг на сервере
+      await loadServerBooks(); // Обновляем список произведений на сервере
     }
     setLoading(false);
   };
 
   const handleLoadFromServer = async () => {
     if (!selectedServerBook) {
-      notifications.show({ message: "Выберите книгу с сервера", color: "red" });
+      notifications.show({ message: "Выберите произведение с сервера", color: "red" });
       return;
     }
     if (!token) {
@@ -105,7 +105,7 @@ export const BookBackupTab = () => {
     setLoading(true);
     const success = await loadBookFromServer(selectedServerBook, token);
     if (success) {
-      await loadLocalBooks(); // Обновляем список локальных книг
+      await loadLocalBooks(); // Обновляем список локальных произведений
     }
     setLoading(false);
   };
@@ -114,7 +114,7 @@ export const BookBackupTab = () => {
     setLoading(true);
     const success = await handleFileImport();
     if (success) {
-      await loadLocalBooks(); // Обновляем список локальных книг
+      await loadLocalBooks(); // Обновляем список локальных произведений
     }
     setLoading(false);
   };
@@ -124,7 +124,7 @@ export const BookBackupTab = () => {
       <LoadingOverlay visible={loading} zIndex={1000} overlayBlur={2} />
 
       <Text size="sm" mb="xl">
-        Экспорт и импорт полных данных книги. При импорте существующие данные книги будут полностью
+        Экспорт и импорт полных данных произведения. При импорте существующие данные произведения будут полностью
         заменены.
       </Text>
 
@@ -136,12 +136,12 @@ export const BookBackupTab = () => {
           </Text>
 
           <Select
-            label="Выберите книгу для экспорта"
+            label="Выберите произведение для экспорта"
             data={localBooks}
             value={selectedBook}
             onChange={setSelectedBook}
             mb="md"
-            placeholder="Выберите книгу..."
+            placeholder="Выберите произведение..."
           />
 
           <Group>
@@ -182,7 +182,7 @@ export const BookBackupTab = () => {
               {/* Сохранение на сервер */}
               <Box>
                 <Text size="sm" mb="sm">
-                  Сохранить локальную книгу на сервер:
+                  Сохранить локальное произведение на сервер:
                 </Text>
                 <Group>
                   <Button
@@ -200,15 +200,15 @@ export const BookBackupTab = () => {
               {/* Загрузка с сервера */}
               <Box>
                 <Text size="sm" mb="sm">
-                  Загрузить книгу с сервера:
+                  Загрузить произведение с сервера:
                 </Text>
                 <Select
-                  label="Выберите книгу на сервере"
+                  label="Выберите произведение на сервере"
                   data={serverBooks}
                   value={selectedServerBook}
                   onChange={setSelectedServerBook}
                   mb="sm"
-                  placeholder="Выберите книгу с сервера..."
+                  placeholder="Выберите произведение на сервере..."
                 />
                 <Group>
                   <Button

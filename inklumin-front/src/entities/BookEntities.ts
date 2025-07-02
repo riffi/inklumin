@@ -3,10 +3,10 @@ import { IBlock, IIcon } from "@/entities/ConstructorEntities";
 export interface IBook {
   id?: number;
   uuid: string;
-  title: string; // Название книги
-  author: string; // Автор книги
+  title: string; // Название произведения
+  author: string; // Автор произведения
   form: string; // Форма произведения
-  genre: string; // Жанр книги
+  genre: string; // Жанр произведения
   configurationUuid: string; // Ссылка на конфигурацию
   configurationTitle: string; // Название конфигурации
   cover?: string;

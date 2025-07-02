@@ -29,7 +29,7 @@ export const collectBookBackupData = async (bookUuid: string): Promise<BackupDat
   const bookData = await BookRepository.getByUuid(configDatabase, bookUuid);
   const db = connectToBookDatabase(bookUuid);
 
-  if (!bookData) throw new Error("Книга не найдена");
+  if (!bookData) throw new Error("Произведение не найдено");
 
   return {
     book: { ...bookData, id: undefined },

@@ -167,7 +167,7 @@ export const BookAgentChat = () => {
 
   const handleCreateNote = async (title: string, content: string) => {
     if (!selectedBook) {
-      notifications.show({ message: "Книга не выбрана", color: "orange" });
+      notifications.show({ message: "Произведение не выбрано", color: "orange" });
       return;
     }
 

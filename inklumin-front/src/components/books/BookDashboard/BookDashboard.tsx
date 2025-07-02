@@ -17,13 +17,13 @@ export const BookDashboard = (bookUuid: string) => {
   const notChildBlocks = blocks?.filter((block) => block.parentBlockUuid == null);
 
   useEffect(() => {
-    setPageTitle(`Рабочий стол книги`);
+    setPageTitle(`Рабочий стол`);
   }, [bookUuid]);
 
   return (
     <Container fluid p="md">
       <Group justify="space-between" mb="md" visibleFrom="sm">
-        <Title order={2}>Рабочий стол книги</Title>
+        <Title order={2}>Рабочий стол произведения</Title>
       </Group>
 
       <SimpleGrid cols={{ base: 1, sm: 2, lg: 3, xl: 4 }} spacing="md">

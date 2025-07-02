@@ -34,7 +34,7 @@ export const BookSettingsPage = () => {
     await BookRepository.update(configDatabase, selectedBook.uuid, data);
     await updateBookLocalUpdatedAt(bookDb);
     notifications.show({
-      title: "Данные книги обновлены",
+      title: "Данные произведения обновлены",
     });
     selectBook({ ...selectedBook, ...data });
   };
@@ -44,7 +44,7 @@ export const BookSettingsPage = () => {
       <Paper>
         <Box p="md">
           <Title order={2} mb={"md"}>
-            Настройки книги
+            Настройки произведения
           </Title>
           <Switch
             label="Не показывать сцены"

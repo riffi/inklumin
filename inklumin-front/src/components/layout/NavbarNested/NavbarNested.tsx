@@ -58,7 +58,7 @@ const BASE_MENU_ITEMS: NavLinkGroup[] = [
         link: "/notes",
       },
       {
-        label: "Книги",
+        label: "Произведения",
         link: "/",
       },
       {
@@ -120,7 +120,7 @@ export const NavbarNested = ({
         });
       }
       dynamicItems.push({
-        label: `Заметки ${selectedBook.kind === "book" ? "книги" : "материала"}`,
+        label: `Заметки ${selectedBook.kind === "book" ? "произведения" : "материала"}`,
         icon: IconGraph,
         link: "/book-notes",
       });
@@ -154,18 +154,10 @@ export const NavbarNested = ({
       });
 
       dynamicItems.push({
-        label: "Настройки книги",
+        label: "Настройки произведения",
         icon: IconSettings,
         link: "/book/settings",
       });
-      //
-      // if (selectedBook.kind === "material") {
-      //   dynamicItems = allDynamicItems.filter(
-      //     (item) => item.label !== "Чтение" && item.label !== "Сцены"
-      //   );
-      // } else {
-      //   dynamicItems = allDynamicItems;
-      // }
     }
 
     return {

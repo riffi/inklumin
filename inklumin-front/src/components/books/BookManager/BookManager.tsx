@@ -133,7 +133,7 @@ export const BookManager = () => {
   useEffect(() => {
     const header = (
       <Group gap="xs">
-        <Text fw={500}>Книги</Text>
+        <Text fw={500}>Произведения и материалы</Text>
         <ActionIcon
           component={Link}
           to={`/knowledge-base/9f64af17-a864-43b5-877a-537d2b5870f4`}
@@ -181,7 +181,7 @@ export const BookManager = () => {
     if (!uploadedImage || !croppedAreaPixels || !editingBookCover) {
       notifications.show({
         title: "Ошибка",
-        message: "Нет изображения, области обрезки или выбранной книги.",
+        message: "Нет изображения, области обрезки или выбранного произведения",
         color: "red",
       });
       return;
@@ -196,7 +196,7 @@ export const BookManager = () => {
 
       notifications.show({
         title: "Обложка обновлена",
-        message: `Обложка для книги "${editingBookCover.title}" успешно обновлена.`,
+        message: `Обложка для произведения "${editingBookCover.title}" успешно обновлена.`,
         color: "green",
       });
 
@@ -228,8 +228,8 @@ export const BookManager = () => {
       selectBook(book);
       connectToBookDatabase(book.uuid);
       notifications.show({
-        title: "Книга выбрана",
-        message: `${book.title} теперь активна`,
+        title: "Произведение выбрано",
+        message: `${book.title} теперь активно`,
       });
     }
   }
@@ -381,7 +381,7 @@ export const BookManager = () => {
   const fetchServerBooks = async () => {
     if (!token) {
       notifications.show({
-        message: "Для загрузки списка книг необходимо войти в систему",
+        message: "Для загрузки списка произведений необходимо войти в систему",
         color: "red",
       });
       return;
@@ -395,7 +395,7 @@ export const BookManager = () => {
       }
     } catch (error) {
       notifications.show({
-        message: "Ошибка при загрузке списка книг",
+        message: "Ошибка при загрузке списка произведений",
         color: "red",
       });
     } finally {
@@ -655,7 +655,7 @@ export const BookManager = () => {
       <Container style={{ position: "relative" }}>
         <LoadingOverlay visible={loading} zIndex={1000} overlayBlur={2} />
 
-        {!isMobile && <h1>Управление книгами2</h1>}
+        {!isMobile && <h1>Произведения и материалы</h1>}
         <Space h={20} />
 
         <Group mb="md" flex={1} align="center" justify="flex-start" gap={20}>
@@ -694,11 +694,16 @@ export const BookManager = () => {
         <Space h={20} />
         <Tabs value={activeTab} onChange={(value) => setActiveTab(value as "books" | "materials")}>
           <Tabs.List>
-            <Tabs.Tab value="books">Книги</Tabs.Tab>
+            <Tabs.Tab value="books">Произведения</Tabs.Tab>
             <Tabs.Tab value="materials">Материалы</Tabs.Tab>
           </Tabs.List>
 
           <Tabs.Panel value="books" pt="xs">
+            {filteredBooks.length === 0 && (
+                <Text ta="center" c="dimmed" mt="sm">
+                  Добавьте&nbsp;первое&nbsp;произведение
+                </Text>
+            )}
             <SimpleGrid cols={{ base: 1, sm: 1, lg: 1, xl: 1 }}>
               {filteredBooks.map((book) => (
                 <BookCard key={book.uuid} book={book} />
@@ -707,6 +712,11 @@ export const BookManager = () => {
           </Tabs.Panel>
 
           <Tabs.Panel value="materials" pt="xs">
+            {filteredBooks.length === 0 && (
+                <Text ta="center" c="dimmed" mt="sm">
+                  Добавьте&nbsp;первый&nbsp;материал
+                </Text>
+            )}
             <SimpleGrid cols={{ base: 1, sm: 1, lg: 1, xl: 1 }}>
               {filteredBooks.map((book) => (
                 <BookCard key={book.uuid} book={book} />
@@ -783,11 +793,11 @@ export const BookManager = () => {
         </Stack>
       </Modal>
 
-      {/* Модальное окно выбора книг с сервера */}
+      {/* Модальное окно выбора произведений с сервера */}
       <Modal
         opened={isServerBooksModalOpened}
         onClose={() => setIsServerBooksModalOpened(false)}
-        title="Выберите книгу для загрузки"
+        title="Выберите произведение для загрузки"
         size="lg"
       >
         <LoadingOverlay visible={loadingServerBooks} />
@@ -797,13 +807,13 @@ export const BookManager = () => {
           onChange={(value) => setServerBooksActiveTab(value as "books" | "materials")}
         >
           <Tabs.List>
-            <Tabs.Tab value="books">Книги</Tabs.Tab>
+            <Tabs.Tab value="books">Произведения</Tabs.Tab>
             <Tabs.Tab value="materials">Материалы</Tabs.Tab>
           </Tabs.List>
 
           <Tabs.Panel value="books" pt="xs">
             {filteredServerBooks.length === 0 && !loadingServerBooks && (
-              <Text>На сервере нет доступных книг</Text>
+              <Text>На сервере нет доступных произведений</Text>
             )}
             <SimpleGrid cols={1} spacing="md">
               {filteredServerBooks.map((book) => (

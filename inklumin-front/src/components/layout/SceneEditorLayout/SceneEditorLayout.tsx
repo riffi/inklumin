@@ -9,7 +9,7 @@ import { useUiSettingsStore } from "@/stores/uiSettingsStore/uiSettingsStore";
 export const SceneEditorLayout = () => {
   const { isNavbarOpened, toggleNavbarOpened } = useUiSettingsStore();
   const { pageTitle, titleElement } = usePageTitle();
-  // Подключаемся к базе данных выбранной книги
+  // Подключаемся к базе данных выбранного произведения
   useBookDbConnection();
   const { isMobile } = useMedia();
   const hideHeader = isMobile;

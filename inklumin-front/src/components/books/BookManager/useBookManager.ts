@@ -12,7 +12,7 @@ export const useBookManager = () => {
   const { showDialog } = useDialog();
   const { clearSelectedBook } = useBookStore();
 
-  // Получаем список книг и конфигураций из базы данных
+  // Получаем список произведений и конфигураций из базы данных
   const books = useLiveQuery<IBook[]>(() => BookRepository.getAll(configDatabase), []);
   const configurations = useLiveQuery<IBookConfiguration[]>(
     () => configDatabase.bookConfigurations.toArray(),
@@ -23,13 +23,13 @@ export const useBookManager = () => {
     const result = await BookService.saveBook(book);
     if (result.success) {
       notifications.show({
-        title: "Книга",
-        message: `Книга "${book.title}" сохранена`,
+        title: "Произведение",
+        message: `Произведение "${book.title}" сохранено`,
       });
     } else {
       notifications.show({
         title: "Ошибка",
-        message: result.message || "Не удалось сохранить книгу",
+        message: result.message || "Не удалось сохранить произведение",
         color: "red",
       });
     }
@@ -38,20 +38,20 @@ export const useBookManager = () => {
   const deleteBook = async (book: IBook) => {
     const confirm = await showDialog(
       "Подтверждение",
-      `Вы уверены, что хотите удалить книгу ${book.title}?`
+      `Вы уверены, что хотите удалить произведение ${book.title}?`
     );
     if (confirm) {
       clearSelectedBook();
       const result = await BookService.deleteBook(book);
       if (result.success) {
         notifications.show({
-          title: "Книга",
-          message: `Книга "${book.title}" удалена`,
+          title: "Произведение",
+          message: `Произведение "${book.title}" удалено`,
         });
       } else {
         notifications.show({
           title: "Ошибка",
-          message: result.message || "Не удалось удалить книгу",
+          message: result.message || "Не удалось удалить произведение",
           color: "red",
         });
       }
