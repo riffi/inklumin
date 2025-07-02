@@ -43,3 +43,24 @@ if (window.scrollY > 100) {
   header.style.background = 'rgba(255, 255, 255, 0.95)';
 }
 });
+
+// Открытие и закрытие модального окна с изображением
+const imageModal = document.getElementById('image-modal');
+const modalImg = document.getElementById('modal-image');
+const modalClose = document.getElementById('modal-close');
+const aboutImage = document.querySelector('.about-image img');
+
+aboutImage.addEventListener('click', () => {
+  imageModal.style.display = 'flex';
+  modalImg.src = aboutImage.src;
+});
+
+modalClose.addEventListener('click', () => {
+  imageModal.style.display = 'none';
+});
+
+imageModal.addEventListener('click', (e) => {
+  if (e.target === imageModal) {
+    imageModal.style.display = 'none';
+  }
+});
