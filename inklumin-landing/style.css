@@ -149,9 +149,9 @@ color: white;
 }
 
 .btn-primary:hover {
-background-color: #8e44ad;
+background-color: #357fb8;
 transform: translateY(-3px);
-box-shadow: 0 10px 20px rgba(155, 89, 182, 0.3);
+box-shadow: 0 10px 20px rgba(85, 150, 202, 0.3);
 }
 
 .btn-secondary {
