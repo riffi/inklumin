@@ -2,11 +2,12 @@
 
 В репозитории хранится исходный код сервиса **Inklumin**. Это монорепозиторий, включающий следующие независимые проекты:
 
-| Directory         | Service                  | Stack                      |
-| ----------------- |--------------------------|----------------------------|
-| **`inklumin-front`** | Фронт-энд сервиса        | React + Vite + Dexie + PWA |
-| **`inklumin-back`**  | Основной бэк-энд сервиса | Java / Spring Boot         |
-| **`inklumin-ml`**   | ML cервис                | Python / Flask             |
+| Directory              | Service                  | Stack                      |
+|------------------------|--------------------------|----------------------------|
+| **`inklumin-front`**   | Фронт-энд сервиса        | React + Vite + Dexie + PWA |
+| **`inklumin-back`**    | Основной бэк-энд сервиса | Java / Spring Boot         |
+| **`inklumin-ml`**      | ML cервис                | Python / Flask             |
+| **`inklumin-landing`** | Лендинг страница сервиса | HTML                       |
 
 ---
 
@@ -148,6 +149,8 @@ cd inklumin-back
 cd inklumin-ml
 python app.py
 ```
+### inklumin-landing
+Простая html лендинг страница, статика на nginx
 
 ## Контракт между фронтэнд и бэкэнд - openapi.yaml
 - `openapi.yaml` расположен в корне репозитория. После изменения спецификации запустите в inklumin-front
