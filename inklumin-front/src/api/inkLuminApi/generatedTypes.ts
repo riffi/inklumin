@@ -68,3 +68,14 @@ export interface ConfigDataResponse {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface SaveNotesDataRequest {
+  notesData: string;
+}
+
+export interface NotesDataResponse {
+  id: number;
+  notesData: string;
+  createdAt: string;
+  updatedAt: string;
+}

@@ -1,6 +1,7 @@
 import { INoteGroup } from "@/entities/BookEntities";
 import { configDatabase } from "@/entities/configuratorDb";
 import { generateUUID } from "@/utils/UUIDUtils";
+import { NoteMetaRepository } from "./NoteMetaRepository";
 
 const getAll = async (db: typeof configDatabase) => {
   return db.notesGroups.toArray();
@@ -43,6 +44,7 @@ const create = async (
     order: group.order ?? (await count(db)),
   };
   await db.notesGroups.add(newGroup);
+  await NoteMetaRepository.updateLocalChange();
   return newGroup;
 };
 
@@ -53,24 +55,29 @@ const update = async (db: typeof configDatabase, group: INoteGroup) => {
   const existing = await db.notesGroups.get(group.id);
   const updated = { ...existing, ...group } as INoteGroup;
   await db.notesGroups.update(group.id, updated);
+  await NoteMetaRepository.updateLocalChange();
   return updated;
 };
 
 const remove = async (db: typeof configDatabase, uuid: string) => {
   await db.notesGroups.where("uuid").equals(uuid).delete();
+  await NoteMetaRepository.updateLocalChange();
 };
 
 const deleteById = async (db: typeof configDatabase, id: number) => {
   await db.notesGroups.delete(id);
+  await NoteMetaRepository.updateLocalChange();
 };
 
 const clear = async (db: typeof configDatabase) => {
   await db.notesGroups.clear();
+  await NoteMetaRepository.updateLocalChange();
 };
 
 const bulkAdd = async (db: typeof configDatabase, groups: INoteGroup[]) => {
   if (groups && groups.length > 0) {
     await db.notesGroups.bulkAdd(groups);
+    await NoteMetaRepository.updateLocalChange();
   }
 };
 

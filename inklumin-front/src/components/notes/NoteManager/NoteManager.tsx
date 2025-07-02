@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 import {
+  IconCheck,
+  IconCloud,
+  IconCloudDown,
+  IconDownload,
   IconEdit,
   IconFolder,
   IconList,
@@ -7,6 +11,7 @@ import {
   IconPlus,
   IconQuestionMark,
   IconTrash,
+  IconUpload,
 } from "@tabler/icons-react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Link, useNavigate } from "react-router-dom";
@@ -34,15 +39,44 @@ import { NoteFolderSelector } from "@/components/notes/parts/NoteFolderSelector"
 import { NoteList } from "@/components/notes/parts/NoteList";
 import { INote, INoteGroup } from "@/entities/BookEntities";
 import { configDatabase } from "@/entities/configuratorDb";
+import { useAuth } from "@/providers/AuthProvider/AuthProvider";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 import { usePageTitle } from "@/providers/PageTitleProvider/PageTitleProvider";
 import { NoteGroupRepository } from "@/repository/Note/NoteGroupRepository";
+import { NoteMetaRepository } from "@/repository/Note/NoteMetaRepository";
+import { loadNotesFromServer, saveNotesToServer } from "@/services/noteSyncService";
 import { useBookStore } from "@/stores/bookStore/bookStore";
 import { useUiSettingsStore } from "@/stores/uiSettingsStore/uiSettingsStore";
 
 export interface NoteManagerProps {
   bookNotesMode?: boolean;
 }
+
+const getSyncStateText = (syncState: "localChanges" | "serverChanges" | "synced" | undefined) => {
+  switch (syncState) {
+    case "localChanges":
+      return "Локальные изменения";
+    case "serverChanges":
+      return "Серверные изменения";
+    case "synced":
+      return "Синхронизировано";
+    default:
+      return "Статус неизвестен";
+  }
+};
+
+const getSyncStateColor = (syncState: "localChanges" | "serverChanges" | "synced" | undefined) => {
+  switch (syncState) {
+    case "localChanges":
+      return "orange";
+    case "serverChanges":
+      return "blue";
+    case "synced":
+      return "green";
+    default:
+      return "gray";
+  }
+};
 
 export const NoteManager = ({ bookNotesMode = false }: NoteManagerProps) => {
   const { selectedBook } = useBookStore();
@@ -53,6 +87,8 @@ export const NoteManager = ({ bookNotesMode = false }: NoteManagerProps) => {
   const [currentGroup, setCurrentGroup] = useState<Partial<INoteGroup>>({});
   const [currentNote, setCurrentNote] = useState<Partial<INote>>({});
   const { isMobile } = useMedia();
+  const { user } = useAuth();
+  const token = user?.token;
 
   const {
     getTopLevelGroups,
@@ -65,6 +101,7 @@ export const NoteManager = ({ bookNotesMode = false }: NoteManagerProps) => {
   } = useNoteManager();
 
   const groups = useLiveQuery(getTopLevelGroups) || [];
+  const notesMeta = useLiveQuery(() => NoteMetaRepository.getMeta(), []);
   const allNotes =
     useLiveQuery(() => {
       if (bookNotesMode && selectedBook) {
@@ -160,6 +197,22 @@ export const NoteManager = ({ bookNotesMode = false }: NoteManagerProps) => {
     }
   };
 
+  const handleSaveToServer = async () => {
+    if (!token) {
+      notifications.show({ message: "Для сохранения на сервер необходимо войти", color: "red" });
+      return;
+    }
+    await saveNotesToServer(token);
+  };
+
+  const handleLoadFromServer = async () => {
+    if (!token) {
+      notifications.show({ message: "Для загрузки с сервера необходимо войти", color: "red" });
+      return;
+    }
+    await loadNotesFromServer(token);
+  };
+
   // Determine effective mode, forcing 'list' if bookNotesMode is true
   const effectiveNoteManagerMode = bookNotesMode ? "list" : globalNoteManagerMode;
 
@@ -207,6 +260,39 @@ export const NoteManager = ({ bookNotesMode = false }: NoteManagerProps) => {
           <Box>
             <Text size={"xl"}>Заметки: {selectedBook.title}</Text>
           </Box>
+        )}
+
+        {notesMeta && (
+          <Group gap="xs" align="center" wrap="nowrap">
+            {notesMeta.syncState === "synced" && <IconCheck size={14} color="green" />}
+            {notesMeta.syncState === "localChanges" && <IconUpload size={14} color="orange" />}
+            {notesMeta.syncState === "serverChanges" && <IconCloudDown size={14} color="blue" />}
+            <Text size="xs" c={getSyncStateColor(notesMeta.syncState)}>
+              {getSyncStateText(notesMeta.syncState)}
+            </Text>
+            {notesMeta.syncState === "localChanges" && (
+              <ActionIcon
+                size="sm"
+                variant="light"
+                color="orange"
+                onClick={handleSaveToServer}
+                title="Отправить на сервер"
+              >
+                <IconCloud size={16} />
+              </ActionIcon>
+            )}
+            {notesMeta.syncState === "serverChanges" && (
+              <ActionIcon
+                size="sm"
+                variant="light"
+                color="blue"
+                onClick={handleLoadFromServer}
+                title="Загрузить с сервера"
+              >
+                <IconDownload size={16} />
+              </ActionIcon>
+            )}
+          </Group>
         )}
 
         <Button leftSection={<IconPlus size={16} />} onClick={handleOpenAddModal}>

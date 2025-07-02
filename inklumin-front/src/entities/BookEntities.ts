@@ -118,3 +118,10 @@ export interface INote {
   bookUuid?: string;
   updatedAt?: string;
 }
+
+export interface INotesMeta {
+  id?: number;
+  localUpdatedAt?: string;
+  serverUpdatedAt?: string;
+  syncState?: "localChanges" | "serverChanges" | "synced";
+}

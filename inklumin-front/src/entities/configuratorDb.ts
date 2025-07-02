@@ -1,15 +1,15 @@
 // Определение базы данных
 import Dexie from "dexie";
 import { baseSchema, BlockAbstractDb } from "@/entities/BlockAbstractDb";
-import { IBook, INote, INoteGroup } from "@/entities/BookEntities";
+import { IBook, INote, INoteGroup, INotesMeta } from "@/entities/BookEntities";
 import { IGlobalSettings, IOpenRouterModel, IUserDocPage } from "@/entities/ConstructorEntities";
-
 
 const schema = {
   ...baseSchema,
   books: "++id, &uuid, title, author, kind, configurationUuid, chapterOnlyMode",
   notes: "++id, &uuid, title, tags, noteGroupUuid, bookUuid",
   notesGroups: "++id, &uuid, title, parentUuid, kindCode",
+  notesMeta: "id, localUpdatedAt, serverUpdatedAt, syncState",
   globalSettings: "++id",
   openRouterModels: "++id, modelName",
 };
@@ -18,12 +18,13 @@ class ConfigDatabase extends BlockAbstractDb {
   books!: Dexie.Table<IBook, number>;
   notes!: Dexie.Table<INote, number>;
   notesGroups!: Dexie.Table<INoteGroup, number>;
+  notesMeta!: Dexie.Table<INotesMeta, number>;
   globalSettings!: Dexie.Table<IGlobalSettings, number>;
   openRouterModels!: Dexie.Table<IOpenRouterModel, number>;
   userDocPages!: Dexie.Table<IUserDocPage, number>;
   constructor() {
     super("BlocksDatabase");
-    this.version(5)
+    this.version(6)
       .stores(schema)
       .upgrade(async (tx) => {
         await tx
@@ -34,6 +35,10 @@ class ConfigDatabase extends BlockAbstractDb {
               book.chapterOnlyMode = 1;
             }
           });
+        const metaExists = await tx.table("notesMeta").count();
+        if (!metaExists) {
+          await tx.table("notesMeta").add({ id: 1, syncState: "synced" });
+        }
       });
   }
 }

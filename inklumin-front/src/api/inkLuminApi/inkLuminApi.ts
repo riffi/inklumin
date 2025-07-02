@@ -7,9 +7,11 @@ import {
   BookShortInfo,
   ConfigDataResponse,
   LoginRequest,
+  NotesDataResponse,
   RegisterRequest,
   SaveBookRequest,
   SaveConfigDataRequest,
+  SaveNotesDataRequest,
 } from "./generatedTypes";
 
 // адрес API задается переменной окружения
@@ -70,6 +72,31 @@ export const inkLuminAPI = {
       headers: {
         Authorization: `Bearer ${token}`,
       },
+    });
+    return response.json();
+  },
+
+  async saveNotesData(
+    token: string,
+    notesData: Record<string, unknown>
+  ): Promise<ApiResponse<NotesDataResponse>> {
+    const payload: SaveNotesDataRequest = {
+      notesData: JSON.stringify(notesData),
+    };
+    const response = await fetch(`${API_BASE}/user/notes-data`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+    return response.json();
+  },
+
+  async getNotesData(token: string): Promise<ApiResponse<NotesDataResponse>> {
+    const response = await fetch(`${API_BASE}/user/notes-data`, {
+      headers: { Authorization: `Bearer ${token}` },
     });
     return response.json();
   },

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="6" author="conversion">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="user_notes_data"/>
+            </not>
+        </preConditions>
+        <sqlFile path="classpath:db/migration/V6__Create_user_notes_data_table.sql" />
+    </changeSet>
+</databaseChangeLog>
