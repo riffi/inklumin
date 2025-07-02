@@ -13,6 +13,7 @@ export default defineConfig(({ command }) => ({
     tsconfigPaths(),
     VitePWA({ // Ensure VitePWA is active
       registerType: 'autoUpdate',
+      disable: process.env.TAURI === 'true',
       includeAssets: [
         'favicon.ico',
         'apple-touch-icon.png',
@@ -25,6 +26,7 @@ export default defineConfig(({ command }) => ({
         short_name: 'InkLumin',
         description: 'Приложение для писателя',
         theme_color: '#ffffff',
+        version: '1.0.1',
         icons: [
           {
             src: 'pwa-192x192.png',
@@ -40,14 +42,21 @@ export default defineConfig(({ command }) => ({
       },
       workbox: {
         maximumFileSizeToCacheInBytes: 10000000,
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}']
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        // Принудительно обновлять кэш
+        skipWaiting: true,
+        clientsClaim: true,
       }
     })
     // visualizer plugin completely removed
   ].filter(Boolean),
   build: {
+    emptyOutDir: true,
     rollupOptions: {
       output: {
+        entryFileNames: '[name].[hash].js',
+        chunkFileNames: '[name].[hash].js',
+        assetFileNames: '[name].[hash].[ext]',
         manualChunks(id, { getModuleInfo }) {
           if (id.includes('node_modules')) {
             if (id.includes('/react/') || id.includes('/react-dom/')) {

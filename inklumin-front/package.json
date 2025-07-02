@@ -17,7 +17,9 @@
     "vitest:watch": "vitest",
     "test": "npm run typecheck && npm run prettier && npm run lint && npm run vitest && npm run build",
     "storybook": "storybook dev -p 6006",
-    "storybook:build": "storybook build"
+    "storybook:build": "storybook build",
+    "tauri-build": "cargo clean --manifest-path src-tauri/Cargo.toml && tauri build",
+    "tauri-dev": "tauri dev"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

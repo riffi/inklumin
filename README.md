@@ -90,6 +90,21 @@ node .yarn/releases/yarn-4.8.1.cjs build
 Или запустите скрипт `build.sh` в корне репозитория, предварительно задав переменную
 `VITE_INKLUMIN_API_URL`.
 
+
+#### Сборка приложения через Tauri
+
+##### dev
+```bash
+npm run dev
+npx tauri dev
+```
+
+##### production
+```bash
+npm run build
+npx tauri build
+```
+
 ### inklumin-back
 Бэкэнд - Spring Boot приложение, предоставляющее REST эндпоинты для авторизации и работы с пользовательскими данными.
 Часть эндпоинтов используется для проксирования запросов из front в ml
