@@ -15,10 +15,12 @@ import { DialogProvider } from "@/providers/DialogProvider/DialogProvider";
 import { MediaQueryProvider } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 import { PageTitleProvider } from "@/providers/PageTitleProvider/PageTitleProvider";
 import { useServerSync } from "@/services/bookSyncService";
+import { useNotesServerSync } from "@/services/noteSyncService";
 
 function AppContent() {
   const { user } = useAuth();
   useServerSync(user?.token);
+  useNotesServerSync(user?.token);
 
   return (
     <MantineProvider defaultColorScheme="light" datesLocale="ru">

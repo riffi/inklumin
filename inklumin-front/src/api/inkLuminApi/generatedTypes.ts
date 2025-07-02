@@ -79,3 +79,7 @@ export interface NotesDataResponse {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface NotesMetaResponse {
+  updatedAt: string;
+}

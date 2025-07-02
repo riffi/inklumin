@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.inklumin.inkluminapi.dto.ApiResponse;
 import ru.inklumin.inkluminapi.dto.NotesDataResponse;
 import ru.inklumin.inkluminapi.dto.SaveNotesDataRequest;
+import ru.inklumin.inkluminapi.dto.NotesMetaResponse;
 import ru.inklumin.inkluminapi.service.UserNotesDataService;
 
 @RestController
@@ -59,6 +60,25 @@ public class NotesDataController {
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body(new ApiResponse(false, "An error occurred while retrieving notes data"));
+    }
+  }
+
+  @GetMapping("/notes-meta")
+  public ResponseEntity<?> getNotesMeta(Authentication authentication) {
+    try {
+      Long userId = (Long) authentication.getPrincipal();
+      String updatedAt = userNotesDataService.getNotesUpdatedAt(userId);
+      NotesMetaResponse response = new NotesMetaResponse(updatedAt);
+      return ResponseEntity.ok(new ApiResponse(true, "Notes meta retrieved", response));
+    } catch (RuntimeException e) {
+      if (e.getMessage().equals("Notes data not found for user")) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(new ApiResponse(false, "No notes data found for user"));
+      }
+      return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(new ApiResponse(false, "An error occurred while retrieving notes meta"));
     }
   }
 }

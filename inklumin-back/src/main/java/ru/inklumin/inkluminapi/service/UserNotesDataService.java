@@ -42,6 +42,13 @@ public class UserNotesDataService {
     return convertToResponse(data);
   }
 
+  public String getNotesUpdatedAt(Long userId) {
+    UserNotesData data = userNotesDataRepository.findLatestByUserId(userId)
+        .orElseThrow(() -> new RuntimeException("Notes data not found for user"));
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    return data.getUpdatedAt().format(formatter);
+  }
+
   private NotesDataResponse convertToResponse(UserNotesData data) {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     return new NotesDataResponse(

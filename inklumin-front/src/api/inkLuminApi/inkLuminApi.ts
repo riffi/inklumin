@@ -8,6 +8,7 @@ import {
   ConfigDataResponse,
   LoginRequest,
   NotesDataResponse,
+  NotesMetaResponse,
   RegisterRequest,
   SaveBookRequest,
   SaveConfigDataRequest,
@@ -96,6 +97,13 @@ export const inkLuminAPI = {
 
   async getNotesData(token: string): Promise<ApiResponse<NotesDataResponse>> {
     const response = await fetch(`${API_BASE}/user/notes-data`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.json();
+  },
+
+  async getNotesMeta(token: string): Promise<ApiResponse<NotesMetaResponse>> {
+    const response = await fetch(`${API_BASE}/user/notes-meta`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.json();
