@@ -17,3 +17,8 @@ hola:
   label: Hola
   permalink: /hola
   description: Hola tag description
+
+base:
+  label: Общее
+  permalink: /main
+  description: Общие посты
