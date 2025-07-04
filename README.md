@@ -161,6 +161,9 @@ python app.py
   Результаты генерации (`inkLuminApi.ts` и `generatedTypes.ts`) появятся в каталоге
   `inklumin-front/src/api/inkLuminApi`.
 
+## Функции пориложения
+Описаны в `/docs/features.md`
+
 ## Недостающая документация
 
 - Требуется описание настройки базы данных и схемы миграций для `inklumin-back`.
