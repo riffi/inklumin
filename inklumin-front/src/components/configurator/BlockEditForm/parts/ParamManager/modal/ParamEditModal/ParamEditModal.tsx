@@ -105,7 +105,7 @@ export const ParamEditModal = (props: IBlockEditModalProps) => {
 
   return (
     <Modal
-      title={props.initialData?.uuid ? "Редактирование параметра" : "Создание нового параметра"}
+      title={props.initialData?.uuid ? "Редактирование свойства" : "Создание нового свойства"}
       opened={props.isOpen}
       onClose={props.onClose}
       size="lg"

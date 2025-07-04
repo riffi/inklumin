@@ -88,7 +88,7 @@ export const ParamTable = ({
         mb="md"
         className={classes.addButton}
       >
-        Добавить параметр
+        Добавить
       </Button>
 
       <Table striped highlightOnHover className={classes.table}>
@@ -219,7 +219,7 @@ export const ParamTable = ({
             <Table.Tr>
               <Table.Td colSpan={4}>
                 <Text c="dimmed" ta="center" py="md" size="sm">
-                  Нет добавленных параметров
+                  Нет добавленных свойств
                 </Text>
               </Table.Td>
             </Table.Tr>

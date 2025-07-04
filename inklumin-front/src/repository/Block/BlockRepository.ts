@@ -5,10 +5,12 @@ import { BlockAbstractDb } from "@/entities/BlockAbstractDb";
 import { BookDB, bookDb } from "@/entities/bookDb";
 import {
   IBlock,
-  IBlockParameter, // Restored
+  IBlockParameter,
   IBlockParameterDataType,
-  IBlockParameterPossibleValue, // Restored
-  IBlockRelation /* IBlockTabKind, */,
+  IBlockParameterPossibleValue,
+  IBlockParameterGroup,
+  IBlockTab,
+  IBlockRelation,
   IBlockStructureKind,
   IBlockTitleForms,
 } from "@/entities/ConstructorEntities";
@@ -34,6 +36,81 @@ const getSiblings = async (db: BlockAbstractDb, block: IBlock) => {
     })
     .filter((b) => b.uuid !== block.uuid)
     .toArray();
+};
+
+const getBlocksByConfiguration = async (
+  db: BlockAbstractDb,
+  configurationUuid: string
+) => {
+  return db.blocks.where({ configurationUuid }).toArray();
+};
+
+const bulkAddBlocks = async (db: BlockAbstractDb, blocks: IBlock[]) => {
+  await db.blocks.bulkAdd(blocks);
+};
+
+const getParameterGroupsByBlock = async (
+  db: BlockAbstractDb,
+  blockUuid: string
+) => {
+  return db.blockParameterGroups.where({ blockUuid }).toArray();
+};
+
+const bulkAddParameterGroups = async (
+  db: BlockAbstractDb,
+  groups: IBlockParameterGroup[]
+) => {
+  await db.blockParameterGroups.bulkAdd(groups);
+};
+
+const getParametersByGroup = async (
+  db: BlockAbstractDb,
+  groupUuid: string
+) => {
+  return db.blockParameters.where({ groupUuid }).toArray();
+};
+
+const bulkAddParameters = async (
+  db: BlockAbstractDb,
+  params: IBlockParameter[]
+) => {
+  await db.blockParameters.bulkAdd(params);
+};
+
+const getPossibleValuesByParameter = async (
+  db: BlockAbstractDb,
+  parameterUuid: string
+) => {
+  return db.blockParameterPossibleValues.where({ parameterUuid }).toArray();
+};
+
+const bulkAddPossibleValues = async (
+  db: BlockAbstractDb,
+  values: IBlockParameterPossibleValue[]
+) => {
+  await db.blockParameterPossibleValues.bulkAdd(values);
+};
+
+const getTabsByBlock = async (db: BlockAbstractDb, blockUuid: string) => {
+  return db.blockTabs.where({ blockUuid }).toArray();
+};
+
+const bulkAddTabs = async (db: BlockAbstractDb, tabs: IBlockTab[]) => {
+  await db.blockTabs.bulkAdd(tabs);
+};
+
+const getRelationsByConfiguration = async (
+  db: BlockAbstractDb,
+  configurationUuid: string
+) => {
+  return db.blocksRelations.where({ configurationUuid }).toArray();
+};
+
+const bulkAddRelations = async (
+  db: BlockAbstractDb,
+  relations: IBlockRelation[]
+) => {
+  await db.blocksRelations.bulkAdd(relations);
 };
 
 // Создание блока
@@ -219,6 +296,18 @@ export const BlockRepository = {
   getByUuidList,
   getChildren,
   getSiblings,
+  getBlocksByConfiguration,
+  bulkAddBlocks,
+  getParameterGroupsByBlock,
+  bulkAddParameterGroups,
+  getParametersByGroup,
+  bulkAddParameters,
+  getPossibleValuesByParameter,
+  bulkAddPossibleValues,
+  getTabsByBlock,
+  bulkAddTabs,
+  getRelationsByConfiguration,
+  bulkAddRelations,
   // getParameterGroups, // Moved
   // getParamsByGroup, // Moved
   // getGroupByUuid, // Moved

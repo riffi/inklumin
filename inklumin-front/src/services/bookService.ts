@@ -5,6 +5,7 @@ import { IBlock, IBlockStructureKind, IBookConfiguration } from "@/entities/Cons
 import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";
 import { BlockParameterInstanceRepository } from "@/repository/BlockInstance/BlockParameterInstanceRepository";
 import { BookRepository } from "@/repository/Book/BookRepository";
+import { BlockRepository } from "@/repository/Block/BlockRepository";
 import { generateUUID } from "@/utils/UUIDUtils";
 
 export interface ServiceResult<T = any> {
@@ -14,31 +15,38 @@ export interface ServiceResult<T = any> {
 }
 
 async function getBookConfiguration(configurationUuid: string) {
-  return configDatabase.bookConfigurations.where({ uuid: configurationUuid }).first();
+  return BookRepository.getConfiguration(configDatabase, configurationUuid);
 }
 
 async function copyParameterPossibleValues(parameterUuid: string) {
-  const possibleValues = await configDatabase.blockParameterPossibleValues
-    .where({ parameterUuid })
-    .toArray();
-  await bookDb.blockParameterPossibleValues.bulkAdd(possibleValues);
+  const possibleValues = await BlockRepository.getPossibleValuesByParameter(
+    configDatabase,
+    parameterUuid
+  );
+  await BlockRepository.bulkAddPossibleValues(bookDb, possibleValues);
 }
 
 async function copyBlockParameters(groupUuid: string) {
-  const parameters = await configDatabase.blockParameters.where({ groupUuid }).toArray();
-  await bookDb.blockParameters.bulkAdd(parameters);
+  const parameters = await BlockRepository.getParametersByGroup(
+    configDatabase,
+    groupUuid
+  );
+  await BlockRepository.bulkAddParameters(bookDb, parameters);
   await Promise.all(parameters.map((p) => copyParameterPossibleValues(p.uuid!)));
 }
 
 async function copyBlockParameterGroups(blockUuid: string) {
-  const parameterGroups = await configDatabase.blockParameterGroups.where({ blockUuid }).toArray();
-  await bookDb.blockParameterGroups.bulkAdd(parameterGroups);
+  const parameterGroups = await BlockRepository.getParameterGroupsByBlock(
+    configDatabase,
+    blockUuid
+  );
+  await BlockRepository.bulkAddParameterGroups(bookDb, parameterGroups);
   await Promise.all(parameterGroups.map((g) => copyBlockParameters(g.uuid!)));
 }
 
 async function copyBlockTabs(blockUuid: string) {
-  const tabs = await configDatabase.blockTabs.where({ blockUuid }).toArray();
-  await bookDb.blockTabs.bulkAdd(tabs);
+  const tabs = await BlockRepository.getTabsByBlock(configDatabase, blockUuid);
+  await BlockRepository.bulkAddTabs(bookDb, tabs);
 }
 
 async function createSingleInstance(block: IBlock) {
@@ -49,13 +57,14 @@ async function createSingleInstance(block: IBlock) {
 }
 
 async function copyBlocks(oldConfigurationUuid: string, newConfigurationUuid: string) {
-  const blocks = await configDatabase.blocks
-    .where({ configurationUuid: oldConfigurationUuid })
-    .toArray();
+  const blocks = await BlockRepository.getBlocksByConfiguration(
+    configDatabase,
+    oldConfigurationUuid
+  );
   blocks.forEach((b) => {
     b.configurationUuid = newConfigurationUuid;
   });
-  await bookDb.blocks.bulkAdd(blocks);
+  await BlockRepository.bulkAddBlocks(bookDb, blocks);
   await Promise.all(
     blocks.map((block) =>
       Promise.all([copyBlockParameterGroups(block.uuid!), copyBlockTabs(block.uuid!)])
@@ -65,13 +74,14 @@ async function copyBlocks(oldConfigurationUuid: string, newConfigurationUuid: st
 }
 
 async function copyBlockRelations(oldConfigurationUuid: string, newConfigurationUuid: string) {
-  const relations = await configDatabase.blocksRelations
-    .where({ configurationUuid: oldConfigurationUuid })
-    .toArray();
+  const relations = await BlockRepository.getRelationsByConfiguration(
+    configDatabase,
+    oldConfigurationUuid
+  );
   relations.forEach((r) => {
     r.configurationUuid = newConfigurationUuid;
   });
-  await bookDb.blocksRelations.bulkAdd(relations);
+  await BlockRepository.bulkAddRelations(bookDb, relations);
 }
 
 async function copyUserDocPages(oldConfigurationUuid: string, newConfigurationUuid: string) {
@@ -86,7 +96,7 @@ async function copyUserDocPages(oldConfigurationUuid: string, newConfigurationUu
 
 async function copyConfigurationToBookDb(configuration: IBookConfiguration, isNew = false) {
   const newConfigurationUuid = generateUUID();
-  await bookDb.bookConfigurations.add({ ...configuration, uuid: newConfigurationUuid });
+  await BookRepository.addConfiguration(bookDb, { ...configuration, uuid: newConfigurationUuid });
   if (!isNew) {
     await copyBlocks(configuration.uuid!, newConfigurationUuid);
     await copyBlockRelations(configuration.uuid!, newConfigurationUuid);

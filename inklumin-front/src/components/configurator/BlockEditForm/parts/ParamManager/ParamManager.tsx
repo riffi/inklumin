@@ -87,14 +87,14 @@ export const ParamManager = ({ blockUuid, bookUuid, useTabs, otherBlocks }: Para
         const updatedParam = { ...paramToMove, groupUuid: targetGroupUuid };
         await saveParam(updatedParam); // saveParam из useBlockParams
         notifications.show({
-          title: "Параметр перемещен",
-          message: `Параметр "${paramToMove.title}" успешно перемещен.`,
+          title: "Свойство перемещено",
+          message: `Свойство "${paramToMove.title}" успешно перемещено`,
           color: "green",
         });
       } else {
         notifications.show({
           title: "Ошибка",
-          message: "Не удалось найти параметр для перемещения.",
+          message: "Не удалось найти свойство для перемещения",
           color: "red",
         });
       }
