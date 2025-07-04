@@ -1,11 +1,11 @@
 import { ReactNode } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { UserDocViewer } from "@/components/userDoc/UserDocViewer";
 import { BaseLayout } from "@/components/layout/BaseLayout/BaseLayout";
 import { SceneEditorLayout } from "@/components/layout/SceneEditorLayout/SceneEditorLayout";
 import { NoteEditPage } from "@/components/notes/NoteEditPage/NoteEditPage";
 import { NoteFolder } from "@/components/notes/NoteFolder/NoteFolder";
 import { NoteManager } from "@/components/notes/NoteManager/NoteManager";
+import { UserDocViewer } from "@/components/userDoc/UserDocViewer";
 import { BlockInstanceManagerPage } from "@/pages/books/BlockInstanceManagerPage";
 import { BlockInstancePage } from "@/pages/books/BlockInstancePage";
 import { BookAgentPage } from "@/pages/books/BookAgentPage";
@@ -16,11 +16,12 @@ import { BooksPage } from "@/pages/books/BooksPage";
 import { BlockCard } from "@/pages/configurator/BlockCard";
 import { ConfigurationCard } from "@/pages/configurator/ConfigurationCard";
 import { Configurator } from "@/pages/configurator/Configurator";
+import { DocViewerPage } from "@/pages/docs/DocViewerPage";
+import { IndexPage } from "@/pages/IndexPage";
 import { SceneCard } from "@/pages/scenes/SceneCard";
 import { ScenesPage } from "@/pages/scenes/ScenesPage";
 import { SettingsPage } from "@/pages/settings/SettingsPage";
 import { DbViewer } from "@/pages/tech/DbViewer";
-import { DocViewerPage } from "@/pages/docs/DocViewerPage";
 
 const router = createBrowserRouter([
   {
@@ -45,7 +46,7 @@ const router = createBrowserRouter([
       },
       {
         index: true,
-        element: (<BooksPage />) as ReactNode,
+        element: (<IndexPage />) as ReactNode,
       },
       {
         path: "/book/dashboard",

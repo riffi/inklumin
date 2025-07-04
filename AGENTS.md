@@ -8,8 +8,6 @@ This repository is a monorepo with several independent projects.
   ```bash
   cd inklumin-front
   yarn prettier
-  yarn lint
-  yarn vitest
   ```
   `yarn test` can be used instead if a full build is required.
 - There are currently no automated tests for `inklumin-back` or `inklumin-ml`.
