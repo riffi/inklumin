@@ -26,7 +26,8 @@
    задав переменную `INKLUMIN_API_URL` в `docker-compose.yml`.
 2. Фронтенд будет доступен по адресу http://localhost,
    API — на http://localhost:8080,
-   сервис ML — на http://localhost:5123.
+   сервис ML — на http://localhost:5123,
+   документация — на http://localhost:3000.
 
 Остановить сервисы можно командой `docker compose down`.
 
@@ -157,6 +158,7 @@ cd inklumin-docs
 yarn install
 yarn start
 ```
+Также сервис можно поднять через Docker Compose и он будет доступен на порту 3000.
 
 ## Контракт между фронтэнд и бэкэнд - openapi.yaml
 - `openapi.yaml` расположен в корне репозитория. После изменения спецификации запустите в inklumin-front

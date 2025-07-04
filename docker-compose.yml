@@ -36,6 +36,13 @@ services:
       - back
     ports:
       - "8081:80"
+
+  docs:
+    build:
+      context: ./inklumin-docs
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
 volumes:
   db-data:
 
