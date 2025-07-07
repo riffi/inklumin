@@ -14,7 +14,7 @@ import {
   IconUpload,
 } from "@tabler/icons-react";
 import { useLiveQuery } from "dexie-react-hooks";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   ActionIcon,
   Badge,
@@ -41,7 +41,7 @@ import { INote, INoteGroup } from "@/entities/BookEntities";
 import { configDatabase } from "@/entities/configuratorDb";
 import { useAuth } from "@/providers/AuthProvider/AuthProvider";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
-import { usePageTitle } from "@/providers/PageTitleProvider/PageTitleProvider";
+import { useMobileHeader } from "@/providers/PageTitleProvider/MobileHeaderProvider";
 import { NoteGroupRepository } from "@/repository/Note/NoteGroupRepository";
 import { NoteMetaRepository } from "@/repository/Note/NoteMetaRepository";
 import { loadNotesFromServer, saveNotesToServer } from "@/services/noteSyncService";
@@ -111,24 +111,20 @@ export const NoteManager = ({ bookNotesMode = false }: NoteManagerProps) => {
     }, [bookNotesMode, selectedBook, getAllNotes]) || [];
 
   const navigate = useNavigate();
-  const { setTitleElement } = usePageTitle();
+  const { setHeader } = useMobileHeader();
 
   useEffect(() => {
-    const header = (
-      <Group gap="xs">
-        <Text fw={500}>Заметки</Text>
-        <ActionIcon
-          component={Link}
-          to={`/knowledge-base/b1fa9a49-88aa-4d5e-932d-f9234f6a0a4c`}
-          variant="subtle"
-          title="Справка"
-        >
-          <IconQuestionMark size="1rem" />
-        </ActionIcon>
-      </Group>
-    );
-    setTitleElement(header);
-    return () => setTitleElement(null);
+    setHeader({
+      title: "Заметки",
+      actions: [
+        {
+          title: "Справка",
+          icon: <IconQuestionMark size="1rem" />,
+          handler: () => navigate("/knowledge-base/b1fa9a49-88aa-4d5e-932d-f9234f6a0a4c"),
+        },
+      ],
+    });
+    return () => setHeader(null);
   }, []);
 
   const handleGroupSubmit = async () => {

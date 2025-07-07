@@ -39,7 +39,7 @@ import { IBlockInstance } from "@/entities/BookEntities";
 import { IBlockParameterDataType, IBlockStructureKind } from "@/entities/ConstructorEntities";
 import { useDialog } from "@/providers/DialogProvider/DialogProvider";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
-import { usePageTitle } from "@/providers/PageTitleProvider/PageTitleProvider";
+import { useMobileHeader } from "@/providers/PageTitleProvider/MobileHeaderProvider";
 import { BlockParameterInstanceRepository } from "@/repository/BlockInstance/BlockParameterInstanceRepository";
 import {
   BlockInstanceSortType,
@@ -105,7 +105,7 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
 
   const navigate = useNavigate();
   const { showDialog } = useDialog();
-  const { setPageTitle, setTitleElement } = usePageTitle();
+  const { setHeader } = useMobileHeader();
 
   const header = (
     <Group>
@@ -132,9 +132,12 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
 
   useEffect(() => {
     if (block) {
-      setTitleElement(header);
-      setPageTitle(getBlockTitle(block));
+      setHeader({
+        title: getBlockTitle(block),
+        icon: block.icon,
+      });
     }
+    return () => setHeader(null);
   }, [block]);
 
   const handleAddClick = () => {

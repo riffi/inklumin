@@ -15,7 +15,7 @@ import {
 } from "@tabler/icons-react";
 import Cropper from "react-easy-crop";
 import { Area, Point } from "react-easy-crop/types";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   ActionIcon,
   Box,
@@ -44,7 +44,7 @@ import { connectToBookDatabase } from "@/entities/bookDb";
 import { IBook } from "@/entities/BookEntities";
 import { useAuth } from "@/providers/AuthProvider/AuthProvider";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
-import { usePageTitle } from "@/providers/PageTitleProvider/PageTitleProvider";
+import { useMobileHeader } from "@/providers/PageTitleProvider/MobileHeaderProvider";
 import { loadBookFromServer, saveBookToServer } from "@/services/bookSyncService";
 import { useBookStore } from "@/stores/bookStore/bookStore";
 import {
@@ -127,26 +127,22 @@ export const BookManager = () => {
   const { isMobile } = useMedia();
   const token = user?.token;
   const navigate = useNavigate();
-  const { setTitleElement } = usePageTitle();
+  const { setHeader } = useMobileHeader();
 
   const { books, configurations, saveBook, deleteBook, refreshBooks } = useBookManager();
 
   useEffect(() => {
-    const header = (
-      <Group gap="xs">
-        <Text fw={500}>Произведения и материалы</Text>
-        <ActionIcon
-          component={Link}
-          to={`/knowledge-base/9f64af17-a864-43b5-877a-537d2b5870f4`}
-          variant="subtle"
-          title="Справка"
-        >
-          <IconQuestionMark size="1rem" />
-        </ActionIcon>
-      </Group>
-    );
-    setTitleElement(header);
-    return () => setTitleElement(null);
+    setHeader({
+      title: "Произведения и материалы",
+      actions: [
+        {
+          title: "Справка",
+          icon: <IconQuestionMark size="1rem" />,
+          handler: () => navigate("/knowledge-base/9f64af17-a864-43b5-877a-537d2b5870f4"),
+        },
+      ],
+    });
+    return () => setHeader(null);
   }, []);
 
   useEffect(() => {

@@ -16,7 +16,7 @@ import {
   IconTriangleInvertedFilled,
   IconX,
 } from "@tabler/icons-react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   ActionIcon,
   Box,
@@ -39,7 +39,7 @@ import { bookDb } from "@/entities/bookDb";
 import { IChapter, ISceneWithInstances } from "@/entities/BookEntities";
 import { IBlock } from "@/entities/ConstructorEntities";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
-import { usePageTitle } from "@/providers/PageTitleProvider/PageTitleProvider";
+import { useMobileHeader } from "@/providers/PageTitleProvider/MobileHeaderProvider";
 import { BlockRepository } from "@/repository/Block/BlockRepository";
 import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";
 import { useBookStore } from "@/stores/bookStore/bookStore";
@@ -61,7 +61,7 @@ export interface SceneManagerProps {
 export const SceneManager = (props: SceneManagerProps) => {
   const theme = useMantineTheme();
 
-  const { setTitleElement } = usePageTitle();
+  const { setHeader } = useMobileHeader();
   const [openedCreateModal, { open: openCreateModal, close: closeCreateModal }] =
     useDisclosure(false);
   const [openedChapterModal, { open: openChapterModal, close: closeChapterModal }] =
@@ -240,21 +240,18 @@ export const SceneManager = (props: SceneManagerProps) => {
   );
 
   useEffect(() => {
-    const header = (
-      <Group gap="xs" justify={"space-between"}>
-        {actionPanel}
-        <ActionIcon
-          component={Link}
-          to={`/knowledge-base/35683308-29ea-4e37-b3b6-1ad3fe7a9053`}
-          variant="subtle"
-          title="Справка"
-        >
-          <IconQuestionMark size="1rem" />
-        </ActionIcon>
-      </Group>
-    );
-    setTitleElement(header);
-    return () => setTitleElement(null);
+    setHeader({
+      title: props.chapterOnly ? "Главы" : "Главы и сцены",
+      actions: [
+        {
+          title: "Справка",
+          icon: <IconQuestionMark size="1rem" />,
+          handler: () => navigate("/knowledge-base/35683308-29ea-4e37-b3b6-1ad3fe7a9053"),
+        },
+      ],
+      icon: undefined,
+    });
+    return () => setHeader(null);
   }, []);
 
   return (

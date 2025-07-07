@@ -20,7 +20,7 @@ import { RichEditor } from "@/components/shared/RichEditor/RichEditor";
 import { IBook, INote, INoteGroup } from "@/entities/BookEntities"; // Corrected INotesGroup to INoteGroup
 import { configDatabase } from "@/entities/configuratorDb";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
-import { usePageTitle } from "@/providers/PageTitleProvider/PageTitleProvider";
+import { useMobileHeader } from "@/providers/PageTitleProvider/MobileHeaderProvider";
 import { BookRepository } from "@/repository/Book/BookRepository";
 import { NoteGroupRepository } from "@/repository/Note/NoteGroupRepository";
 import { NoteRepository } from "@/repository/Note/NoteRepository";
@@ -38,7 +38,7 @@ export const NoteEditPage = () => {
   const [showBookSelect, setShowBookSelect] = useState(false);
   const { isMobile } = useMedia();
   const [drawerOpened, setDrawerOpened] = useState(false);
-  const { setTitleElement } = usePageTitle(); // Removed setPageTitle as it's not used directly
+  const { setHeader } = useMobileHeader();
 
   useEffect(() => {
     const loadNoteAndBooks = async () => {
@@ -83,35 +83,24 @@ export const NoteEditPage = () => {
   // Управление заголовком через эффект
   useEffect(() => {
     if (note && isMobile) {
-      const headerElement = (
-        <Group justify="space-between" align="flex-end" flex={2} flexShrink={1}>
-          <div
-            style={{
-              flexGrow: 1,
-              marginLeft: 10,
-            }}
-          >
-            {note.title}
-          </div>
-          <ActionIcon
-            flexShrink={0}
-            variant="subtle"
-            color={"gray"}
-            onClick={() => setDrawerOpened(true)}
-          >
-            <IconSettings size={32} />
-          </ActionIcon>
-        </Group>
-      );
-      setTitleElement(headerElement);
+      setHeader({
+        title: note.title,
+        actions: [
+          {
+            title: "Настройки",
+            icon: <IconSettings size={32} />,
+            handler: () => setDrawerOpened(true),
+          },
+        ],
+      });
     } else {
-      setTitleElement(null);
+      setHeader(null);
     }
 
     return () => {
-      setTitleElement(null); // Очистка при размонтировании
+      setHeader(null); // Очистка при размонтировании
     };
-  }, [note, isMobile]); // Added setTitleElement to deps
+  }, [note, isMobile]);
 
   const persistNote = useCallback(
     async (updatedFields: Partial<INote>) => {

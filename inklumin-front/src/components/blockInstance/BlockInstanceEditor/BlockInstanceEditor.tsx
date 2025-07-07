@@ -42,7 +42,7 @@ import { UserDocViewer } from "@/components/userDoc/UserDocViewer";
 import { bookDb } from "@/entities/bookDb";
 import { IBlock, IBlockStructureKind, IBlockTabKind } from "@/entities/ConstructorEntities";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
-import { usePageTitle } from "@/providers/PageTitleProvider/PageTitleProvider";
+import { useMobileHeader } from "@/providers/PageTitleProvider/MobileHeaderProvider";
 import { UserDocRepository } from "@/repository/UserDocRepository";
 import { useBookStore } from "@/stores/bookStore/bookStore";
 import { useUiSettingsStore } from "@/stores/uiSettingsStore/uiSettingsStore";
@@ -65,7 +65,7 @@ export const BlockInstanceEditor = (props: IBlockInstanceEditorProps) => {
   const { selectedBook } = useBookStore();
   const { blockInstanceViewMode, setBlockInstanceViewMode } = useUiSettingsStore();
 
-  const { setTitleElement } = usePageTitle();
+  const { setHeader } = useMobileHeader();
 
   const {
     blockInstance,
@@ -117,9 +117,22 @@ export const BlockInstanceEditor = (props: IBlockInstanceEditorProps) => {
 
   useEffect(() => {
     if (block) {
-      setTitleElement(header);
+      setHeader({
+        title: blockInstance?.title || "",
+        icon: blockInstance?.icon ?? block?.icon,
+        actions: userDocPage
+          ? [
+              {
+                title: "Статья",
+                icon: <IconQuestionMark size={isMobile ? "1rem" : "1.2rem"} />,
+                handler: () => setKbDrawerOpen(true),
+              },
+            ]
+          : undefined,
+      });
     }
-  }, [block, blockInstance]);
+    return () => setHeader(null);
+  }, [block, blockInstance, userDocPage, isMobile]);
 
   const getTabs = () => {
     if (!blockTabs) return [{ label: "Параметры", value: "params" }];

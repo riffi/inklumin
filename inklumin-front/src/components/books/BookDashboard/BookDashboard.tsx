@@ -4,11 +4,11 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { Container, Group, SimpleGrid, Title } from "@mantine/core";
 import { DashboardBlockCard } from "@/components/books/BookDashboard/parts/DashboardBlockCard";
 import { bookDb } from "@/entities/bookDb";
-import { usePageTitle } from "@/providers/PageTitleProvider/PageTitleProvider";
+import { useMobileHeader } from "@/providers/PageTitleProvider/MobileHeaderProvider";
 import { BlockRepository } from "@/repository/Block/BlockRepository";
 
 export const BookDashboard = (bookUuid: string) => {
-  const { setPageTitle } = usePageTitle();
+  const { setHeader } = useMobileHeader();
   const blocks = useLiveQuery(async () => {
     if (!bookUuid) return [];
     return BlockRepository.getAll(bookDb);
@@ -17,7 +17,9 @@ export const BookDashboard = (bookUuid: string) => {
   const notChildBlocks = blocks?.filter((block) => block.parentBlockUuid == null);
 
   useEffect(() => {
-    setPageTitle(`Рабочий стол`);
+    setHeader({
+      title: `Рабочий стол`
+    });
   }, [bookUuid]);
 
   return (

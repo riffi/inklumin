@@ -16,7 +16,7 @@ import { ParamManager } from "@/components/configurator/BlockEditForm/parts/Para
 import { RelationManager } from "@/components/configurator/BlockEditForm/parts/RelationManager/RelationManager";
 import { useBlockEditForm } from "@/components/configurator/BlockEditForm/useBlockEditForm";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
-import { usePageTitle } from "@/providers/PageTitleProvider/PageTitleProvider";
+import { useMobileHeader } from "@/providers/PageTitleProvider/MobileHeaderProvider";
 import { getBlockTitle } from "@/utils/configUtils";
 import { BlockEditTab, blockEditTabOptions } from "./BlockEditTabs";
 import classes from "./BlockEditForm.module.css";
@@ -28,7 +28,7 @@ interface IBlockEditFormProps {
 
 export const BlockEditForm = ({ blockUuid, bookUuid }: IBlockEditFormProps) => {
   const { isMobile } = useMedia();
-  const { setPageTitle } = usePageTitle();
+  const { setHeader } = useMobileHeader();
   const [activeTab, setActiveTab] = useState<BlockEditTab>(BlockEditTab.main);
   const handleTabChange = useCallback((value: string) => setActiveTab(value as BlockEditTab), []);
 
@@ -38,7 +38,9 @@ export const BlockEditForm = ({ blockUuid, bookUuid }: IBlockEditFormProps) => {
   );
 
   useEffect(() => {
-    setPageTitle(getBlockTitle(block));
+    setHeader({
+     title: getBlockTitle(block)
+    });
   }, [blockUuid, block]);
 
   const breadCrumbs = useMemo(

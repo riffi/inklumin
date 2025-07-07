@@ -7,7 +7,7 @@ import {
   IconTablePlus,
   IconTrash,
 } from "@tabler/icons-react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   ActionIcon,
   Anchor,
@@ -25,7 +25,7 @@ import { notifications } from "@mantine/notifications";
 import { ConfigurationEditModal } from "@/components/configurator/BookConfigurationManager/ConfigurationEditModal/ConfigurationEditModal";
 import { configDatabase } from "@/entities/configuratorDb";
 import { IBookConfiguration } from "@/entities/ConstructorEntities";
-import { usePageTitle } from "@/providers/PageTitleProvider/PageTitleProvider";
+import { useMobileHeader } from "@/providers/PageTitleProvider/MobileHeaderProvider";
 import { exportConfiguration } from "@/utils/configurationBackupManager";
 import { useConfigurationManager } from "./useConfigurationManager";
 
@@ -46,7 +46,7 @@ export const BookConfigurationManager = () => {
   const [isModalOpened, setIsModalOpened] = useState<boolean>(false);
   const [currentBookConfiguration, setCurrentBookConfiguration] =
     useState<IBookConfiguration>(getBlackConfiguration());
-  const { setTitleElement } = usePageTitle();
+  const { setHeader } = useMobileHeader();
 
   const breadCrumbs = [{ title: "Конфигуратор", href: "/configurator" }].map((item, index) => (
     <Anchor href={item.href} key={index}>
@@ -55,16 +55,17 @@ export const BookConfigurationManager = () => {
   ));
 
   useEffect(() => {
-    const header = (
-      <Group gap="xs">
-        <Text fw={500}>Конфигуратор</Text>
-        <ActionIcon component={Link} variant="subtle" title="Справка" to={`/docs/configurator`}>
-          <IconQuestionMark size="1rem" />
-        </ActionIcon>
-      </Group>
-    );
-    setTitleElement(header);
-    return () => setTitleElement(null);
+    setHeader({
+      title: "Конфигуратор",
+      actions: [
+        {
+          title: "Справка",
+          icon: <IconQuestionMark size="1rem" />,
+          handler: () => navigate("/docs/configurator"),
+        },
+      ],
+    });
+    return () => setHeader(null);
   }, []);
 
   // Обработчик экспорта

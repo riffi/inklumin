@@ -17,8 +17,8 @@ import { bookDb } from "@/entities/bookDb";
 import { IBlockParameterInstance } from "@/entities/BookEntities";
 // import {BlockRepository} from "@/repository/Block/BlockRepository"; // Unused
 import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";
+import { useBookStore } from "@/stores/bookStore/bookStore";
 import { relationUtils } from "@/utils/relationUtils";
-import {useBookStore} from "@/stores/bookStore/bookStore";
 
 export interface ParameterRendererProps {
   dataType: string;

@@ -3,12 +3,12 @@ import { AppShell, Burger, Group, Text } from "@mantine/core";
 import { NavbarNested } from "@/components/layout/NavbarNested/NavbarNested";
 import { useBookDbConnection } from "@/hooks/useBookDbConnection";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
-import { usePageTitle } from "@/providers/PageTitleProvider/PageTitleProvider";
+import { useMobileHeader } from "@/providers/PageTitleProvider/MobileHeaderProvider";
 import { useUiSettingsStore } from "@/stores/uiSettingsStore/uiSettingsStore";
 
 export const SceneEditorLayout = () => {
   const { isNavbarOpened, toggleNavbarOpened } = useUiSettingsStore();
-  const { pageTitle, titleElement } = usePageTitle();
+  const { pageTitle, titleElement } = useMobileHeader();
   // Подключаемся к базе данных выбранного произведения
   useBookDbConnection();
   const { isMobile } = useMedia();
