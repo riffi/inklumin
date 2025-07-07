@@ -66,7 +66,7 @@ export const useBookConfigurationEditForm = (
     );
     if (!result || !block.uuid) return;
     if (isBookDb) {
-      await BlockInstanceRepository.removeByBlock(bookDb, block.uuid);
+      await BlockInstanceRepository.removeByBlock(db, block.uuid);
     }
     await BlockRepository.remove(db, block);
   };

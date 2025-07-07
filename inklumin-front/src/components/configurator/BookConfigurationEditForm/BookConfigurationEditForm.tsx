@@ -18,6 +18,7 @@ import {
   Text,
   Title,
 } from "@mantine/core";
+import { IconViewer } from "@/components/shared/IconViewer/IconViewer";
 import { BlockEditModal } from "@/components/configurator/BookConfigurationEditForm/BlockEditModal/BlockEditModal";
 import { useBookConfigurationEditForm } from "@/components/configurator/BookConfigurationEditForm/useBookConfigurationEditForm";
 import { BlocksMindMap } from "@/components/mindMap/BlocksMindMap/BlocksMindMap";
@@ -150,9 +151,12 @@ export const BookConfigurationEditForm = (props: IBookConfigurationEditFormProps
           >
             <Stack gap="sm">
               <Group justify="space-between" wrap="nowrap">
-                <Text fw={500} truncate="end">
-                  {c.title}
-                </Text>
+                <Group gap="xs" wrap="nowrap" align="center">
+                  <IconViewer icon={c.icon} size={20} />
+                  <Text fw={500} truncate="end">
+                    {c.title}
+                  </Text>
+                </Group>
                 <ActionIcon
                   color="red"
                   variant="subtle"
