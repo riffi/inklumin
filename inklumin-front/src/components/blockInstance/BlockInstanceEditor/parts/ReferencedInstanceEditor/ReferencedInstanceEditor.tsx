@@ -33,6 +33,9 @@ export const ReferencedInstanceEditor = (props: IReferencedInstanceEditorProps) 
     return referencedBlockInstances;
   }, [props.referencingParam, props.block, props.instance]);
 
+  const referencingBlock = useLiveQuery<IBlock>(async () => {
+    return BlockRepository.getByUuid(bookDb, props.referencingParam.blockUuid);
+  }, [props.block, props.instance, props.referencingParam]);
 
   if (!referencingInstances?.length) {
     return (
