@@ -14,6 +14,7 @@ import { ChapterRepository } from "@/repository/Scene/ChapterRepository";
 import { BlockInstanceAiFiller } from "./parts/BlockInstanceAiFiller";
 import { SceneAnalysisDrawer } from "./parts/SceneAnalysisDrawer";
 import type { SceneEditorProps } from "./types";
+import {SceneRepository} from "@/repository/Scene/SceneRepository";
 
 // Extracted custom hook
 const useSceneEditorState = () => {
@@ -92,8 +93,7 @@ export const SceneEditor = ({ sceneId, chapter }: SceneEditorProps) => {
         totalSymbolCountWoSpaces: contentText.replace(/\s+/g, "").length,
       };
 
-      saveScene(updatedScene, true);
-      editorState.setSceneBody(contentHTML);
+      SceneRepository.updateBody(bookDb, sceneId, contentHTML);
     },
     [scene, saveScene, editorState.setSceneBody]
   );

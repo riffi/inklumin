@@ -289,6 +289,11 @@ export const findByTitle = async (db: BookDB, title: string): Promise<IScene | u
   return scenes.find((s) => s.title.toLowerCase().includes(lower));
 };
 
+export const updateBody = async (db: BookDB, sceneId: number, body: string) => {
+  await db.sceneBodies.where("sceneId").equals(sceneId).modify({ body });
+  await updateBookLocalUpdatedAt(db);
+};
+
 export const SceneRepository = {
   getById,
   getAll,
@@ -304,4 +309,5 @@ export const SceneRepository = {
   addSceneToChapter,
   removeSceneFromChapter,
   findByTitle,
+  updateBody
 };
