@@ -81,6 +81,7 @@ export const SceneEditor = ({ sceneId, chapter }: SceneEditorProps) => {
     [chapterData?.id]
   );
 
+  //@TODO нужно понять как сохранять количество символов без перерисовки всего
   const handleContentChange = useCallback(
     (contentHTML: string, contentText: string) => {
       if (!scene?.id || contentHTML === scene.body) return;

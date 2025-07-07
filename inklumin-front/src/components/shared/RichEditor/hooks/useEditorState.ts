@@ -14,7 +14,7 @@ import { ClicheHighlighterExtension } from "@/components/shared/RichEditor/plugi
 // 1. Импортируем новое расширение
 import { FocusModeExtension } from "@/components/shared/RichEditor/plugins/FocusModeExtension";
 import { RepeatHighlighterExtension } from "@/components/shared/RichEditor/plugins/RepeatHighlighterExtension";
-import SimpleTextChecker from "@/components/shared/RichEditor/plugins/SimpleTextChecker";
+import SimplePunctuationChecker from "@/components/shared/RichEditor/plugins/SimplePunctuationChecker";
 import { SpellingHighlighterExtension } from "@/components/shared/RichEditor/plugins/SpellingHighlighterExtension";
 
 // 2. Обновляем функцию getEditorExtensions
@@ -27,7 +27,7 @@ const getEditorExtensions = (focusMode: boolean) => [
   Color,
   TextStyle,
   Image.configure({ inline: true, allowBase64: true }),
-  SimpleTextChecker,
+  SimplePunctuationChecker,
   RepeatHighlighterExtension,
   ClicheHighlighterExtension,
   SpellingHighlighterExtension,

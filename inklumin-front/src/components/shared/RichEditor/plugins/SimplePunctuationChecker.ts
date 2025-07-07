@@ -85,7 +85,7 @@ const PUNCTUATION_CHECKS = [
   },
 ];
 
-const SimpleTextChecker = Extension.create({
+const SimplePunctuationChecker = Extension.create({
   name: "repeatWordsHighlighter",
 
   addOptions() {
@@ -231,4 +231,4 @@ const createDecoration = (from, to, title) =>
     "data-tooltip": title,
   });
 
-export default SimpleTextChecker;
+export default SimplePunctuationChecker;
