@@ -47,7 +47,7 @@ export const ParameterEditVariantRenderer = ({
         initialContent={value}
         onContentChange={onValueChange}
         desktopConstraints={{ top: 25, bottom: 0 }}
-        mobileConstraints={{ top: 80, bottom: 0 }}
+        mobileConstraints={{ top: 100, bottom: 0 }}
       />
     );
   }
