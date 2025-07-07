@@ -12,6 +12,8 @@ export interface IBook {
   cover?: string;
   kind?: string;
   chapterOnlyMode?: number;
+  /** Включить базовую проверку орфографии */
+  useSimplePunctuationChecker?: number;
   description?: string;
   localUpdatedAt?: string;
   serverUpdatedAt?: string;

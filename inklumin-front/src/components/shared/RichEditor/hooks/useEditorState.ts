@@ -18,7 +18,7 @@ import SimplePunctuationChecker from "@/components/shared/RichEditor/plugins/Sim
 import { SpellingHighlighterExtension } from "@/components/shared/RichEditor/plugins/SpellingHighlighterExtension";
 
 // 2. Обновляем функцию getEditorExtensions
-const getEditorExtensions = (focusMode: boolean) => [
+const getEditorExtensions = (focusMode: boolean, useSimplePunctuationChecker: boolean) => [
   StarterKit,
   Underline,
   Superscript,
@@ -27,7 +27,7 @@ const getEditorExtensions = (focusMode: boolean) => [
   Color,
   TextStyle,
   Image.configure({ inline: true, allowBase64: true }),
-  SimplePunctuationChecker,
+  ...(useSimplePunctuationChecker ? [SimplePunctuationChecker] : []),
   RepeatHighlighterExtension,
   ClicheHighlighterExtension,
   SpellingHighlighterExtension,
@@ -41,6 +41,7 @@ const getEditorExtensions = (focusMode: boolean) => [
 export const useEditorState = (
   initialContent: string,
   focusMode: boolean,
+  useSimplePunctuationChecker: boolean,
   onContentChange?: (contentHtml: string, contentText: string) => void,
   onSelectionChange?: (from: number, to: number) => void
 ) => {
@@ -54,7 +55,7 @@ export const useEditorState = (
   // 4. Переписываем использование хука useEditor
   const editor = useEditor(
     {
-      extensions: getEditorExtensions(focusMode), // Передаем focusMode сюда
+      extensions: getEditorExtensions(focusMode, useSimplePunctuationChecker),
       content: initialContent,
       autofocus: true,
       editorProps: {
@@ -96,7 +97,7 @@ export const useEditorState = (
         }
       },
     },
-    [focusMode]
+    [focusMode, useSimplePunctuationChecker]
   ); // <-- ВАЖНО: добавляем focusMode в зависимости
 
   useEffect(() => () => debouncedContentChange.cancel(), [debouncedContentChange]);

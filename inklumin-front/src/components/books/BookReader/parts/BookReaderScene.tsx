@@ -7,6 +7,7 @@ import { bookDb } from "@/entities/bookDb";
 import { IScene } from "@/entities/BookEntities";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 import { SceneRepository } from "@/repository/Scene/SceneRepository";
+import { useBookStore } from "@/stores/bookStore/bookStore";
 import styles from "../BookReader.module.css";
 
 interface SceneProps {
@@ -28,6 +29,7 @@ export const BookReaderScene: React.FC<SceneProps> = ({
     onSceneUpdate(scene.id!, contentHtml);
   };
   const { isMobile } = useMedia();
+  const useChecker = useBookStore((state) => state.selectedBook?.useSimplePunctuationChecker === 1);
 
   const body = useLiveQuery<string>(() => SceneRepository.getBodyById(bookDb, scene.id!), [scene]);
 
@@ -59,7 +61,11 @@ export const BookReaderScene: React.FC<SceneProps> = ({
       {isEditing ? (
         <>
           <Space h={10} />
-          <RichEditor initialContent={body} onContentChange={(html) => handleContentChange(html)} />
+          <RichEditor
+            initialContent={body}
+            onContentChange={(html) => handleContentChange(html)}
+            useSimplePunctuationChecker={useChecker}
+          />
         </>
       ) : (
         <div dangerouslySetInnerHTML={{ __html: body }} className={styles.contentBody} />

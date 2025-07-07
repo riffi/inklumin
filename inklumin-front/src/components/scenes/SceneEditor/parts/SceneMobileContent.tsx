@@ -38,6 +38,7 @@ export const SceneMobileContent = ({
     useDisclosure(false);
   const keyboardHeight = useKeyboardHeight(true);
   const chapterOnlyMode = useBookStore((state) => state.selectedBook?.chapterOnlyMode === 1);
+  const useChecker = useBookStore((state) => state.selectedBook?.useSimplePunctuationChecker === 1);
   const warningsPanelRef = useRef<HTMLDivElement | null>(null);
   const [hasWarnings, setHasWarnings] = useState(false);
 
@@ -113,6 +114,7 @@ export const SceneMobileContent = ({
         toggleFocusMode={toggleFocusMode}
         warningsPanelContainer={warningsPanelRef.current}
         useIndent
+        useSimplePunctuationChecker={useChecker}
       />
       {!focusMode && (
         <Flex

@@ -298,6 +298,7 @@ export const NoteEditPage = () => {
           initialContent={noteBody}
           mobileConstraints={{ top: 50, bottom: 0 }}
           onContentChange={handleContentChange}
+          useSimplePunctuationChecker={false}
         />
       </Paper>
     </Container>

@@ -37,6 +37,8 @@ export interface ISceneRichTextEditorProps {
   warningsPanelContainer?: HTMLElement | null;
   /** Включить отступ первой строки */
   useIndent?: boolean;
+  /** Использовать базовую проверку орфографии */
+  useSimplePunctuationChecker?: boolean;
 }
 
 const TOOLBAR_HEIGHT = 40;
@@ -75,6 +77,7 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
   const { editor } = useEditorState(
     props.initialContent || "",
     props.focusMode,
+    props.useSimplePunctuationChecker !== false,
     props.onContentChange,
     onSelectionChange
   );

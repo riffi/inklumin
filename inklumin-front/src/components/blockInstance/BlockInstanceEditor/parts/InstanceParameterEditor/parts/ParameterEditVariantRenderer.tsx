@@ -18,6 +18,7 @@ import { IBlockParameterInstance } from "@/entities/BookEntities";
 // import {BlockRepository} from "@/repository/Block/BlockRepository"; // Unused
 import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";
 import { relationUtils } from "@/utils/relationUtils";
+import {useBookStore} from "@/stores/bookStore/bookStore";
 
 export interface ParameterRendererProps {
   dataType: string;
@@ -40,6 +41,7 @@ export const ParameterEditVariantRenderer = ({
   parameter,
 }: ParameterRendererProps) => {
   const theme = useMantineTheme();
+  const useChecker = useBookStore((state) => state.selectedBook?.useSimplePunctuationChecker === 1);
 
   if (dataType === "text") {
     return (
@@ -48,6 +50,7 @@ export const ParameterEditVariantRenderer = ({
         onContentChange={onValueChange}
         desktopConstraints={{ top: 25, bottom: 0 }}
         mobileConstraints={{ top: 100, bottom: 0 }}
+        useSimplePunctuationChecker={useChecker}
       />
     );
   }

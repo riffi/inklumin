@@ -16,7 +16,7 @@ import { IUserDocPage } from "@/entities/ConstructorEntities";
 const bookSchema = {
   ...baseSchema,
   books:
-    "++id, &uuid, title, author, kind, configurationUuid, chapterOnlyMode, localUpdatedAt, serverUpdatedAt, syncState",
+    "++id, &uuid, title, author, kind, configurationUuid, chapterOnlyMode, useSimplePunctuationChecker, localUpdatedAt, serverUpdatedAt, syncState",
   scenes: "++id, title, order, chapterId",
   chapters: "++id, title, order, contentSceneId",
   sceneBodies: "++id, sceneId",
@@ -44,7 +44,7 @@ export class BookDB extends BlockAbstractDb {
   userDocPages!: Dexie.Table<IUserDocPage, number>;
   constructor(dbName: string) {
     super(dbName);
-    this.version(9)
+    this.version(10)
       .stores(bookSchema)
       .upgrade(async (tx) => {
         await tx
@@ -53,6 +53,9 @@ export class BookDB extends BlockAbstractDb {
           .modify((book) => {
             if (book.chapterOnlyMode === undefined) {
               book.chapterOnlyMode = 1;
+            }
+            if (book.useSimplePunctuationChecker === undefined) {
+              book.useSimplePunctuationChecker = 1;
             }
           });
 

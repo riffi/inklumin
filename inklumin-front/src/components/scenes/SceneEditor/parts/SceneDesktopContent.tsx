@@ -50,6 +50,7 @@ export const SceneDesktopContent = ({
 }: SceneDesktopContentProps) => {
   const { isHeaderVisible, handleEditorScroll } = useHeaderVisibility();
   const chapterOnlyMode = useBookStore((state) => state.selectedBook?.chapterOnlyMode === 1);
+  const useChecker = useBookStore((state) => state.selectedBook?.useSimplePunctuationChecker === 1);
   const [linkManagerOpened, { open: openLinkManager, close: closeLinkManager }] =
     useDisclosure(false);
   const [readOnly, setReadOnly] = useState(true);
@@ -150,6 +151,7 @@ export const SceneDesktopContent = ({
                   focusMode={focusMode}
                   toggleFocusMode={toggleFocusMode}
                   useIndent
+                  useSimplePunctuationChecker={useChecker}
                 />
               )}
               <>

@@ -95,6 +95,7 @@ const getBlankBook = (kind: string = "book"): IBook => ({
   cover: undefined,
   kind: kind,
   chapterOnlyMode: 1,
+  useSimplePunctuationChecker: 1,
 });
 
 const getFormLabel = (formValue: string) => {

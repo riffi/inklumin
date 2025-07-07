@@ -1,7 +1,8 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { Heading } from "tabler-icons-react";
-import { Box, Container, Paper, Switch, Title } from "@mantine/core";
+import { Box, Container, Paper, Switch, Tabs, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
+import { TextEditorSettingsTab } from "@/components/books/BookSettings/TextEditorSettingsTab";
 import { BookSettingsForm } from "@/components/books/BookSettingsForm/BookSettingsForm";
 import { bookDb } from "@/entities/bookDb";
 import { configDatabase } from "@/entities/configuratorDb";
@@ -48,19 +49,32 @@ export const BookSettingsPage = () => {
           <Title order={2} mb={"md"}>
             Настройки {kind === "book" ? "произведения" : "материала"}
           </Title>
-          {kind === "book" && (
-            <Switch
-              label="Не показывать сцены"
-              checked={chapterOnlyMode}
-              onChange={(e) => handleToggleChapterOnlyMode(e.currentTarget.checked)}
-              mb="md"
-            />
-          )}
-          <BookSettingsForm
-            configurations={configurations}
-            initialData={selectedBook}
-            onSave={handleSave}
-          />
+          <Tabs defaultValue="general">
+            <Tabs.List>
+              <Tabs.Tab value="general">Общие</Tabs.Tab>
+              <Tabs.Tab value="editor">Текстовый редактор</Tabs.Tab>
+            </Tabs.List>
+
+            <Tabs.Panel value="general" pt="md">
+              {kind === "book" && (
+                <Switch
+                  label="Не показывать сцены"
+                  checked={chapterOnlyMode}
+                  onChange={(e) => handleToggleChapterOnlyMode(e.currentTarget.checked)}
+                  mb="md"
+                />
+              )}
+              <BookSettingsForm
+                configurations={configurations}
+                initialData={selectedBook}
+                onSave={handleSave}
+              />
+            </Tabs.Panel>
+
+            <Tabs.Panel value="editor" pt="md">
+              <TextEditorSettingsTab />
+            </Tabs.Panel>
+          </Tabs>
         </Box>
       </Paper>
     </Container>
