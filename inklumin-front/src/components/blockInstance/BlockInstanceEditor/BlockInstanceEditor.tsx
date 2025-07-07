@@ -236,6 +236,7 @@ export const BlockInstanceEditor = (props: IBlockInstanceEditorProps) => {
                         size={120}
                         backgroundColor={"transparent"}
                         color="var(--mantine-color-blue-filled)"
+                        showNoImage
                       />
                     </Box>
                     <Box mb="lg" style={{ flex: "1" }}>

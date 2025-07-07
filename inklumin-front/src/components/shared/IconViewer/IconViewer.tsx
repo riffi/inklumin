@@ -1,28 +1,28 @@
 import React from "react";
 import * as Gi from "react-icons/gi";
-import { Box, Image as MantineImage, Text } from "@mantine/core";
+import { Box, Image as MantineImage } from "@mantine/core";
 import { IIcon, IIconKind } from "@/entities/ConstructorEntities";
 
 interface IconViewerProps {
   icon?: IIcon;
-  iconName?: string;
-  customIconBase64?: string;
   size?: number;
   color?: string;
   backgroundColor?: string;
   style?: React.CSSProperties; // Добавляем пропс для стилей
+  showNoImage?: boolean
 }
 
 export const IconViewer = ({
-  iconName,
   icon,
-  customIconBase64,
   size = 24,
   color = "black",
   backgroundColor = "#fff",
   style,
+  showNoImage
 }: IconViewerProps) => {
-  if (!iconName && !customIconBase64 && !icon) return null;
+  const isIconEmpty =
+    (!icon) ||
+    (icon && !icon.iconName && !icon.iconBase64);
 
   const combinedStyle = {
     color,
@@ -35,11 +35,17 @@ export const IconViewer = ({
     ...style, // Переданные стили перезаписывают базовые
   };
 
-  const IconComponent = icon
-    ? icon.iconKind === "gameIcons"
-      ? Gi[icon.iconName]
-      : null
-    : Gi[iconName];
+  if (isIconEmpty) {
+    return (
+      <Box style={combinedStyle}>
+        {showNoImage && <MantineImage src="/no-image.png" alt="Нет иконки" radius="sm" />}
+      </Box>
+    );
+  }
+
+  const IconComponent = icon && icon.iconKind === "gameIcons" ?
+      Gi[icon.iconName]
+      : null;
 
   if (icon?.iconKind === IIconKind.custom) {
     return (
