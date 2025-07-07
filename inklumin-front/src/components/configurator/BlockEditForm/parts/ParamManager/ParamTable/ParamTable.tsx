@@ -17,9 +17,8 @@ import {
   IBlockParameterDataTypeTitle,
   IBlockParameterGroup,
   IBlockRelation,
+  IUserDocPage,
 } from "@/entities/ConstructorEntities";
-import { IUserDocPage } from "@/entities/ConstructorEntities";
-
 import { useDb } from "@/hooks/useDb";
 import { useDialog } from "@/providers/DialogProvider/DialogProvider";
 import classes from "./ParamTable.module.css"; // Создайте этот CSS модуль для кастомизации

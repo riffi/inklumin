@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { Container, LoadingOverlay } from "@mantine/core";
 import ReactMarkdown from "react-markdown";
+import { useParams } from "react-router-dom";
 import remarkGfm from "remark-gfm";
+import { Container, LoadingOverlay } from "@mantine/core";
 
 export const DocViewer = () => {
   const { "*": subPath } = useParams();

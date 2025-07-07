@@ -39,10 +39,12 @@ export const BaseLayout = () => {
               lineSize={1}
               size="lg"
             />
-            <Box style={{
-              flexGrow: 1,
-              textAlign: "center"
-            }}>
+            <Box
+              style={{
+                flexGrow: 1,
+                textAlign: "center",
+              }}
+            >
               {(isMobile && titleElement) || (
                 <Text fw={500} hiddenFrom="sm">
                   {pageTitle}

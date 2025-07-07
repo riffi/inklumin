@@ -19,12 +19,16 @@ import { notifications } from "@mantine/notifications";
 import { OpenRouterApi } from "@/api/openRouterApi"; // For fetching knowledge base entities
 
 import { IconViewer } from "@/components/shared/IconViewer/IconViewer"; // For types
+
+import {
+  AiBlockInstanceEntity,
+  AiBlockInstanceEntityExt,
+} from "@/entities/AiBlockInstanceEntities";
 import { bookDb } from "@/entities/bookDb"; // To query blockInstances and blockInstanceSceneLinks
 
 import type { IBlockInstance, IBlockInstanceSceneLink } from "@/entities/BookEntities";
 import { IBlock } from "@/entities/ConstructorEntities"; // Ensure IBlock is imported
 
-import { AiBlockInstanceEntity, AiBlockInstanceEntityExt } from "@/entities/AiBlockInstanceEntities";
 import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";
 import { BlockInstanceSceneLinkRepository } from "@/repository/BlockInstance/BlockInstanceSceneLinkRepository";
 import { generateUUID } from "@/utils/UUIDUtils";

@@ -1,7 +1,7 @@
+import { useCallback, useMemo } from "react";
 import { notifications } from "@mantine/notifications";
 import { IScene } from "@/entities/BookEntities";
 import { SceneService } from "@/services/sceneService";
-import { useCallback, useMemo } from "react";
 
 export const useScenes = (scenes?: IScene[]) => {
   const createScene = useCallback(async (title: string, chapterId?: number) => {
@@ -31,7 +31,11 @@ export const useScenes = (scenes?: IScene[]) => {
     if (result.success) {
       notifications.show({ title: "Успешно", message: "Порядок сцен обновлен", color: "green" });
     } else {
-      notifications.show({ title: "Ошибка", message: "Не удалось обновить порядок сцен", color: "red" });
+      notifications.show({
+        title: "Ошибка",
+        message: "Не удалось обновить порядок сцен",
+        color: "red",
+      });
     }
   }, []);
 
@@ -49,19 +53,23 @@ export const useScenes = (scenes?: IScene[]) => {
     if (result.success) {
       notifications.show({ title: "Успешно", message: "Порядок сцен изменен", color: "green" });
     } else {
-      notifications.show({ title: "Ошибка", message: "Не удалось изменить порядок сцен", color: "red" });
+      notifications.show({
+        title: "Ошибка",
+        message: "Не удалось изменить порядок сцен",
+        color: "red",
+      });
     }
   }, []);
 
   return useMemo(
-      () => ({
-        scenes,
-        deleteScene,
-        reorderScenes,
-        updateSceneOrder,
-        createScene,
-        updateScene,
-      }),
-      [scenes, deleteScene, reorderScenes, updateSceneOrder, createScene, updateScene]
+    () => ({
+      scenes,
+      deleteScene,
+      reorderScenes,
+      updateSceneOrder,
+      createScene,
+      updateScene,
+    }),
+    [scenes, deleteScene, reorderScenes, updateSceneOrder, createScene, updateScene]
   );
 };

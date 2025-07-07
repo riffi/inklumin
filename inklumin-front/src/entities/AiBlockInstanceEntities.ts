@@ -14,4 +14,3 @@ export interface AiBlockInstanceEntityExt extends AiBlockInstanceEntity {
   instanceUuid?: string;
   instance?: IBlockInstance;
 }
-

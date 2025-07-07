@@ -1,10 +1,10 @@
-import React, {useCallback} from "react";
+import React, { useCallback } from "react";
 import { IconPlus } from "@tabler/icons-react";
 import { Center, Group, LoadingOverlay, Paper, Stack, Text } from "@mantine/core";
 import { IChapter, ISceneWithInstances } from "@/entities/BookEntities";
+import { useBookStore } from "@/stores/bookStore/bookStore";
 import { ChapterRow } from "./ChapterRow";
 import { SceneRow } from "./SceneRow";
-import {useBookStore} from "@/stores/bookStore/bookStore";
 
 interface SceneTableProps {
   onAddScene: (chapterId: number) => void;
@@ -30,9 +30,6 @@ const SceneTableComponent = ({
   selectedInstanceUuid,
   chapterOnly,
 }: SceneTableProps) => {
-
-
-
   // Отфильтрованные сцены мемоизируются, чтобы избежать лишних вычислений
   const filteredScenes = React.useMemo(() => {
     if (!scenes) return [] as ISceneWithInstances[];
@@ -92,16 +89,19 @@ const SceneTableComponent = ({
 
   // Мемoизированная функция для получения сцен по главе
   const getScenesForChapter = React.useCallback(
-      (chapterId: number | null) => {
-        return scenesByChapterId.get(chapterId) || EMPTY_SCENES;
-      },
-      [scenesByChapterId] // Зависимость от мемоизированной мапы
+    (chapterId: number | null) => {
+      return scenesByChapterId.get(chapterId) || EMPTY_SCENES;
+    },
+    [scenesByChapterId] // Зависимость от мемоизированной мапы
   );
 
   // 1. Создаём ОДНУ стабильную функцию-обработчик
-  const handleAddScene = useCallback((chapterId: number) => {
-    onAddScene(chapterId);
-  }, [onAddScene]); // Зависимость от внешней функции
+  const handleAddScene = useCallback(
+    (chapterId: number) => {
+      onAddScene(chapterId);
+    },
+    [onAddScene]
+  ); // Зависимость от внешней функции
 
   if (!scenes || !chapters)
     return (
@@ -134,7 +134,7 @@ const SceneTableComponent = ({
           <ChapterRow
             key={`chapter-${chapter.id}`}
             chapter={chapter}
-            scenes={chapterOnly ? EMPTY_SCENES  : getScenesForChapter(chapter.id)}
+            scenes={chapterOnly ? EMPTY_SCENES : getScenesForChapter(chapter.id)}
             onAddScene={handleAddScene}
             openScene={openScene}
             selectedSceneId={selectedSceneId}
@@ -169,6 +169,5 @@ const tableEqual = (prev: Readonly<SceneTableProps>, next: Readonly<SceneTablePr
   prev.selectedSceneId === next.selectedSceneId &&
   prev.mode === next.mode &&
   prev.chapterOnly === next.chapterOnly;
-
 
 export const SceneTable = React.memo(SceneTableComponent, tableEqual);

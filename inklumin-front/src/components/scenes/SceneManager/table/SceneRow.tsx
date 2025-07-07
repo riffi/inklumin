@@ -54,7 +54,6 @@ const SceneRowComponent = ({
 
   const isSelected = selectedSceneId === scene.id;
 
-
   const handleMoveUp = () => {
     const prevScene = scenesInChapter[currentIndex - 1];
     if (prevScene) {
@@ -136,48 +135,47 @@ const SceneRowComponent = ({
               </Text>
             </Group>
 
-
-              <Stack gap={isMobile ? 2 : 3} ml={isMobile ? 18 : 22}>
-                {scene?.blockInstances.map((sceneWithInstancesBlock) => (
-                  <Group key={`block-${sceneWithInstancesBlock.block.id}`} gap={6} wrap="wrap">
-                    <Group gap={4}>
-                      <IconViewer
-                        icon={sceneWithInstancesBlock.block.icon}
-                        size={12}
-                        color={theme.colors.gray[6]}
-                        backgroundColor="transparent"
-                      />
-                      <Text size="xs" c="dimmed">
-                        {sceneWithInstancesBlock.block.titleForms?.plural}:
-                      </Text>
-                    </Group>
-                    <Group gap={isMobile ? 2 : 4}>
-                      {sceneWithInstancesBlock.instances.map((instance) => (
-                        <Badge
-                          key={`instance-${instance.id}`}
-                          size={isMobile ? "xs" : "xs"}
-                          variant="light"
-                          color="gray"
-                          styles={{
-                            root: { padding: isMobile ? "0 4px" : undefined },
-                            label: { fontSize: isMobile ? "9px" : undefined },
-                          }}
-                        >
-                          {instance.title.length > (isMobile ? 15 : 15)
-                            ? `${instance.title.slice(0, isMobile ? 15 : 15)}…`
-                            : instance.title}
-                        </Badge>
-                      ))}
-                    </Group>
+            <Stack gap={isMobile ? 2 : 3} ml={isMobile ? 18 : 22}>
+              {scene?.blockInstances.map((sceneWithInstancesBlock) => (
+                <Group key={`block-${sceneWithInstancesBlock.block.id}`} gap={6} wrap="wrap">
+                  <Group gap={4}>
+                    <IconViewer
+                      icon={sceneWithInstancesBlock.block.icon}
+                      size={12}
+                      color={theme.colors.gray[6]}
+                      backgroundColor="transparent"
+                    />
+                    <Text size="xs" c="dimmed">
+                      {sceneWithInstancesBlock.block.titleForms?.plural}:
+                    </Text>
                   </Group>
-                ))}
+                  <Group gap={isMobile ? 2 : 4}>
+                    {sceneWithInstancesBlock.instances.map((instance) => (
+                      <Badge
+                        key={`instance-${instance.id}`}
+                        size={isMobile ? "xs" : "xs"}
+                        variant="light"
+                        color="gray"
+                        styles={{
+                          root: { padding: isMobile ? "0 4px" : undefined },
+                          label: { fontSize: isMobile ? "9px" : undefined },
+                        }}
+                      >
+                        {instance.title.length > (isMobile ? 15 : 15)
+                          ? `${instance.title.slice(0, isMobile ? 15 : 15)}…`
+                          : instance.title}
+                      </Badge>
+                    ))}
+                  </Group>
+                </Group>
+              ))}
 
-                {scene.totalSymbolCountWithSpaces > 0 && (
-                  <Text size="xs" c="dimmed" ml={0}>
-                    Символов: {scene.totalSymbolCountWithSpaces?.toLocaleString()}
-                  </Text>
-                )}
-              </Stack>
+              {scene.totalSymbolCountWithSpaces > 0 && (
+                <Text size="xs" c="dimmed" ml={0}>
+                  Символов: {scene.totalSymbolCountWithSpaces?.toLocaleString()}
+                </Text>
+              )}
+            </Stack>
           </Box>
 
           <Menu withinPortal shadow="md" position="left-start">
@@ -263,6 +261,5 @@ const rowEqual = (prev: Readonly<SceneRowProps>, next: Readonly<SceneRowProps>) 
   prev.isSelected === next.isSelected &&
   prev.mode === next.mode &&
   prev.isNested === next.isNested;
-
 
 export const SceneRow = React.memo(SceneRowComponent, rowEqual);

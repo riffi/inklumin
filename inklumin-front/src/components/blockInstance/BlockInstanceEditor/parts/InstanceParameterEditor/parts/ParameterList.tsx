@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { ActionIcon, Box, Button, Checkbox, Drawer, Group, Stack, Text } from "@mantine/core";
 import { ParameterActions } from "@/components/blockInstance/BlockInstanceEditor/parts/InstanceParameterEditor/parts/ParameterActionsProps";
 import { ParameterEditVariantRenderer } from "@/components/blockInstance/BlockInstanceEditor/parts/InstanceParameterEditor/parts/ParameterEditVariantRenderer";
-import { UserDocViewer } from "@/components/userDoc/UserDocViewer";
 import { ParameterViewVariantRenderer } from "@/components/shared/blockParameter/ParameterViewVariantRenderer/ParameterViewVariantRenderer";
+import { UserDocViewer } from "@/components/userDoc/UserDocViewer";
 import { bookDb } from "@/entities/bookDb";
 import { IBlockParameterInstance } from "@/entities/BookEntities";
 import {
@@ -160,16 +160,15 @@ export const ParameterList = ({
                     <Text fw={500} color={"dimmed"} style={{ fontSize: "0.8rem" }}>
                       {parameter.title}
                     </Text>
-                    {parameter.userDocPageUuid &&
-                      useDocPagesMap[parameter.userDocPageUuid] && (
-                        <ActionIcon
-                          variant="subtle"
-                          onClick={() => openKbDrawer(parameter?.userDocPageUuid!)}
-                          title="Статья"
-                        >
-                          <IconQuestionMark size="1rem" />
-                        </ActionIcon>
-                      )}
+                    {parameter.userDocPageUuid && useDocPagesMap[parameter.userDocPageUuid] && (
+                      <ActionIcon
+                        variant="subtle"
+                        onClick={() => openKbDrawer(parameter?.userDocPageUuid!)}
+                        title="Статья"
+                      >
+                        <IconQuestionMark size="1rem" />
+                      </ActionIcon>
+                    )}
                   </Group>
                   {onAddNewInstance && (
                     <ActionIcon
@@ -307,16 +306,15 @@ export const ParameterList = ({
                     >
                       {parameter?.title}
                     </Text>
-                    {parameter?.userDocPageUuid &&
-                      useDocPagesMap[parameter.userDocPageUuid] && (
-                        <ActionIcon
-                          variant="subtle"
-                          onClick={() => openKbDrawer(parameter?.userDocPageUuid!)}
-                          title="Статья"
-                        >
-                          <IconQuestionMark size="1rem" />
-                        </ActionIcon>
-                      )}
+                    {parameter?.userDocPageUuid && useDocPagesMap[parameter.userDocPageUuid] && (
+                      <ActionIcon
+                        variant="subtle"
+                        onClick={() => openKbDrawer(parameter?.userDocPageUuid!)}
+                        title="Статья"
+                      >
+                        <IconQuestionMark size="1rem" />
+                      </ActionIcon>
+                    )}
                   </Group>
                   <ParameterActions
                     isEditing={isEditing}

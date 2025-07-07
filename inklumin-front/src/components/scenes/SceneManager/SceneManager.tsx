@@ -1,18 +1,20 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
+  IconArrowDown,
+  IconArrowDownBar,
+  IconCaretDownFilled,
   IconChevronLeft,
+  IconDotsVertical,
   IconFilter,
   IconFolderOpen,
   IconFolderPlus,
   IconFolderUp,
-  IconDotsVertical,
   IconNote,
   IconPlus,
   IconQuestionMark,
   IconSearch,
-  IconX, IconArrowDown, IconArrowDownBar,
   IconTriangleInvertedFilled,
-  IconCaretDownFilled,
+  IconX,
 } from "@tabler/icons-react";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -77,9 +79,7 @@ export const SceneManager = (props: SceneManagerProps) => {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const isWide = useMediaQuery("(min-width: 85.375em)");
 
-  useHotkeys([
-    ["mod+K", () => setIsSearchVisible(true)],
-  ]);
+  useHotkeys([["mod+K", () => setIsSearchVisible(true)]]);
 
   useEffect(() => {
     if (isSearchVisible) {
@@ -113,8 +113,6 @@ export const SceneManager = (props: SceneManagerProps) => {
   const { createChapter } = useChapters(props.chapters);
 
   const { createScene } = useScenes(props.scenes);
-
-
 
   useEffect(() => {
     const loadBlocks = async () => {
@@ -180,74 +178,80 @@ export const SceneManager = (props: SceneManagerProps) => {
     });
   };
 
-  const actionPanel = <Group justify="flex-end" align="center" wrap="nowrap">
-    <Text fw={700} size="sm" style={{ lineHeight: 1 }} c="gray.6" tt="uppercase">
-      {props.chapterOnly ? "Главы" : "Главы и сцены"}
-    </Text>
+  const actionPanel = (
+    <Group justify="flex-end" align="center" wrap="nowrap">
+      <Text fw={700} size="sm" style={{ lineHeight: 1 }} c="gray.6" tt="uppercase">
+        {props.chapterOnly ? "Главы" : "Главы и сцены"}
+      </Text>
 
-    {isWide || isSearchVisible ? (
+      {isWide || isSearchVisible ? (
         <TextInput
-            ref={searchInputRef}
-            placeholder="Поиск…"
-            leftSection={<IconSearch size={14} />}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.currentTarget.value)}
-            onBlur={() => !isWide && setIsSearchVisible(false)}
-            style={{ flex: 1, marginLeft: 8, marginRight: 8 }}
+          ref={searchInputRef}
+          placeholder="Поиск…"
+          leftSection={<IconSearch size={14} />}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.currentTarget.value)}
+          onBlur={() => !isWide && setIsSearchVisible(false)}
+          style={{ flex: 1, marginLeft: 8, marginRight: 8 }}
         />
-    ) : (
+      ) : (
         <Tooltip label="Поиск (⌘+K)">
           <ActionIcon onClick={() => setIsSearchVisible(true)} aria-label="Поиск">
             <IconSearch size={16} />
           </ActionIcon>
         </Tooltip>
-    )}
+      )}
 
-    <Menu withinPortal position="bottom-end">
-      <Menu.Target>
-        <Tooltip label="Создать">
-          <ActionIcon variant="filled" color="blue" aria-label="Создать">
-            <IconPlus size={16} />
-          </ActionIcon>
-        </Tooltip>
-      </Menu.Target>
-      <Menu.Dropdown>
-        <Menu.Item onClick={openChapterModal}>Новая глава</Menu.Item>
-        {!props.chapterOnly && (
+      <Menu withinPortal position="bottom-end">
+        <Menu.Target>
+          <Tooltip label="Создать">
+            <ActionIcon variant="filled" color="blue" aria-label="Создать">
+              <IconPlus size={16} />
+            </ActionIcon>
+          </Tooltip>
+        </Menu.Target>
+        <Menu.Dropdown>
+          <Menu.Item onClick={openChapterModal}>Новая глава</Menu.Item>
+          {!props.chapterOnly && (
             <Menu.Item onClick={() => handleOpenCreateModal(null)}>Новая сцена</Menu.Item>
-        )}
-      </Menu.Dropdown>
-    </Menu>
+          )}
+        </Menu.Dropdown>
+      </Menu>
 
-    <Menu withinPortal position="bottom-end">
-      <Menu.Target>
-        <Tooltip label="Ещё действия">
-          <ActionIcon variant="subtle" aria-label="Меню">
-            <IconCaretDownFilled size={16} />
-          </ActionIcon>
-        </Tooltip>
-      </Menu.Target>
-      <Menu.Dropdown>
-        <Menu.Item onClick={collapseAllChapters} disabled={!props.chapters?.length}>Свернуть всё</Menu.Item>
-        <Menu.Item onClick={expandAllChapters} disabled={!collapsedCount}>Развернуть всё</Menu.Item>
-        <Menu.Item onClick={openFilters}>Фильтры</Menu.Item>
-      </Menu.Dropdown>
-    </Menu>
-  </Group>
+      <Menu withinPortal position="bottom-end">
+        <Menu.Target>
+          <Tooltip label="Ещё действия">
+            <ActionIcon variant="subtle" aria-label="Меню">
+              <IconCaretDownFilled size={16} />
+            </ActionIcon>
+          </Tooltip>
+        </Menu.Target>
+        <Menu.Dropdown>
+          <Menu.Item onClick={collapseAllChapters} disabled={!props.chapters?.length}>
+            Свернуть всё
+          </Menu.Item>
+          <Menu.Item onClick={expandAllChapters} disabled={!collapsedCount}>
+            Развернуть всё
+          </Menu.Item>
+          <Menu.Item onClick={openFilters}>Фильтры</Menu.Item>
+        </Menu.Dropdown>
+      </Menu>
+    </Group>
+  );
 
   useEffect(() => {
     const header = (
-        <Group gap="xs" justify={"space-between"}>
-          {actionPanel}
-          <ActionIcon
-              component={Link}
-              to={`/knowledge-base/35683308-29ea-4e37-b3b6-1ad3fe7a9053`}
-              variant="subtle"
-              title="Справка"
-          >
-            <IconQuestionMark size="1rem" />
-          </ActionIcon>
-        </Group>
+      <Group gap="xs" justify={"space-between"}>
+        {actionPanel}
+        <ActionIcon
+          component={Link}
+          to={`/knowledge-base/35683308-29ea-4e37-b3b6-1ad3fe7a9053`}
+          variant="subtle"
+          title="Справка"
+        >
+          <IconQuestionMark size="1rem" />
+        </ActionIcon>
+      </Group>
     );
     setTitleElement(header);
     return () => setTitleElement(null);
@@ -271,19 +275,21 @@ export const SceneManager = (props: SceneManagerProps) => {
         width: props.mode === "manager" ? "var(--container-size-md)" : undefined,
       }}
     >
-      {!isMobile && <Box
-        style={{
-          position: "sticky",
-          top: isMobile ? 50 : 0,
-          zIndex: 50,
-          backgroundColor: "#FFFFFF",
-          borderBottom: "1px solid #E0E0E0",
-          minHeight: isMobile ? 40 : 48,
-        }}
-        p={isMobile ? 'sm' : 'md'}
-      >
-        {actionPanel}
-      </Box>}
+      {!isMobile && (
+        <Box
+          style={{
+            position: "sticky",
+            top: isMobile ? 50 : 0,
+            zIndex: 50,
+            backgroundColor: "#FFFFFF",
+            borderBottom: "1px solid #E0E0E0",
+            minHeight: isMobile ? 40 : 48,
+          }}
+          p={isMobile ? "sm" : "md"}
+        >
+          {actionPanel}
+        </Box>
+      )}
 
       <SceneTable
         onAddScene={handleOpenCreateModal}

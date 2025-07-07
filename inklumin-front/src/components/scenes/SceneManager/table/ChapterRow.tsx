@@ -21,14 +21,14 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
 import { IChapter, ISceneWithInstances } from "@/entities/BookEntities";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
+import { SceneService } from "@/services/sceneService";
 import { useBookStore } from "@/stores/bookStore/bookStore";
 import { DeleteConfirmationModal } from "../modals/DeleteConfirmationModal";
 import { EditChapterModal } from "../modals/EditChapterModal";
 import { SceneRow } from "./SceneRow";
-import {SceneService} from "@/services/sceneService";
-import {notifications} from "@mantine/notifications";
 
 interface ChapterRowProps {
   chapter: IChapter;
@@ -54,10 +54,10 @@ const ChapterRowComponent = ({
   const isMobile = useMedia();
   const theme = useMantineTheme();
   const isCollapsed = useBookStore(
-      React.useCallback(
-          (state) => state.collapsedChapters.get(chapter.id) ?? false,
-          [chapter.id] // зависимость только от ID главы
-      )
+    React.useCallback(
+      (state) => state.collapsedChapters.get(chapter.id) ?? false,
+      [chapter.id] // зависимость только от ID главы
+    )
   );
 
   // Получаем функцию toggleChapterCollapse один раз
@@ -113,7 +113,7 @@ const ChapterRowComponent = ({
     },
     [chapter.id]
   );
-  console.log("render chapter row")
+  console.log("render chapter row");
 
   return (
     <>
@@ -129,9 +129,9 @@ const ChapterRowComponent = ({
             backgroundColor: chapterOnly ? "white" : theme.colors.gray[0],
             cursor: "pointer",
             transition: "background-color 0.15s ease",
-            borderRadius: "0"
+            borderRadius: "0",
           }}
-          p={isMobile ? 'sm' : 'md'}
+          p={isMobile ? "sm" : "md"}
           onClick={() => {
             if (chapterOnly) {
               if (chapter.contentSceneId !== undefined) {
@@ -277,21 +277,19 @@ const ChapterRowComponent = ({
   );
 };
 
-const areEqual = (prev: Readonly<ChapterRowProps>, next: Readonly<ChapterRowProps>) =>
-{
-  const includes = (prev.scenes?.map(scene => scene.id).includes(prev.selectedSceneId)) ||
-      (next.scenes?.map(scene => scene.id).includes(next.selectedSceneId))
+const areEqual = (prev: Readonly<ChapterRowProps>, next: Readonly<ChapterRowProps>) => {
+  const includes =
+    prev.scenes?.map((scene) => scene.id).includes(prev.selectedSceneId) ||
+    next.scenes?.map((scene) => scene.id).includes(next.selectedSceneId);
 
-  const selectedSceneNotAffecting =  (
-      prev.selectedSceneId === next.selectedSceneId
-       || !includes
+  const selectedSceneNotAffecting = prev.selectedSceneId === next.selectedSceneId || !includes;
+
+  return (
+    prev.chapter === next.chapter &&
+    prev.scenes === next.scenes &&
+    selectedSceneNotAffecting &&
+    prev.chapterOnly === next.chapterOnly
   );
-
-  return prev.chapter === next.chapter &&
-  prev.scenes === next.scenes &&
-      selectedSceneNotAffecting &&
-  prev.chapterOnly === next.chapterOnly;
-
-}
+};
 
 export const ChapterRow = React.memo(ChapterRowComponent, areEqual);

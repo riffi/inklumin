@@ -15,19 +15,19 @@ interface BookEditModalProps {
 }
 
 const getTitle = (uuid: string, kind: string) => {
-  if (kind === 'material'){
-    if (uuid){
-      return "Редактирование информации о материале"
+  if (kind === "material") {
+    if (uuid) {
+      return "Редактирование информации о материале";
     }
-    return "Добавление нового материала"
+    return "Добавление нового материала";
   }
-  if (kind === 'book'){
-    if (uuid){
-      return "Редактирование информации о произведении"
+  if (kind === "book") {
+    if (uuid) {
+      return "Редактирование информации о произведении";
     }
-    return "Добавление нового произведения"
+    return "Добавление нового произведения";
   }
-}
+};
 
 export const BookEditModal = ({
   isOpen,

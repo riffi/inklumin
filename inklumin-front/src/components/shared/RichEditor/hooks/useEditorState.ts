@@ -84,9 +84,8 @@ export const useEditorState = (
         }
       },
       onTransaction: ({ editor, transaction }) => {
-
         if (transaction.meta?.pointer) {
-          console.log('click ontransaction')
+          console.log("click ontransaction");
           editor.setEditable(true);
           editor.commands.focus();
         }

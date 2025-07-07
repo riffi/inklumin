@@ -33,12 +33,12 @@ import { ChildInstancesTable } from "@/components/blockInstance/BlockInstanceEdi
 import { InstanceParameterEditor } from "@/components/blockInstance/BlockInstanceEditor/parts/InstanceParameterEditor/InstanceParameterEditor";
 import { InstanceRelationsEditor } from "@/components/blockInstance/BlockInstanceEditor/parts/InstanceRelationsEditor/InstanceRelationsEditor";
 import { ReferencedInstanceEditor } from "@/components/blockInstance/BlockInstanceEditor/parts/ReferencedInstanceEditor/ReferencedInstanceEditor";
-import { UserDocViewer } from "@/components/userDoc/UserDocViewer";
 import { InstanceMindMap } from "@/components/mindMap/InstanceMindMap/InstanceMindMap";
 import { IconSelector } from "@/components/shared/IconSelector/IconSelector";
 import { IconViewer } from "@/components/shared/IconViewer/IconViewer";
 import { InlineEdit } from "@/components/shared/InlineEdit/InlineEdit";
 import { InlineEdit2 } from "@/components/shared/InlineEdit2/InlineEdit2";
+import { UserDocViewer } from "@/components/userDoc/UserDocViewer";
 import { bookDb } from "@/entities/bookDb";
 import { IBlock, IBlockStructureKind, IBlockTabKind } from "@/entities/ConstructorEntities";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
@@ -398,9 +398,7 @@ export const BlockInstanceEditor = (props: IBlockInstanceEditorProps) => {
         position="right"
         title={userDocPage?.title}
       >
-        {userDocPage && (
-          <UserDocViewer uuid={userDocPage.uuid!} bookUuid={selectedBook?.uuid} />
-        )}
+        {userDocPage && <UserDocViewer uuid={userDocPage.uuid!} bookUuid={selectedBook?.uuid} />}
       </Drawer>
     </>
   );

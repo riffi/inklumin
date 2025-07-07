@@ -8,16 +8,19 @@ export const useChapters = (chapters?: IChapter[]) => {
   const { selectedBook } = useBookStore();
   const chapterOnlyMode = selectedBook?.chapterOnlyMode === 1;
 
-  const createChapter = useCallback(async (title: string) => {
-    const result = await SceneService.createChapter(title, chapterOnlyMode);
-    if (result.success) {
-      notifications.show({ title: "Успех", message: "Глава успешно создана", color: "green" });
-      return result.data;
-    } else {
-      notifications.show({ title: "Ошибка", message: "Не удалось создать главу", color: "red" });
-      return undefined;
-    }
-  }, [chapterOnlyMode]);
+  const createChapter = useCallback(
+    async (title: string) => {
+      const result = await SceneService.createChapter(title, chapterOnlyMode);
+      if (result.success) {
+        notifications.show({ title: "Успех", message: "Глава успешно создана", color: "green" });
+        return result.data;
+      } else {
+        notifications.show({ title: "Ошибка", message: "Не удалось создать главу", color: "red" });
+        return undefined;
+      }
+    },
+    [chapterOnlyMode]
+  );
 
   const deleteChapter = useCallback(async (chapterId: number) => {
     const result = await SceneService.deleteChapter(chapterId);

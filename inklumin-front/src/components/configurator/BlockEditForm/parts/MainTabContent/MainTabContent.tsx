@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { IconPhoto, IconQuestionMark, IconTrash } from "@tabler/icons-react";
 import {
@@ -16,20 +15,19 @@ import {
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { InkLuminApiError, InkLuminMlApi } from "@/api/inkLuminMlApi";
-import { UserDocEditor } from "@/components/userDoc/UserDocEditor";
 import { IconSelector } from "@/components/shared/IconSelector/IconSelector";
 import { IconViewer } from "@/components/shared/IconViewer/IconViewer";
 import { InlineEdit2 } from "@/components/shared/InlineEdit2/InlineEdit2";
 import { LoadingOverlayExtended } from "@/components/shared/overlay/LoadingOverlayExtended";
+import { UserDocEditor } from "@/components/userDoc/UserDocEditor";
 import {
   IBlock,
   IBlockStructureKind,
   IBlockStructureKindTitle,
   IBlockTitleForms,
-  IIconKind, IUserDocPage,
+  IIconKind,
+  IUserDocPage,
 } from "@/entities/ConstructorEntities";
-
-
 
 interface MainTabContentProps {
   block: IBlock;

@@ -11,10 +11,10 @@ import { IBlock } from "@/entities/ConstructorEntities";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 import { BlockRepository } from "@/repository/Block/BlockRepository";
 import { ChapterRepository } from "@/repository/Scene/ChapterRepository";
+import { SceneRepository } from "@/repository/Scene/SceneRepository";
 import { BlockInstanceAiFiller } from "./parts/BlockInstanceAiFiller";
 import { SceneAnalysisDrawer } from "./parts/SceneAnalysisDrawer";
 import type { SceneEditorProps } from "./types";
-import {SceneRepository} from "@/repository/Scene/SceneRepository";
 
 // Extracted custom hook
 const useSceneEditorState = () => {

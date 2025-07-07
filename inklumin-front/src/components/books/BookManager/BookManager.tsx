@@ -700,9 +700,9 @@ export const BookManager = () => {
 
           <Tabs.Panel value="books" pt="xs">
             {filteredBooks.length === 0 && (
-                <Text ta="center" c="dimmed" mt="sm">
-                  Добавьте&nbsp;первое&nbsp;произведение
-                </Text>
+              <Text ta="center" c="dimmed" mt="sm">
+                Добавьте&nbsp;первое&nbsp;произведение
+              </Text>
             )}
             <SimpleGrid cols={{ base: 1, sm: 1, lg: 1, xl: 1 }}>
               {filteredBooks.map((book) => (
@@ -713,9 +713,9 @@ export const BookManager = () => {
 
           <Tabs.Panel value="materials" pt="xs">
             {filteredBooks.length === 0 && (
-                <Text ta="center" c="dimmed" mt="sm">
-                  Добавьте&nbsp;первый&nbsp;материал
-                </Text>
+              <Text ta="center" c="dimmed" mt="sm">
+                Добавьте&nbsp;первый&nbsp;материал
+              </Text>
             )}
             <SimpleGrid cols={{ base: 1, sm: 1, lg: 1, xl: 1 }}>
               {filteredBooks.map((book) => (

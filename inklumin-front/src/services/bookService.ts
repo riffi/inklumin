@@ -2,10 +2,10 @@ import { bookDb, connectToBookDatabase, deleteBookDatabase } from "@/entities/bo
 import { IBook } from "@/entities/BookEntities";
 import { configDatabase } from "@/entities/configuratorDb";
 import { IBlock, IBlockStructureKind, IBookConfiguration } from "@/entities/ConstructorEntities";
+import { BlockRepository } from "@/repository/Block/BlockRepository";
 import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";
 import { BlockParameterInstanceRepository } from "@/repository/BlockInstance/BlockParameterInstanceRepository";
 import { BookRepository } from "@/repository/Book/BookRepository";
-import { BlockRepository } from "@/repository/Block/BlockRepository";
 import { generateUUID } from "@/utils/UUIDUtils";
 
 export interface ServiceResult<T = any> {
@@ -27,10 +27,7 @@ async function copyParameterPossibleValues(parameterUuid: string) {
 }
 
 async function copyBlockParameters(groupUuid: string) {
-  const parameters = await BlockRepository.getParametersByGroup(
-    configDatabase,
-    groupUuid
-  );
+  const parameters = await BlockRepository.getParametersByGroup(configDatabase, groupUuid);
   await BlockRepository.bulkAddParameters(bookDb, parameters);
   await Promise.all(parameters.map((p) => copyParameterPossibleValues(p.uuid!)));
 }

@@ -1,6 +1,6 @@
 import { notifications } from "@mantine/notifications";
-import { IBlock } from "@/entities/ConstructorEntities";
 import { AiBlockInstanceEntity } from "@/entities/AiBlockInstanceEntities";
+import { IBlock } from "@/entities/ConstructorEntities";
 import { getOpenRouterKey, useApiSettingsStore } from "@/stores/apiSettingsStore/apiSettingsStore";
 
 const fetchCompletions = async (prompt: string) => {

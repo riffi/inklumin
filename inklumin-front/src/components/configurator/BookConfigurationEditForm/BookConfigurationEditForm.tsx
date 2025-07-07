@@ -18,10 +18,10 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import { IconViewer } from "@/components/shared/IconViewer/IconViewer";
 import { BlockEditModal } from "@/components/configurator/BookConfigurationEditForm/BlockEditModal/BlockEditModal";
 import { useBookConfigurationEditForm } from "@/components/configurator/BookConfigurationEditForm/useBookConfigurationEditForm";
 import { BlocksMindMap } from "@/components/mindMap/BlocksMindMap/BlocksMindMap";
+import { IconViewer } from "@/components/shared/IconViewer/IconViewer";
 import { InlineEdit2 } from "@/components/shared/InlineEdit2/InlineEdit2";
 import { bookDb } from "@/entities/bookDb";
 import {

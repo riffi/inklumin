@@ -9,7 +9,7 @@ interface IconViewerProps {
   color?: string;
   backgroundColor?: string;
   style?: React.CSSProperties; // Добавляем пропс для стилей
-  showNoImage?: boolean
+  showNoImage?: boolean;
 }
 
 export const IconViewer = ({
@@ -18,11 +18,9 @@ export const IconViewer = ({
   color = "black",
   backgroundColor = "#fff",
   style,
-  showNoImage
+  showNoImage,
 }: IconViewerProps) => {
-  const isIconEmpty =
-    (!icon) ||
-    (icon && !icon.iconName && !icon.iconBase64);
+  const isIconEmpty = !icon || (icon && !icon.iconName && !icon.iconBase64);
 
   const combinedStyle = {
     color,
@@ -43,9 +41,7 @@ export const IconViewer = ({
     );
   }
 
-  const IconComponent = icon && icon.iconKind === "gameIcons" ?
-      Gi[icon.iconName]
-      : null;
+  const IconComponent = icon && icon.iconKind === "gameIcons" ? Gi[icon.iconName] : null;
 
   if (icon?.iconKind === IIconKind.custom) {
     return (

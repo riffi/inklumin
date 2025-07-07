@@ -7,7 +7,7 @@ import {
   IBlockRelation,
   IBlockTab,
   IBookConfiguration,
-  IUserDocPage
+  IUserDocPage,
 } from "@/entities/ConstructorEntities";
 
 export const baseSchema = {

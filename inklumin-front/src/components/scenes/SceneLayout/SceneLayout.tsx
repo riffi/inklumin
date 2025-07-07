@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { IconColumns, IconLayoutSidebar } from "@tabler/icons-react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useLocation, useNavigate } from "react-router-dom";
-import {Box, Container, LoadingOverlay, SegmentedControl} from "@mantine/core";
+import { Box, Container, LoadingOverlay, SegmentedControl } from "@mantine/core";
 import { SceneEditor } from "@/components/scenes/SceneEditor/SceneEditor";
 import { useSceneLayout } from "@/components/scenes/SceneLayout/hooks/useSceneLayout";
 import { SceneManager } from "@/components/scenes/SceneManager/SceneManager";
@@ -110,76 +110,76 @@ export const SceneLayout = () => {
 
   return (
     <Container fluid={sceneLayoutMode === "split"}>
-    <Box display="flex">
-      <LoadingOverlay
-        visible={isLoading}
-        zIndex={1000}
-        overlayProps={{ radius: "sm", blur: 2 }}
-        loaderProps={{ color: "blue", type: "bars" }}
-        style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0 }}
-      />
+      <Box display="flex">
+        <LoadingOverlay
+          visible={isLoading}
+          zIndex={1000}
+          overlayProps={{ radius: "sm", blur: 2 }}
+          loaderProps={{ color: "blue", type: "bars" }}
+          style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0 }}
+        />
 
-      <SegmentedControl
-        value={sceneLayoutMode}
-        onChange={handleModeChange}
-        data={segmentedControlData}
-        style={{
-          position: "fixed",
-          top: 20,
-          right: 20,
-          zIndex: 99,
-        }}
-        styles={{
-          root: { height: 36 },
-          label: {
-            padding: "0 12px",
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          },
-        }}
-      />
+        <SegmentedControl
+          value={sceneLayoutMode}
+          onChange={handleModeChange}
+          data={segmentedControlData}
+          style={{
+            position: "fixed",
+            top: 20,
+            right: 20,
+            zIndex: 99,
+          }}
+          styles={{
+            root: { height: 36 },
+            label: {
+              padding: "0 12px",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            },
+          }}
+        />
 
-      <Box
-        style={{
-          width: sceneLayoutMode === "split" ? "500px" : undefined,
-          flexShrink: sceneLayoutMode === "split" ? 0 : undefined,
-          position: "relative",
-          flex: "auto",
-          flexGrow: sceneLayoutMode === "split" ? "0" : undefined,
-        }}
-      >
         <Box
+          style={{
+            width: sceneLayoutMode === "split" ? "500px" : undefined,
+            flexShrink: sceneLayoutMode === "split" ? 0 : undefined,
+            position: "relative",
+            flex: "auto",
+            flexGrow: sceneLayoutMode === "split" ? "0" : undefined,
+          }}
+        >
+          <Box
             style={{
               maxHeight: "calc(100vh - 50px)",
               overflowY: "auto",
             }}
-        >
-          <SceneManager
+          >
+            <SceneManager
               openScene={openScene}
               selectedSceneId={sceneId}
               mode={sceneLayoutMode}
               scenes={scenesWithBlockInstances}
               chapters={chapters}
               chapterOnly={chapterOnlyMode}
-          />
+            />
+          </Box>
         </Box>
-      </Box>
 
-      {sceneLayoutMode === "split" && (
-        <Box
-          style={{
-            flexGrow: 1,
-            flex: "auto",
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          {sceneId ? <SceneEditor sceneId={sceneId} chapter={chapter} /> : <Placeholder />}
-        </Box>
-      )}
-    </Box>
+        {sceneLayoutMode === "split" && (
+          <Box
+            style={{
+              flexGrow: 1,
+              flex: "auto",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            {sceneId ? <SceneEditor sceneId={sceneId} chapter={chapter} /> : <Placeholder />}
+          </Box>
+        )}
+      </Box>
     </Container>
   );
 };

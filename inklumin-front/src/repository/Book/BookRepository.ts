@@ -40,10 +40,7 @@ const getConfiguration = async (
   return db.bookConfigurations.where("uuid").equals(uuid).first();
 };
 
-const addConfiguration = async (
-  db: BookDbLike,
-  config: IBookConfiguration
-): Promise<void> => {
+const addConfiguration = async (db: BookDbLike, config: IBookConfiguration): Promise<void> => {
   await db.bookConfigurations.add(config);
 };
 

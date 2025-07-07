@@ -3,8 +3,8 @@ import { IconAlertCircle, IconCircle, IconInfoCircle, IconRepeat } from "@tabler
 import { Group, List, Paper, Text, ThemeIcon } from "@mantine/core";
 import { WarningGroup } from "@/components/shared/RichEditor/parts/WarningsPanel/WarningGroup";
 import { IWarning, IWarningGroup, IWarningKind } from "@/components/shared/RichEditor/types";
-import { NavigationButtons } from "./NavigationButtons";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
+import { NavigationButtons } from "./NavigationButtons";
 
 export interface IWarningIterationProps {
   warningGroups: IWarningGroup[];
@@ -13,22 +13,22 @@ export interface IWarningIterationProps {
   onSelectGroup: (warningGroup: IWarningGroup) => void;
 }
 
-const mobileStyle={
-    position: "fixed",
-    height: "130px",
-    left: 0,
-    right: 0,
-    zIndex: 200,
-    bottom: 0,
-    transition: "bottom 0.3s ease",
-    padding: "8px",
-    backgroundColor: "white",
-    boxShadow: "0 -2px 10px rgba(0,0,0,0.1)",
-}
+const mobileStyle = {
+  position: "fixed",
+  height: "130px",
+  left: 0,
+  right: 0,
+  zIndex: 200,
+  bottom: 0,
+  transition: "bottom 0.3s ease",
+  padding: "8px",
+  backgroundColor: "white",
+  boxShadow: "0 -2px 10px rgba(0,0,0,0.1)",
+};
 
 export const WarningIteration = (props: IWarningIterationProps) => {
   const currentGroup = props.warningGroups?.[props.currentIndex] ?? props.warningGroups?.[0];
-  const {isMobile} = useMedia()
+  const { isMobile } = useMedia();
 
   if (!currentGroup) {
     return (
@@ -39,7 +39,7 @@ export const WarningIteration = (props: IWarningIterationProps) => {
   }
 
   return (
-    <div style={isMobile? mobileStyle : { padding: 2, backgroundColor: "white" }}>
+    <div style={isMobile ? mobileStyle : { padding: 2, backgroundColor: "white" }}>
       <NavigationButtons
         currentIndex={props.currentIndex}
         total={props.warningGroups.length}

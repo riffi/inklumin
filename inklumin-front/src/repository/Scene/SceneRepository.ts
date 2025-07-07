@@ -309,5 +309,5 @@ export const SceneRepository = {
   addSceneToChapter,
   removeSceneFromChapter,
   findByTitle,
-  updateBody
+  updateBody,
 };

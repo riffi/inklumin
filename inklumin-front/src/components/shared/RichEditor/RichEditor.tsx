@@ -7,15 +7,15 @@ import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 
 import "./editor.override.css";
 
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { IconCheck, IconFocus } from "@tabler/icons-react";
 import { createPortal } from "react-dom";
 import { Button, Drawer } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { WarningsPanel } from "@/components/shared/RichEditor/parts/WarningsPanel/WarningsPanel";
 import { LoadingOverlayExtended } from "@/components/shared/overlay/LoadingOverlayExtended";
 import { useEditorState } from "@/components/shared/RichEditor/hooks/useEditorState";
 import { useWarningGroups } from "@/components/shared/RichEditor/hooks/useWarningGroups";
+import { WarningsPanel } from "@/components/shared/RichEditor/parts/WarningsPanel/WarningsPanel";
 import { ChecksDrawerButton } from "@/components/shared/RichEditor/toolbar/ChecksDrawerButton";
 import { EditorToolBar } from "@/components/shared/RichEditor/toolbar/EditorToolBar";
 import { SuggestionsDrawerButton } from "@/components/shared/RichEditor/toolbar/SuggestionsDrawerButton";
@@ -79,32 +79,28 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
     onSelectionChange
   );
   const [selectedGroup, setSelectedGroup] = useState<IWarningGroup>();
-  const warningGroups = useWarningGroups(
-    editor,
-    selectedGroup,
-    setSelectedGroup
-  );
+  const warningGroups = useWarningGroups(editor, selectedGroup, setSelectedGroup);
 
   useEffect(() => {
     const panel =
-        warningGroups?.length > 0 ? (
-            <WarningsPanel
-                warningGroups={warningGroups}
-                selectedGroup={selectedGroup}
-                onSelectGroup={setSelectedGroup}
-                displayType="iteration"
-            />
-        ) : <div style={{display:"none"}}/>;
-    setWarningsPanel(panel)
+      warningGroups?.length > 0 ? (
+        <WarningsPanel
+          warningGroups={warningGroups}
+          selectedGroup={selectedGroup}
+          onSelectGroup={setSelectedGroup}
+          displayType="iteration"
+        />
+      ) : (
+        <div style={{ display: "none" }} />
+      );
+    setWarningsPanel(panel);
   }, [warningGroups, selectedGroup]);
-
 
   // Обработчик прокрутки
   const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
     props.onScroll?.(event.target.scrollTop);
     setScrollTop(event.target.scrollTop);
   };
-
 
   return (
     <>
@@ -116,8 +112,8 @@ export const RichEditor = (props: ISceneRichTextEditorProps) => {
           props.useIndent ? "use-indent" : ""
         }`}
         onClick={() => {
-          editor?.setEditable(true)
-          editor?.commands.focus()
+          editor?.setEditable(true);
+          editor?.commands.focus();
         }}
         style={
           isMobile

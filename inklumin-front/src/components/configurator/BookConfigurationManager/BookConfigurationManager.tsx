@@ -58,12 +58,7 @@ export const BookConfigurationManager = () => {
     const header = (
       <Group gap="xs">
         <Text fw={500}>Конфигуратор</Text>
-        <ActionIcon
-          component={Link}
-          variant="subtle"
-          title="Справка"
-          to={`/docs/configurator`}
-        >
+        <ActionIcon component={Link} variant="subtle" title="Справка" to={`/docs/configurator`}>
           <IconQuestionMark size="1rem" />
         </ActionIcon>
       </Group>

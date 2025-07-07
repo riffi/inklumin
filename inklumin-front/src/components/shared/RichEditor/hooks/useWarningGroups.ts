@@ -30,7 +30,6 @@ export const useWarningGroups = (
 
         const newWarningGroups = [...clicheGroups, ...repeatGroups, ...spellingGroups];
         setWarningGroups(newWarningGroups);
-
       }
     };
 
@@ -56,7 +55,6 @@ export const useWarningGroups = (
           ...(repeatHighlighterKey.getState(editor.state)?.warningGroups || []),
           ...(spellingHighlighterKey.getState(editor.state)?.warningGroups || []),
         ];
-
 
         const group = groups.find((g) => g.groupIndex === meta.groupIndex);
 

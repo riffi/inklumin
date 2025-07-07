@@ -186,7 +186,11 @@ export const SceneDesktopContent = ({
           </Container>
         </Box>
         {!focusMode && (
-          <Box flex={2} style={{ position: "sticky", top: 16, minWidth: '200px' }} ref={warningsPanelRef} />
+          <Box
+            flex={2}
+            style={{ position: "sticky", top: 16, minWidth: "200px" }}
+            ref={warningsPanelRef}
+          />
         )}
       </Flex>
       {!focusMode && (

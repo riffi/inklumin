@@ -38,7 +38,6 @@ export const BookBackupTab = () => {
     setLoading(false);
   };
 
-
   const handleFileImportWithRefresh = async () => {
     setLoading(true);
     const success = await handleFileImport();
@@ -53,8 +52,8 @@ export const BookBackupTab = () => {
       <LoadingOverlay visible={loading} zIndex={1000} overlayBlur={2} />
 
       <Text size="sm" mb="xl">
-        Экспорт и импорт полных данных произведения. При импорте существующие данные произведения будут полностью
-        заменены.
+        Экспорт и импорт полных данных произведения. При импорте существующие данные произведения
+        будут полностью заменены.
       </Text>
 
       <Stack spacing="xl">
@@ -93,8 +92,7 @@ export const BookBackupTab = () => {
             </Button>
           </Group>
         </Box>
-
-        </Stack>
-      </div>
+      </Stack>
+    </div>
   );
 };

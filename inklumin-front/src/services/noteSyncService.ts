@@ -1,6 +1,6 @@
-import { notifications } from "@mantine/notifications";
 import { useEffect } from "react";
 import moment from "moment";
+import { notifications } from "@mantine/notifications";
 import { inkLuminAPI } from "@/api/inkLuminApi/inkLuminApi";
 import { NoteBackupRepository } from "@/repository/Note/NoteBackupRepository";
 import { NoteMetaRepository } from "@/repository/Note/NoteMetaRepository";
@@ -57,9 +57,7 @@ export const useNotesServerSync = (token: string | undefined) => {
 
         const serverDate = moment(response.data.updatedAt);
         const localMeta = await NoteMetaRepository.getMeta();
-        const localDate = localMeta?.localUpdatedAt
-          ? moment(localMeta.localUpdatedAt)
-          : moment(0);
+        const localDate = localMeta?.localUpdatedAt ? moment(localMeta.localUpdatedAt) : moment(0);
 
         if (serverDate.unix() > localDate.unix()) {
           await NoteMetaRepository.updateMeta({
