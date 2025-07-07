@@ -25,7 +25,7 @@ export const IconViewer = ({
   const combinedStyle = {
     color,
     backgroundColor,
-    padding: `3px 5px`,
+    padding: `5px`,
     borderRadius: "3px",
     display: "flex",
     alignItems: "center",
@@ -50,8 +50,7 @@ export const IconViewer = ({
           src={icon?.iconBase64}
           alt="Пользовательская иконка"
           style={{
-            width: `${size + 10}px`,
-            marginRight: "5px",
+            width: `${size + 5 }px`,
           }}
           radius="sm"
         />
