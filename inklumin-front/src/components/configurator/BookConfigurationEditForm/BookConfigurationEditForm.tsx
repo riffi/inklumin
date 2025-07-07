@@ -152,7 +152,7 @@ export const BookConfigurationEditForm = (props: IBookConfigurationEditFormProps
             <Stack gap="sm">
               <Group justify="space-between" wrap="nowrap">
                 <Group gap="xs" wrap="nowrap" align="center">
-                  <IconViewer icon={c.icon} size={20} />
+                  <IconViewer icon={c.icon} size={24} color={"gray"} />
                   <Text fw={500} truncate="end">
                     {c.title}
                   </Text>

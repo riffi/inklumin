@@ -52,7 +52,7 @@ export const DashboardBlockCard = ({ block }: BlockCardProps) => {
       <Stack gap="sm">
         <Group justify="space-between">
           <Group gap="xs" style={{ cursor: "pointer" }} onClick={handleNavigateToBlockManager}>
-            <IconViewer iconName={block?.icon} size={28} color="var(--mantine-color-blue-7)" />
+            <IconViewer icon={block?.icon} size={28} color="var(--mantine-color-blue-7)" />
             <Text fw={500} size="lg" truncate style={{ textTransform: "capitalize" }}>
               {getBlockTitle(block)}
             </Text>
