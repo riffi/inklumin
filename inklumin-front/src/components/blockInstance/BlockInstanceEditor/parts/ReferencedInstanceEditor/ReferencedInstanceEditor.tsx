@@ -1,11 +1,12 @@
-import { IconLink } from "@tabler/icons-react";
+import {IconArrowUpRight, IconLink} from "@tabler/icons-react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useNavigate } from "react-router-dom";
-import { ActionIcon, Box, Group, Table, Text } from "@mantine/core";
+import {ActionIcon, Box, Group, Stack, Table, Text, UnstyledButton} from "@mantine/core";
 import { bookDb } from "@/entities/bookDb";
 import { IBlockInstance } from "@/entities/BookEntities";
 import { IBlock, IBlockParameter } from "@/entities/ConstructorEntities";
 import { BlockRepository } from "@/repository/Block/BlockRepository";
+import {useMedia} from "@/providers/MediaQueryProvider/MediaQueryProvider";
 
 export interface IReferencedInstanceEditorProps {
   instance: IBlockInstance;
@@ -14,6 +15,7 @@ export interface IReferencedInstanceEditorProps {
 }
 export const ReferencedInstanceEditor = (props: IReferencedInstanceEditorProps) => {
   const navigate = useNavigate();
+  const {isMobile} = useMedia()
 
   const referencingInstances = useLiveQuery(async () => {
     const referencedParameterInstances = await bookDb.blockParameterInstances
@@ -31,41 +33,67 @@ export const ReferencedInstanceEditor = (props: IReferencedInstanceEditorProps) 
     return referencedBlockInstances;
   }, [props.referencingParam, props.block, props.instance]);
 
-  const referencingBlock = useLiveQuery<IBlock>(async () => {
-    return BlockRepository.getByUuid(bookDb, props.referencingParam.blockUuid);
-  }, [props.block, props.instance, props.referencingParam]);
+
+  if (!referencingInstances?.length) {
+    return (
+        <Box>
+          <Text c="dimmed" style={{ fontStyle: "italic" }}>
+            Ссылок нет
+          </Text>
+        </Box>
+    );
+  }
+
+  const handleNavigate = (uuid: string) => {
+    navigate(`/block-instance/card?uuid=${uuid}`);
+  };
+
+  const renderRowContent = (title: string) => (
+      <Group justify="space-between" wrap="nowrap">
+        <Text lineClamp={1}>{title}</Text>
+        <IconArrowUpRight size={16} stroke={1.5} />
+      </Group>
+  );
 
   return (
-    <>
       <Box>
-        <Table>
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th>{referencingBlock?.title}</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            {referencingInstances?.map((instance) => (
-              <Table.Tr key={instance.uuid}>
-                <Table.Td>
-                  <Group>
-                    <Text>{instance.title}</Text>
-                    <ActionIcon
-                      variant="subtle"
-                      size="18"
-                      onClick={() => {
-                        navigate(`/block-instance/card?uuid=${instance.uuid}`);
-                      }}
-                    >
-                      <IconLink />
-                    </ActionIcon>
-                  </Group>
-                </Table.Td>
-              </Table.Tr>
-            ))}
-          </Table.Tbody>
-        </Table>
+
+        {isMobile ? (
+            <Stack spacing={4}>
+              {referencingInstances.map((instance) => (
+                  <UnstyledButton
+                      key={instance.uuid}
+                      onClick={() => handleNavigate(instance.uuid)}
+                      sx={(theme) => ({
+                        display: "block",
+                        width: "100%",
+                        padding: theme.spacing.xs,
+                        borderRadius: theme.radius.md,
+                        "&:hover": {
+                          backgroundColor: theme.colors.gray[0],
+                        },
+                      })}
+                  >
+                    {renderRowContent(instance.title)}
+                  </UnstyledButton>
+              ))}
+            </Stack>
+        ) : (
+            <Table highlightOnHover withBorder withColumnBorders>
+              <tbody>
+              {referencingInstances.map((instance) => (
+                  <tr
+                      key={instance.uuid}
+                      style={{ cursor: "pointer" }}
+                      onClick={() => handleNavigate(instance.uuid)}
+                  >
+                    <td>{renderRowContent(instance.title)}</td>
+                  </tr>
+              ))}
+              </tbody>
+            </Table>
+        )}
       </Box>
-    </>
   );
 };
+
