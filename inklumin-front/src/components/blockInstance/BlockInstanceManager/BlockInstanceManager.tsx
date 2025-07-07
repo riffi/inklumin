@@ -19,6 +19,7 @@ import {
   LoadingOverlay,
   Modal,
   MultiSelect,
+  ScrollArea,
   SegmentedControl,
   Select,
   Space,
@@ -27,7 +28,6 @@ import {
   Text,
   TextInput,
   Title,
-  ScrollArea,
 } from "@mantine/core";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 import { BlockInstanceEditor } from "@/components/blockInstance/BlockInstanceEditor/BlockInstanceEditor";
@@ -364,7 +364,7 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
                   mb={10}
                   styles={{ root: { minWidth: "100%" } }}
                 >
-                  <Tabs.List style={{flexWrap: 'nowrap'}}>
+                  <Tabs.List style={{ flexWrap: "nowrap" }}>
                     <Tabs.Tab value="none">Без групп</Tabs.Tab>
                     {groups?.map((g) => (
                       <Tabs.Tab key={g.uuid} value={g.uuid}>
@@ -393,7 +393,7 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
                   mb={10}
                   styles={{ root: { minWidth: "100%" } }}
                 >
-                  <Tabs.List style={{flexWrap: 'nowrap'}}>
+                  <Tabs.List style={{ flexWrap: "nowrap" }}>
                     <Tabs.Tab value="none">Все</Tabs.Tab>
                     {visibleLinkGroups?.map((g) => (
                       <Tabs.Tab key={g.uuid} value={g.uuid}>

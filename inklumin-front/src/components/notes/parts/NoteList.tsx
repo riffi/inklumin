@@ -2,27 +2,27 @@ import { useState } from "react";
 import {
   IconArrowRightCircleFilled,
   IconCalendar,
-  IconDots,
   IconEdit,
   IconSortAZ,
   IconTrash,
 } from "@tabler/icons-react";
 import { useLiveQuery } from "dexie-react-hooks";
 import {
-  ActionIcon,
   Badge,
   Button,
-  Drawer,
   Group,
   Modal,
   SegmentedControl,
-  Stack,
   Table,
   TagsInput,
   Text,
 } from "@mantine/core";
 import { useNoteManager } from "@/components/notes/hook/useNoteManager";
 import { NoteFolderSelector } from "@/components/notes/parts/NoteFolderSelector";
+import {
+  ActionItem,
+  RowActionButtons,
+} from "@/components/shared/RowActionButtons/RowActionButtons";
 import { INote } from "@/entities/BookEntities";
 import { configDatabase } from "@/entities/configuratorDb";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
@@ -51,10 +51,27 @@ export const NoteList = ({
   const { notesSortType, setNotesSortType } = useUiSettingsStore();
   const [searchTags, setSearchTags] = useState<string[]>([]);
   const [expandedNoteUuid, setExpandedNoteUuid] = useState<string | null>(null);
-  const [openedDrawerId, setOpenedDrawerId] = useState<string | null>(null);
 
   const { updateNote } = useNoteManager();
   const { isMobile } = useMedia();
+  const noteActions: ActionItem[] = [
+    {
+      key: "edit",
+      title: "Редактировать",
+      icon: <IconEdit size={16} />,
+    },
+    {
+      key: "move",
+      title: "Переместить",
+      icon: <IconArrowRightCircleFilled size={16} />,
+    },
+    {
+      key: "delete",
+      title: "Удалить",
+      icon: <IconTrash size={16} />,
+      color: "red",
+    },
+  ];
   // Получаем все группы заметок
   const allGroups = useLiveQuery(() => NoteGroupRepository.getAll(configDatabase), [notes]) || [];
 
@@ -94,8 +111,7 @@ export const NoteList = ({
     setExpandedNoteUuid((prev) => (prev === noteUuid ? null : noteUuid));
   };
 
-  const handleDrawerActions = (note: INote, action: "edit" | "move" | "delete") => {
-    setOpenedDrawerId(null);
+  const handleNoteActions = (note: INote, action: "edit" | "move" | "delete") => {
     switch (action) {
       case "edit":
         onEdit(note);
@@ -113,7 +129,7 @@ export const NoteList = ({
     ...sortedNotes.map((note) => (
       <Table.Tr key={note.uuid}>
         <Table.Td>
-          <Text style={{ cursor: "pointer" }} onClick={() => handleDrawerActions(note, "edit")}>
+          <Text style={{ cursor: "pointer" }} onClick={() => handleNoteActions(note, "edit")}>
             {note.title}
           </Text>
           {note.noteGroupUuid && showFolderName && (
@@ -152,60 +168,12 @@ export const NoteList = ({
         </Table.Td>
 
         <Table.Td>
-          <Group gap={4} justify="flex-end">
-            {isMobile ? (
-              <>
-                <ActionIcon variant="subtle" onClick={() => setOpenedDrawerId(note.uuid)}>
-                  <IconDots size={16} />
-                </ActionIcon>
-
-                <Drawer
-                  opened={openedDrawerId === note.uuid}
-                  onClose={() => setOpenedDrawerId(null)}
-                  position="bottom"
-                  title="Действия с заметкой"
-                  size="25%"
-                >
-                  <Stack gap="sm">
-                    <Button
-                      variant="subtle"
-                      leftSection={<IconEdit size={16} />}
-                      onClick={() => handleDrawerActions(note, "edit")}
-                    >
-                      Редактировать
-                    </Button>
-                    <Button
-                      variant="subtle"
-                      leftSection={<IconArrowRightCircleFilled size={16} />}
-                      onClick={() => handleDrawerActions(note, "move")}
-                    >
-                      Переместить
-                    </Button>
-                    <Button
-                      color="red"
-                      variant="subtle"
-                      leftSection={<IconTrash size={16} />}
-                      onClick={() => handleDrawerActions(note, "delete")}
-                    >
-                      Удалить
-                    </Button>
-                  </Stack>
-                </Drawer>
-              </>
-            ) : (
-              <>
-                <ActionIcon variant="subtle" onClick={() => onEdit(note)}>
-                  <IconEdit size={16} />
-                </ActionIcon>
-                <ActionIcon variant="subtle" onClick={() => setMovingNote(note)}>
-                  <IconArrowRightCircleFilled size={16} />
-                </ActionIcon>
-                <ActionIcon color="red" variant="subtle" onClick={() => onDelete(note.uuid)}>
-                  <IconTrash size={16} />
-                </ActionIcon>
-              </>
-            )}
-          </Group>
+          <RowActionButtons
+            actions={noteActions}
+            onAction={(key) => handleNoteActions(note, key as "edit" | "move" | "delete")}
+            entityId={note.uuid}
+            drawerTitle="Действия с заметкой"
+          />
         </Table.Td>
       </Table.Tr>
     )),

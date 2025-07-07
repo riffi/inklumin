@@ -18,7 +18,7 @@ export const BookDashboard = (bookUuid: string) => {
 
   useEffect(() => {
     setHeader({
-      title: `Рабочий стол`
+      title: `Рабочий стол`,
     });
   }, [bookUuid]);
 

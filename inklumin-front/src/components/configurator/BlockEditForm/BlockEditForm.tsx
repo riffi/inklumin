@@ -39,7 +39,7 @@ export const BlockEditForm = ({ blockUuid, bookUuid }: IBlockEditFormProps) => {
 
   useEffect(() => {
     setHeader({
-     title: getBlockTitle(block)
+      title: getBlockTitle(block),
     });
   }, [blockUuid, block]);
 

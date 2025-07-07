@@ -87,54 +87,54 @@ export const BlockInstanceTableRow = ({
               </Text>
             )}
             <Group
-                gap="0"
-                style={{
-                  marginTop: "0px",
-                }}
+              gap="0"
+              style={{
+                marginTop: "0px",
+              }}
             >
               {displayedParameters?.map((param, index) => {
-                const paramInstance = instance.params?.find((p) => p.blockParameterUuid === param.uuid);
-                if (!paramInstance) return
+                const paramInstance = instance.params?.find(
+                  (p) => p.blockParameterUuid === param.uuid
+                );
+                if (!paramInstance) return;
                 return (
-                    <Badge
-                        key={param.uuid}
-                        variant="transparent"
-                        color="#BBB"
-                        style={{
-                          fontSize: "0.8rem",
-                          textTransform: "lowercase",
-                          fontWeight: 400,
-                          paddingLeft: "0px",
-                          borderRadius: "0",
-                        }}
+                  <Badge
+                    key={param.uuid}
+                    variant="transparent"
+                    color="#BBB"
+                    style={{
+                      fontSize: "0.8rem",
+                      textTransform: "lowercase",
+                      fontWeight: 400,
+                      paddingLeft: "0px",
+                      borderRadius: "0",
+                    }}
+                  >
+                    <Group
+                      gap={5}
+                      style={{
+                        borderRight:
+                          index < displayedParameters?.length - 1 ? "1px solid #EEE" : "none",
+                        paddingRight: "10px",
+                      }}
                     >
-                      <Group
-                          gap={5}
-                          style={{
-                            borderRight:
-                                index < displayedParameters?.length - 1 ? "1px solid #EEE" : "none",
-                            paddingRight: "10px",
-                          }}
-                      >
-                        <Text size={12}>{param.title}: </Text>
+                      <Text size={12}>{param.title}: </Text>
 
-                        <ParameterViewVariantRenderer
-                            dataType={param.dataType}
-                            value={
-                              param.dataType === IBlockParameterDataType.blockLink
-                                  ? paramInstance?.linkedBlockInstanceUuid || ""
-                                  : paramInstance?.value || ""
-                            }
-                        />
-                      </Group>
-                    </Badge>
+                      <ParameterViewVariantRenderer
+                        dataType={param.dataType}
+                        value={
+                          param.dataType === IBlockParameterDataType.blockLink
+                            ? paramInstance?.linkedBlockInstanceUuid || ""
+                            : paramInstance?.value || ""
+                        }
+                      />
+                    </Group>
+                  </Badge>
                 );
               })}
             </Group>
           </Stack>
-
         </Group>
-
       </Table.Td>
       <Table.Td>
         <RowActionButtons

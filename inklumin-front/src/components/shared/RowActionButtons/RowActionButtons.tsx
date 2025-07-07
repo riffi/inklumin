@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { IconDots } from "@tabler/icons-react";
-import { ActionIcon, Box, Button, Drawer, Group, Stack, Text } from "@mantine/core";
+import { ActionIcon, Drawer, Group, Stack, Text } from "@mantine/core";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 
 export interface ActionItem {

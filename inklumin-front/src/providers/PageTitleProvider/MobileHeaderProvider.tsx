@@ -41,8 +41,6 @@ export const MobileHeaderProvider = ({ children }: { children: React.ReactNode }
     }
   }, [pageTitle]);
 
-
-
   const setHeader = (headerProps: PageHeaderProps | null) => {
     if (headerProps) {
       setHeaderState(headerProps);

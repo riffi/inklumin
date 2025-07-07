@@ -50,7 +50,7 @@ export const IconViewer = ({
           src={icon?.iconBase64}
           alt="Пользовательская иконка"
           style={{
-            width: `${size + 5 }px`,
+            width: `${size + 5}px`,
           }}
           radius="sm"
         />
