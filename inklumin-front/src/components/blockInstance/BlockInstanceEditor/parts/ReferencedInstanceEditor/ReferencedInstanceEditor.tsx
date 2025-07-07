@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { IconArrowUpRight, IconLink } from "@tabler/icons-react";
+import { IconArrowUpRight, IconLink, IconUnlink } from "@tabler/icons-react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useNavigate } from "react-router-dom";
 import {
@@ -17,6 +17,7 @@ import {
 import { bookDb } from "@/entities/bookDb";
 import { IBlockInstance, IBlockParameterInstance } from "@/entities/BookEntities";
 import { IBlock, IBlockParameter } from "@/entities/ConstructorEntities";
+import { useDialog } from "@/providers/DialogProvider/DialogProvider";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 import { BlockRepository } from "@/repository/Block/BlockRepository";
 import { BlockParameterInstanceRepository } from "@/repository/BlockInstance/BlockParameterInstanceRepository";
@@ -27,16 +28,24 @@ export interface IReferencedInstanceEditorProps {
   block: IBlock;
   referencingParam: IBlockParameter;
 }
+
+interface ReferencingInstance {
+  instance: IBlockInstance;
+  params: IBlockParameterInstance[];
+}
 export const ReferencedInstanceEditor = (props: IReferencedInstanceEditorProps) => {
   const navigate = useNavigate();
   const { isMobile } = useMedia();
+  const { showDialog } = useDialog();
 
-  const referencingInstances = useLiveQuery(async () => {
+  const referencingInstances = useLiveQuery<ReferencingInstance[]>(async () => {
     const referencedParameterInstances = await bookDb.blockParameterInstances
       .where("blockParameterUuid")
       .equals(props.referencingParam.uuid)
       .filter((pi) => pi.linkedBlockInstanceUuid === props.instance.uuid)
       .toArray();
+
+    if (referencedParameterInstances.length === 0) return [] as ReferencingInstance[];
 
     const blockInstanceUuids = referencedParameterInstances.map((pi) => pi.blockInstanceUuid);
     const referencedBlockInstances = await bookDb.blockInstances
@@ -44,7 +53,16 @@ export const ReferencedInstanceEditor = (props: IReferencedInstanceEditorProps) 
       .anyOf(blockInstanceUuids)
       .toArray();
 
-    return referencedBlockInstances;
+    const paramMap: Record<string, IBlockParameterInstance[]> = {};
+    referencedParameterInstances.forEach((pi) => {
+      if (!paramMap[pi.blockInstanceUuid]) paramMap[pi.blockInstanceUuid] = [];
+      paramMap[pi.blockInstanceUuid].push(pi);
+    });
+
+    return referencedBlockInstances.map((inst) => ({
+      instance: inst,
+      params: paramMap[inst.uuid] || [],
+    }));
   }, [props.referencingParam, props.block, props.instance]);
 
   const referencingBlock = useLiveQuery<IBlock>(async () => {
@@ -110,6 +128,16 @@ export const ReferencedInstanceEditor = (props: IReferencedInstanceEditorProps) 
     setSelectedInstanceUuid("");
   };
 
+  const handleUnlink = async (params: IBlockParameterInstance[]) => {
+    const result = await showDialog("Подтверждение", "Отвязать ссылку?");
+    if (!result) return;
+    await Promise.all(
+      params
+        .filter((p) => p.id !== undefined)
+        .map((p) => BlockParameterInstanceRepository.deleteParameterInstance(bookDb, p.id!))
+    );
+  };
+
   const renderRowContent = (title: string) => (
     <Group justify="space-between" wrap="nowrap">
       <Text lineClamp={1}>{title}</Text>
@@ -133,22 +161,31 @@ export const ReferencedInstanceEditor = (props: IReferencedInstanceEditorProps) 
       {isMobile ? (
         <Stack spacing={4}>
           {referencingInstances && referencingInstances.length > 0 ? (
-            referencingInstances.map((instance) => (
-              <UnstyledButton
-                key={instance.uuid}
-                onClick={() => handleNavigate(instance.uuid)}
+            referencingInstances.map((ri) => (
+              <Group
+                key={ri.instance.uuid}
+                justify="space-between"
+                p="xs"
                 sx={(theme) => ({
-                  display: "block",
-                  width: "100%",
-                  padding: theme.spacing.xs,
                   borderRadius: theme.radius.md,
-                  "&:hover": {
-                    backgroundColor: theme.colors.gray[0],
-                  },
+                  "&:hover": { backgroundColor: theme.colors.gray[0] },
                 })}
               >
-                {renderRowContent(instance.title)}
-              </UnstyledButton>
+                <UnstyledButton
+                  onClick={() => handleNavigate(ri.instance.uuid)}
+                  sx={{ flex: 1, textAlign: "left" }}
+                >
+                  {renderRowContent(ri.instance.title)}
+                </UnstyledButton>
+                <ActionIcon
+                  variant="subtle"
+                  color="red"
+                  onClick={() => handleUnlink(ri.params)}
+                  title="Отвязать"
+                >
+                  <IconUnlink size={16} />
+                </ActionIcon>
+              </Group>
             ))
           ) : (
             <Text c="dimmed" style={{ fontStyle: "italic" }}>
@@ -160,18 +197,29 @@ export const ReferencedInstanceEditor = (props: IReferencedInstanceEditorProps) 
         <Table highlightOnHover withBorder withColumnBorders>
           <tbody>
             {referencingInstances && referencingInstances.length > 0 ? (
-              referencingInstances.map((instance) => (
-                <tr
-                  key={instance.uuid}
-                  style={{ cursor: "pointer" }}
-                  onClick={() => handleNavigate(instance.uuid)}
-                >
-                  <td>{renderRowContent(instance.title)}</td>
+              referencingInstances.map((ri) => (
+                <tr key={ri.instance.uuid}>
+                  <td
+                    style={{ cursor: "pointer" }}
+                    onClick={() => handleNavigate(ri.instance.uuid)}
+                  >
+                    {renderRowContent(ri.instance.title)}
+                  </td>
+                  <td style={{ width: 50 }}>
+                    <ActionIcon
+                      variant="subtle"
+                      color="red"
+                      onClick={() => handleUnlink(ri.params)}
+                      title="Отвязать"
+                    >
+                      <IconUnlink size={16} />
+                    </ActionIcon>
+                  </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td>
+                <td colSpan={2}>
                   <Text c="dimmed" style={{ fontStyle: "italic" }}>
                     Ссылок нет
                   </Text>
