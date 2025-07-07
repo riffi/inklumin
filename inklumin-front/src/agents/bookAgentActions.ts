@@ -69,7 +69,7 @@ export const saveParamInstance = async ({
       );
       const changes: Partial<IBlockParameterInstance> = {};
       if (paramDef?.dataType === IBlockParameterDataType.blockLink) {
-        changes.linkedBlockUuid = value as string;
+        changes.linkedBlockInstanceUuid = value as string;
       } else {
         changes.value = value;
       }

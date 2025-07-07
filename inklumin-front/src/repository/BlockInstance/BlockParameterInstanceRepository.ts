@@ -25,7 +25,7 @@ export const appendDefaultParam = async (
     blockParameterUuid: param.uuid!,
     blockParameterGroupUuid: param.groupUuid,
     value: "",
-    linkedBlockUuid: param.dataType === IBlockParameterDataType.blockLink ? "" : undefined,
+    linkedBlockInstanceUuid: param.dataType === IBlockParameterDataType.blockLink ? "" : undefined,
   };
   await db.blockParameterInstances.add(paramInstance);
   await updateBlockInstance(db, instance);
@@ -96,7 +96,7 @@ export const removeAllForInstance = async (db: BookDB, instanceUuid: string) => 
 
 export const getReferencingParamsToInstance = async (db: BookDB, instanceUuid: string) => {
   return db.blockParameterInstances
-    .filter((param) => param.linkedBlockUuid === instanceUuid)
+    .filter((param) => param.linkedBlockInstanceUuid === instanceUuid)
     .toArray();
 };
 

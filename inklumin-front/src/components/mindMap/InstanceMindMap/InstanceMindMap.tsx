@@ -129,9 +129,9 @@ export const InstanceMindMap = ({ blockInstance }: InstanceMindMapProps) => {
         // Добавляем связи из параметров
         blockParameterInstances.forEach((param) => {
           if (param.blockInstanceUuid === currentUuid) {
-            relatedInstanceUuids.add(param.linkedBlockUuid as string);
-            outgoingInstanceUuids.add(param.linkedBlockUuid as string);
-          } else if (param.linkedBlockUuid === currentUuid) {
+            relatedInstanceUuids.add(param.linkedBlockInstanceUuid as string);
+            outgoingInstanceUuids.add(param.linkedBlockInstanceUuid as string);
+          } else if (param.linkedBlockInstanceUuid === currentUuid) {
             relatedInstanceUuids.add(param.blockInstanceUuid);
             incomingInstanceUuids.add(param.blockInstanceUuid);
           }
@@ -205,7 +205,7 @@ export const InstanceMindMap = ({ blockInstance }: InstanceMindMapProps) => {
           edges.push({
             id: `param-${param.id}-${isOutgoing ? "out" : "in"}`,
             source: isOutgoing ? currentUuid : param.blockInstanceUuid,
-            target: isOutgoing ? (param.linkedBlockUuid as string) : currentUuid,
+            target: isOutgoing ? (param.linkedBlockInstanceUuid as string) : currentUuid,
             label: param.title,
             labelStyle: {
               fontSize: "5px",

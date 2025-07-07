@@ -242,7 +242,7 @@ export const ParameterList = ({
                                 dataType={parameter.dataType || "text"}
                                 value={
                                   parameter.dataType === IBlockParameterDataType.blockLink
-                                    ? fullParam.instance.linkedBlockUuid || ""
+                                    ? fullParam.instance.linkedBlockInstanceUuid || ""
                                     : fullParam.instance.value || ""
                                 }
                                 fontSize={14}
@@ -255,7 +255,7 @@ export const ParameterList = ({
                                   handleStartEdit(
                                     fullParam.instance.id,
                                     parameter.dataType === IBlockParameterDataType.blockLink
-                                      ? fullParam.instance.linkedBlockUuid || ""
+                                      ? fullParam.instance.linkedBlockInstanceUuid || ""
                                       : fullParam.instance.value
                                   )
                                 }
@@ -324,7 +324,7 @@ export const ParameterList = ({
                       handleStartEdit(
                         fullParam.instance.id,
                         parameter?.dataType === IBlockParameterDataType.blockLink
-                          ? fullParam.instance.linkedBlockUuid || ""
+                          ? fullParam.instance.linkedBlockInstanceUuid || ""
                           : fullParam.instance.value || ""
                       )
                     }
@@ -385,7 +385,7 @@ export const ParameterList = ({
                             dataType={parameter?.dataType || "text"}
                             value={
                               parameter?.dataType === IBlockParameterDataType.blockLink
-                                ? fullParam.instance.linkedBlockUuid || ""
+                                ? fullParam.instance.linkedBlockInstanceUuid || ""
                                 : fullParam.instance.value || ""
                             }
                             fontSize={16}

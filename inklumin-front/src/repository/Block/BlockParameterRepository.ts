@@ -273,7 +273,7 @@ const saveParam = async (db: BlockAbstractDb, blockUuid: string, param: IBlockPa
             blockParameterUuid: param.uuid!,
             blockParameterGroupUuid: param.groupUuid,
             value: "",
-            linkedBlockUuid: param.dataType === IBlockParameterDataType.blockLink ? "" : undefined,
+            linkedBlockInstanceUuid: param.dataType === IBlockParameterDataType.blockLink ? "" : undefined,
           });
           await (db as BookDB).blockInstances.update(inst.id!, {
             ...inst,

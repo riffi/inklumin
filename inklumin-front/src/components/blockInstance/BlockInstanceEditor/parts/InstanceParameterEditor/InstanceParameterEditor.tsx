@@ -148,7 +148,7 @@ export const InstanceParameterEditor = ({
       const paramDef = await bookDb.blockParameters.get({ uuid: instance.blockParameterUuid });
       const changes: Partial<IBlockParameterInstance> = {};
       if (paramDef?.dataType === IBlockParameterDataType.blockLink) {
-        changes.linkedBlockUuid = String(newValue);
+        changes.linkedBlockInstanceUuid = String(newValue);
       } else {
         changes.value = newValue;
       }
@@ -185,7 +185,7 @@ export const InstanceParameterEditor = ({
       // For now, currentParamGroup?.uuid (which could be null -> undefined) or "" is fine.
       blockParameterGroupUuid: currentParamGroup?.uuid || "",
       value: defaultValue,
-      linkedBlockUuid:
+      linkedBlockInstanceUuid:
         parameterDefinition?.dataType === IBlockParameterDataType.blockLink ? "" : undefined,
     };
 

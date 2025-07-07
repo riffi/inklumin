@@ -19,7 +19,7 @@ export const ReferencedInstanceEditor = (props: IReferencedInstanceEditorProps) 
     const referencedParameterInstances = await bookDb.blockParameterInstances
       .where("blockParameterUuid")
       .equals(props.referencingParam.uuid)
-      .filter((pi) => pi.value === props.instance.uuid)
+      .filter((pi) => pi.linkedBlockInstanceUuid === props.instance.uuid)
       .toArray();
 
     const blockInstanceUuids = referencedParameterInstances.map((pi) => pi.blockInstanceUuid);

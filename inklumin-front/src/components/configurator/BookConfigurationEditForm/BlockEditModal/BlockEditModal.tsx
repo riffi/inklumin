@@ -6,7 +6,6 @@ import {
   Modal,
   SegmentedControl,
   SimpleGrid,
-  Text,
   TextInput,
   Title,
 } from "@mantine/core";

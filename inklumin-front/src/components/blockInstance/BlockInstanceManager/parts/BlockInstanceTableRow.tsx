@@ -123,7 +123,7 @@ export const BlockInstanceTableRow = ({
                     dataType={param.dataType}
                     value={
                       param.dataType === IBlockParameterDataType.blockLink
-                        ? paramInstance?.linkedBlockUuid || ""
+                        ? paramInstance?.linkedBlockInstanceUuid || ""
                         : paramInstance?.value || ""
                     }
                   />

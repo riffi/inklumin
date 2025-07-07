@@ -215,7 +215,7 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
         instance.params.forEach((p) => {
           if (p.blockParameterUuid === param.uuid) {
             if (param.dataType === "blockLink") {
-              values.set(p.linkedBlockUuid || "", p.displayValue || "—");
+              values.set(p.linkedBlockInstanceUuid || "", p.displayValue || "—");
             } else {
               const valueKey = p.displayValue;
               values.set(valueKey, valueKey);
@@ -242,7 +242,7 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
         const displayedParam = displayedParameters?.find((p) => p.uuid === paramUuid);
         const valueToCompare =
           displayedParam?.dataType === IBlockParameterDataType.blockLink
-            ? param.linkedBlockUuid || ""
+            ? param.linkedBlockInstanceUuid || ""
             : param.displayValue;
         return values.includes(valueToCompare);
       });
@@ -288,7 +288,7 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
     return linkGroups.filter((g) =>
       instancesWithParams.some((inst) =>
         inst.params.some(
-          (p) => p.blockParameterUuid === groupingParam.uuid && p.linkedBlockUuid === g.uuid
+          (p) => p.blockParameterUuid === groupingParam.uuid && p.linkedBlockInstanceUuid === g.uuid
         )
       )
     );

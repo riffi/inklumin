@@ -201,7 +201,7 @@ export const BookConfigurationEditForm = (props: IBookConfigurationEditFormProps
   return (
     <>
       <Container fluid style={{ backgroundColor: "white", padding: "20px" }}>
-        <h2>Конфигурация{isBookConfiguration ? " произведения" : `: ${configuration?.title}`}</h2>
+        <h2>Конфигурация{isBookConfiguration ? "" : `: ${configuration?.title}`}</h2>
         {!isBookConfiguration && (
           <>
             <Breadcrumbs separator="→" separatorMargin="md" mt="xs">

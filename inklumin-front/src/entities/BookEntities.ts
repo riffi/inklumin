@@ -54,7 +54,7 @@ export interface IBlockParameterInstance {
   blockParameterUuid: string; // Ссылка на параметр блока
   blockParameterGroupUuid: string; // Ссылка на группу параметров блока, к которой принадлежит параметр
   value: string | number; // Значение параметра
-  linkedBlockUuid?: string; // UUID связанного экземпляра блока
+  linkedBlockInstanceUuid?: string; // UUID связанного экземпляра блока
 }
 
 export interface IScene {

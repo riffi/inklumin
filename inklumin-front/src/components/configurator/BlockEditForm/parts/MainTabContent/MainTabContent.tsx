@@ -1,4 +1,4 @@
-// MainTabContent.tsx – выравнивание и упорядочивание блоков
+
 import React, { useState } from "react";
 import { IconPhoto, IconQuestionMark, IconTrash } from "@tabler/icons-react";
 import {
@@ -26,7 +26,7 @@ import {
   IBlockStructureKind,
   IBlockStructureKindTitle,
   IBlockTitleForms,
-  IIconKind,
+  IIconKind, IUserDocPage,
 } from "@/entities/ConstructorEntities";
 
 

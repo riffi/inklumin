@@ -141,6 +141,7 @@ async function saveBook(book: IBook): Promise<ServiceResult> {
       book.uuid = generateUUID();
       const initResult = await initBookDb(book);
       if (!initResult.success) return initResult;
+      delete book.id;
       await BookRepository.create(configDatabase, book);
     }
     return { success: true };

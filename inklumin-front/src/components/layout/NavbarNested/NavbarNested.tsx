@@ -154,7 +154,7 @@ export const NavbarNested = ({
       });
 
       dynamicItems.push({
-        label: "Настройки произведения",
+        label: `Настройки ${selectedBook.kind === "book" ? "произведения" : "материала"}`,
         icon: IconSettings,
         link: "/book/settings",
       });

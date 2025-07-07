@@ -39,19 +39,21 @@ export const BookSettingsPage = () => {
     selectBook({ ...selectedBook, ...data });
   };
 
+  const kind = selectedBook?.kind
+
   return (
     <Container size={900} my="md">
       <Paper>
         <Box p="md">
           <Title order={2} mb={"md"}>
-            Настройки произведения
+            Настройки {kind === 'book' ? 'произведения' : 'материала'}
           </Title>
-          <Switch
+          {kind === 'book' && <Switch
             label="Не показывать сцены"
             checked={chapterOnlyMode}
             onChange={(e) => handleToggleChapterOnlyMode(e.currentTarget.checked)}
             mb="md"
-          />
+          />}
           <BookSettingsForm
             configurations={configurations}
             initialData={selectedBook}
