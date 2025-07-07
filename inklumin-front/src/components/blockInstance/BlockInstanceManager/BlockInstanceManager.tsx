@@ -27,6 +27,7 @@ import {
   Text,
   TextInput,
   Title,
+  ScrollArea,
 } from "@mantine/core";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 import { BlockInstanceEditor } from "@/components/blockInstance/BlockInstanceEditor/BlockInstanceEditor";
@@ -347,41 +348,61 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
             <Space h="md" />
 
             {block?.useGroups === 1 && (
-              <Tabs
-                value={currentGroupUuid}
-                onChange={(val) => {
-                  setCurrentGroupUuid(val || "none");
+              <ScrollArea
+                type="hover"
+                offsetScrollbars
+                styles={{
+                  root: { maxWidth: "100%" },
+                  viewport: { scrollBehavior: "smooth" },
                 }}
-                mb={10}
               >
-                <Tabs.List>
-                  <Tabs.Tab value="none">Без групп</Tabs.Tab>
-                  {groups?.map((g) => (
-                    <Tabs.Tab key={g.uuid} value={g.uuid}>
-                      {g.title}
-                    </Tabs.Tab>
-                  ))}
-                  <ActionIcon onClick={() => setGroupsModalOpened(true)} variant="subtle" mt="3">
-                    <IconSettings size="1rem" />
-                  </ActionIcon>
-                </Tabs.List>
-              </Tabs>
+                <Tabs
+                  value={currentGroupUuid}
+                  onChange={(val) => {
+                    setCurrentGroupUuid(val || "none");
+                  }}
+                  mb={10}
+                  styles={{ root: { minWidth: "100%" } }}
+                >
+                  <Tabs.List style={{flexWrap: 'nowrap'}}>
+                    <Tabs.Tab value="none">Без групп</Tabs.Tab>
+                    {groups?.map((g) => (
+                      <Tabs.Tab key={g.uuid} value={g.uuid}>
+                        {g.title}
+                      </Tabs.Tab>
+                    ))}
+                    <ActionIcon onClick={() => setGroupsModalOpened(true)} variant="subtle" mt="3">
+                      <IconSettings size="1rem" />
+                    </ActionIcon>
+                  </Tabs.List>
+                </Tabs>
+              </ScrollArea>
             )}
             {block?.useGroups !== 1 && groupingParam && (
-              <Tabs
-                value={currentGroupUuid}
-                onChange={(val) => setCurrentGroupUuid(val || "none")}
-                mb={10}
+              <ScrollArea
+                type="hover"
+                offsetScrollbars
+                styles={{
+                  root: { maxWidth: "100%" },
+                  viewport: { scrollBehavior: "smooth" },
+                }}
               >
-                <Tabs.List>
-                  <Tabs.Tab value="none">Все</Tabs.Tab>
-                  {visibleLinkGroups?.map((g) => (
-                    <Tabs.Tab key={g.uuid} value={g.uuid}>
-                      {g.title}
-                    </Tabs.Tab>
-                  ))}
-                </Tabs.List>
-              </Tabs>
+                <Tabs
+                  value={currentGroupUuid}
+                  onChange={(val) => setCurrentGroupUuid(val || "none")}
+                  mb={10}
+                  styles={{ root: { minWidth: "100%" } }}
+                >
+                  <Tabs.List style={{flexWrap: 'nowrap'}}>
+                    <Tabs.Tab value="none">Все</Tabs.Tab>
+                    {visibleLinkGroups?.map((g) => (
+                      <Tabs.Tab key={g.uuid} value={g.uuid}>
+                        {g.title}
+                      </Tabs.Tab>
+                    ))}
+                  </Tabs.List>
+                </Tabs>
+              </ScrollArea>
             )}
 
             <Group justify="space-between" mb="md" px={"sm"}>
