@@ -5,6 +5,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/svg+xml" href="favicon.png" />
   <title>InkLumin - Приложение для писателей</title>
+  <meta name="description" content="InkLumin — приложение для писателей с оффлайн-режимом, мощной базой знаний, ИИ-помощником и удобным редактором сцен и заметок.">
+
+  <!-- OpenGraph -->
+  <meta property="og:title" content="InkLumin — Приложение для писателей" />
+  <meta property="og:description" content="Все инструменты для писателей в одном месте: редактор сцен, заметки, база знаний, ИИ-помощник." />
+  <meta property="og:image" content="https://inklumin.ru/logo.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://inklumin.ru" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="InkLumin — Приложение для писателей" />
+  <meta name="twitter:description" content="Создавайте произведения, управляйте сценами и базой знаний — всё оффлайн и с ИИ-помощником." />
+  <meta name="twitter:image" content="https://inklumin.ru/logo.png" />
+
+  <!-- Yandex -->
+  <meta name="robots" content="index, follow" />
+
+  <!-- Schema.org -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "InkLumin",
+      "url": "https://inklumin.ru",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://inklumin.ru/?s={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+  </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Главная",
+      "description": "InkLumin — приложение для писателей с возможностью оффлайн-работы, ИИ-помощником и базой знаний.",
+      "url": "https://inklumin.ru"
+    }
+  </script>
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <link rel="stylesheet" href="style.css">
@@ -58,7 +100,9 @@
 </section>
 
 <!-- About Section -->
-<section class="about" id="about">
+<section class="about" id="about" itemprop="mainEntity" itemscope itemtype="https://schema.org/Article">
+  <meta itemprop="name" content="О сервисе InkLumin">
+  <meta itemprop="description" content="О сервисе InkLumin — подробности на лендинге.">
   <div class="container">
     <div class="section-header">
       <h2>О сервисе</h2>
@@ -237,10 +281,10 @@
   </div>
 </footer>
 
-  <div id="image-modal" class="image-modal">
-    <span id="modal-close" class="modal-close">&times;</span>
-    <img id="modal-image" src="interface.png" alt="InkLumin Interface">
-  </div>
+<div id="image-modal" class="image-modal">
+  <span id="modal-close" class="modal-close">&times;</span>
+  <img id="modal-image" src="interface.png" alt="InkLumin Interface">
+</div>
 
 <script src="script.js"></script>
 </body>
