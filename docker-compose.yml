@@ -45,4 +45,6 @@ services:
       - "3000:80"
 volumes:
   db-data:
+    external: true
+
 

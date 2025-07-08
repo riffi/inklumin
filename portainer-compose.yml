@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+
+    # 1. Доступ к socket Docker/Podman
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data          # здесь хранятся настройки, пользователи, Git-ключи
+
+    # 2. Порты UI (https предпочтительнее)
+    ports:
+      - "9443:9443"   # HTTPS
+      - "9000:9000"   # HTTP (можно убрать за reverse-proxy)
+
+volumes:
+  portainer_data:
