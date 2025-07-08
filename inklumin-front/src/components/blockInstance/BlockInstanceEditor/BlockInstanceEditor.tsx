@@ -230,18 +230,16 @@ export const BlockInstanceEditor = (props: IBlockInstanceEditorProps) => {
           {infoSectionCompactMode && (
           <Box style={{ flex: "1" }}>
             <Group wrap={"nowrap"} gap={5}>
-              <Text c={"dimmed"} size={"md"}>
-                {block?.title || ""}:
-              </Text>
-            <InlineEdit2
-              size={"md"}
-              onChange={(val) => updateBlockInstanceTitle(val)}
-              value={blockInstance?.title || ""}
-            />
+              <Text component="span" c={"dimmed"} size={"md"} tt={"lowercase"}>{block?.title?.trim()}:</Text>
+              <InlineEdit2
+                size={"md"}
+                onChange={(val) => updateBlockInstanceTitle(val)}
+                value={blockInstance?.title || ""}
+              />
             </Group>
             <Group wrap={"nowrap"} gap={5}>
               <Text c={"dimmed"} style={{fontSize: '12px'}}>
-                Описание:
+                описание:
               </Text>
               <InlineEdit2
                   onChange={(val) => updateBlockInstanceShortDescription(val)}
