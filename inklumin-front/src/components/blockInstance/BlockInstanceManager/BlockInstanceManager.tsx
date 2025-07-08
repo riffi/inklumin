@@ -133,13 +133,34 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
 
   useEffect(() => {
     if (block) {
+      const actions = isMobile
+        ? [
+            {
+              title: "Добавить",
+              icon: <IconPlus size="1rem" />,
+              handler: handleAddClick,
+            },
+            {
+              title: "Сортировать по дате",
+              icon: <IconCalendar size="1rem" />,
+              handler: () => setBlockInstanceSortType("date"),
+            },
+            {
+              title: "Сортировать по алфавиту",
+              icon: <IconSortAZ size="1rem" />,
+              handler: () => setBlockInstanceSortType("title"),
+            },
+          ]
+        : undefined;
+
       setHeader({
         title: getBlockTitle(block),
         icon: block.icon,
+        actions,
       });
     }
     return () => setHeader(null);
-  }, [block]);
+  }, [block, isMobile]);
 
   const handleAddClick = () => {
     setNewInstanceName("");
@@ -406,15 +427,17 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
             )}
 
             <Group justify="space-between" mb="md" px={"sm"}>
-              <Button
-                onClick={handleAddClick}
-                leftSection={<IconPlus size="1rem" />}
-                size="sm"
-                variant="light"
-                className={classes.addButton}
-              >
-                Добавить
-              </Button>
+              {!isMobile && (
+                <Button
+                  onClick={handleAddClick}
+                  leftSection={<IconPlus size="1rem" />}
+                  size="sm"
+                  variant="light"
+                  className={classes.addButton}
+                >
+                  Добавить
+                </Button>
+              )}
 
               <TextInput
                 placeholder="Поиск по названию..."
@@ -431,27 +454,9 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
                 style={{ flexGrow: 1, marginRight: "10px" }}
               />
 
-              <Group>
-                {" "}
-                {/* New group for sorting and filters */}
-                <SegmentedControl
-                  value={blockInstanceSortType}
-                  onChange={(value) => setBlockInstanceSortType(value as BlockInstanceSortType)}
-                  data={[
-                    {
-                      value: "date",
-                      label: <IconCalendar size="1rem" />,
-                      title: "Сортировка по дате",
-                    },
-                    {
-                      value: "title",
-                      label: <IconSortAZ size="1rem" />,
-                      title: "Сортировка по алфавиту",
-                    },
-                  ]}
-                />
-                {displayedParameters?.length > 0 /* Filter icons existing logic */ && (
-                  <>
+              {isMobile ? (
+                displayedParameters?.length > 0 && (
+                  <Group>
                     <ActionIcon
                       onClick={toggleFilters}
                       variant={filtersVisible ? "filled" : "default"}
@@ -463,9 +468,43 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
                         <IconFilterOff size="1rem" />
                       </ActionIcon>
                     )}
-                  </>
-                )}
-              </Group>
+                  </Group>
+                )
+              ) : (
+                <Group>
+                  <SegmentedControl
+                    value={blockInstanceSortType}
+                    onChange={(value) => setBlockInstanceSortType(value as BlockInstanceSortType)}
+                    data={[
+                      {
+                        value: "date",
+                        label: <IconCalendar size="1rem" />,
+                        title: "Сортировка по дате",
+                      },
+                      {
+                        value: "title",
+                        label: <IconSortAZ size="1rem" />,
+                        title: "Сортировка по алфавиту",
+                      },
+                    ]}
+                  />
+                  {displayedParameters?.length > 0 && (
+                    <>
+                      <ActionIcon
+                        onClick={toggleFilters}
+                        variant={filtersVisible ? "filled" : "default"}
+                      >
+                        <IconFilter size="1rem" />
+                      </ActionIcon>
+                      {Object.keys(filters).length > 0 && (
+                        <ActionIcon onClick={clearFilters} variant={"default"}>
+                          <IconFilterOff size="1rem" />
+                        </ActionIcon>
+                      )}
+                    </>
+                  )}
+                </Group>
+              )}
             </Group>
 
             {filtersVisible && displayedParameters && (
