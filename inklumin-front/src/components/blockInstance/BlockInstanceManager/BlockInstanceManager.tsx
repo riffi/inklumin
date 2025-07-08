@@ -144,11 +144,13 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
               title: "Сортировать по дате",
               icon: <IconCalendar size="1rem" />,
               handler: () => setBlockInstanceSortType("date"),
+              active: blockInstanceSortType === "date",
             },
             {
               title: "Сортировать по алфавиту",
               icon: <IconSortAZ size="1rem" />,
               handler: () => setBlockInstanceSortType("title"),
+              active: blockInstanceSortType === "title",
             },
           ]
         : undefined;
@@ -160,7 +162,7 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
       });
     }
     return () => setHeader(null);
-  }, [block, isMobile]);
+  }, [block, isMobile, blockInstanceSortType]);
 
   const handleAddClick = () => {
     setNewInstanceName("");

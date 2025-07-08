@@ -9,6 +9,7 @@ export interface ActionItem {
   handler: () => void;
   color?: string;
   variant?: string;
+  active?: boolean;
 }
 
 interface ActionButtonsProps {
@@ -57,11 +58,16 @@ export const RowActionButtons = ({
                     cursor: "pointer",
                     paddingTop: "8px",
                     paddingBottom: "8px",
+                    paddingLeft: '8px',
+                    backgroundColor: action.active ? 'var(--mantine-color-blue-0)' : undefined,
                     borderBottom:
                       index < actions.length - 1 ? "1px solid rgba(0,0,0,0.0.1)" : "none",
                   }}
                 >
-                  <ActionIcon variant="subtle" color={action.color}>
+                  <ActionIcon
+                    variant={"subtle"}
+                    color={action.color || (action.active ? "blue" : undefined)}
+                  >
                     {action.icon}
                   </ActionIcon>
                   <Text size="lg">{action.title}</Text>
@@ -75,8 +81,8 @@ export const RowActionButtons = ({
           {actions.map((action, index) => (
             <ActionIcon
               key={index}
-              variant="subtle"
-              color={action.color}
+              variant={action.active ? "filled" : (action.variant ?? "subtle")}
+              color={action.color || (action.active ? "blue" : undefined)}
               size={20}
               onClick={action.handler}
             >
