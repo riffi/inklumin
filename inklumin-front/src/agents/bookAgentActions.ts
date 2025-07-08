@@ -87,7 +87,7 @@ export const saveParamInstance = async ({
     blockParameterUuid,
     blockParameterGroupUuid,
     value: paramDef?.dataType === IBlockParameterDataType.blockLink ? "" : value,
-    linkedBlockUuid:
+    linkedBlockInstanceUuid:
       paramDef?.dataType === IBlockParameterDataType.blockLink ? (value as string) : undefined,
   } as any;
   await BlockParameterInstanceRepository.addParameterInstance(bookDb, instance);

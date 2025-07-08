@@ -281,7 +281,7 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
         if (currentGroupUuid === "none") {
           return true;
         }
-        return param?.linkedBlockUuid === currentGroupUuid;
+        return param?.linkedBlockInstanceUuid === currentGroupUuid;
       });
     }
     return sortedAndFilteredInstances;

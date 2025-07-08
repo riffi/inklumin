@@ -24,7 +24,7 @@ const bookSchema = {
   blockInstanceGroups: "++id, &uuid, blockUuid, title, order",
   blockInstances: "++id, &uuid, blockUuid, title, parentInstanceUuid, blockInstanceGroupUuid",
   blockParameterInstances:
-    "++id, &uuid, blockParameterUuid, blockInstanceUuid, blockParameterGroupUuid, value, linkedBlockUuid",
+    "++id, &uuid, blockParameterUuid, blockInstanceUuid, blockParameterGroupUuid, value, linkedBlockInstanceUuid",
   blockInstanceRelations:
     "++id, &uuid, sourceInstanceUuid, targetInstanceUuid, blockRelationUuid, sourceBlockUuid, targetBlockUuid",
   blockInstanceSceneLinks: "++id, &uuid, blockInstanceUuid, sceneId, blockUuid, title",
@@ -71,7 +71,7 @@ export class BookDB extends BlockAbstractDb {
           .toCollection()
           .modify((inst) => {
             if (blockLinkUuids.has(inst.blockParameterUuid)) {
-              inst.linkedBlockUuid = inst.value;
+              inst.linkedBlockInstanceUuid = inst.value;
             }
           });
       });

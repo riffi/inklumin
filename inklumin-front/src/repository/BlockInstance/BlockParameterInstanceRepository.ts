@@ -47,7 +47,7 @@ export const appendDefaultParams = async (db: BookDB, instance: IBlockInstance) 
     blockParameterUuid: param.uuid!,
     blockParameterGroupUuid: param.groupUuid,
     value: "",
-    linkedBlockUuid: param.dataType === IBlockParameterDataType.blockLink ? "" : undefined,
+    linkedBlockInstanceUuid: param.dataType === IBlockParameterDataType.blockLink ? "" : undefined,
   }));
 
   await db.blockParameterInstances.bulkAdd(paramInstances);
@@ -89,7 +89,7 @@ export const deleteParameterInstance = async (db: BookDB, id: number) => {
 export const removeAllForInstance = async (db: BookDB, instanceUuid: string) => {
   await Promise.all([
     db.blockParameterInstances.where("blockInstanceUuid").equals(instanceUuid).delete(),
-    db.blockParameterInstances.where("linkedBlockUuid").equals(instanceUuid).delete(),
+    db.blockParameterInstances.where("linkedBlockInstanceUuid").equals(instanceUuid).delete(),
   ]);
   await updateBookLocalUpdatedAt(db);
 };
