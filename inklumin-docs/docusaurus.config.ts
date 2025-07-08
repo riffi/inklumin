@@ -92,19 +92,19 @@ const config: Config = {
           ],
         },
         {
-          title: 'Community',
+          title: 'Соцсети',
           items: [
             {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
+              label: 'VK',
+              href: 'https://vk.com/inklumin',
             },
             {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
+              label: 'Дзен',
+              href: 'https://dzen.ru/inklumin',
             },
             {
-              label: 'X',
-              href: 'https://x.com/docusaurus',
+              label: 'Telegram',
+              href: 'https://t.me/inklumin',
             },
           ],
         },
