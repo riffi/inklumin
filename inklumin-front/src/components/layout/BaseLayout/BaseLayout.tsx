@@ -71,12 +71,11 @@ export const BaseLayout = () => {
                     {header.icon && (
                       <IconViewer
                         icon={header.icon}
-                        size={24}
+                        size={20}
                         color="var(--mantine-color-gray-6)"
                       />
                     )}
                     <Text
-                      fw={500}
                       c="var(--mantine-color-gray-6)"
                       // Обрезаем длинный текст и добавляем многоточие
                       style={{
