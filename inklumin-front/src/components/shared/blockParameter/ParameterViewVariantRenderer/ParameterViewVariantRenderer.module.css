@@ -11,7 +11,13 @@
   word-wrap: break-word;
   overflow-wrap: break-word;
   word-break: break-word;
+
 }
+
+.htmlContent pre{
+  text-wrap: auto;
+}
+
 
 .clampedContent {
   display: -webkit-box;
