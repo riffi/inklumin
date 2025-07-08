@@ -1,53 +1,47 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
+import {IconCalendar, IconPlus, IconSortAZ} from "@tabler/icons-react";
+import {useNavigate} from "react-router-dom";
 import {
-  IconCalendar,
-  IconFilter,
-  IconFilterOff,
-  IconPlus,
-  IconSearch,
-  IconSettings,
-  IconSortAZ,
-  IconX,
-} from "@tabler/icons-react";
-import { useNavigate } from "react-router-dom";
-import {
-  ActionIcon,
   Box,
-  Button,
   Container,
   Group,
   LoadingOverlay,
-  Modal,
   MultiSelect,
-  ScrollArea,
-  SegmentedControl,
-  Select,
   Space,
   Table,
-  Tabs,
   Text,
-  TextInput,
   Title,
 } from "@mantine/core";
-import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
-import { BlockInstanceEditor } from "@/components/blockInstance/BlockInstanceEditor/BlockInstanceEditor";
-import { InstanceGroupsModal } from "@/components/blockInstance/BlockInstanceManager/modal/InstanceGroupsModal/InstanceGroupsModal";
-import { BlockInstanceTableRow } from "@/components/blockInstance/BlockInstanceManager/parts/BlockInstanceTableRow";
-import { useBlockInstanceManager } from "@/components/blockInstance/BlockInstanceManager/useBlockInstanceManager";
-import { IconViewer } from "@/components/shared/IconViewer/IconViewer";
-import { bookDb } from "@/entities/bookDb";
-import { IBlockInstance } from "@/entities/BookEntities";
-import { IBlockParameterDataType, IBlockStructureKind } from "@/entities/ConstructorEntities";
-import { useDialog } from "@/providers/DialogProvider/DialogProvider";
-import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
-import { useMobileHeader } from "@/providers/PageTitleProvider/MobileHeaderProvider";
-import { BlockParameterInstanceRepository } from "@/repository/BlockInstance/BlockParameterInstanceRepository";
+import {useDebouncedValue, useDisclosure} from "@mantine/hooks";
 import {
-  BlockInstanceSortType,
-  useUiSettingsStore,
-} from "@/stores/uiSettingsStore/uiSettingsStore";
-import { getBlockTitle } from "@/utils/configUtils";
-import { generateUUID } from "@/utils/UUIDUtils";
+  BlockInstanceEditor
+} from "@/components/blockInstance/BlockInstanceEditor/BlockInstanceEditor";
+import {
+  InstanceGroupsModal
+} from "@/components/blockInstance/BlockInstanceManager/modal/InstanceGroupsModal/InstanceGroupsModal";
+import {
+  BlockInstanceTableRow
+} from "@/components/blockInstance/BlockInstanceManager/parts/BlockInstanceTableRow";
+import {
+  useBlockInstanceManager
+} from "@/components/blockInstance/BlockInstanceManager/hooks/useBlockInstanceManager";
+import {IconViewer} from "@/components/shared/IconViewer/IconViewer";
+import {bookDb} from "@/entities/bookDb";
+import {IBlockInstance} from "@/entities/BookEntities";
+import {useDialog} from "@/providers/DialogProvider/DialogProvider";
+import {useMedia} from "@/providers/MediaQueryProvider/MediaQueryProvider";
+import {useMobileHeader} from "@/providers/PageTitleProvider/MobileHeaderProvider";
+import {
+  BlockParameterInstanceRepository
+} from "@/repository/BlockInstance/BlockParameterInstanceRepository";
+import {useUiSettingsStore,} from "@/stores/uiSettingsStore/uiSettingsStore";
+import {getBlockTitle} from "@/utils/configUtils";
+import {generateUUID} from "@/utils/UUIDUtils";
+import {useInstanceList} from "./hooks/useInstanceList";
+import {AddInstanceModal} from "./modal/AddInstanceModal/AddInstanceModal";
+import {MoveInstanceModal} from "./modal/MoveInstanceModal/MoveInstanceModal";
+import {BlockInstanceGroupTabs} from "./parts/BlockInstanceGroupTabs";
+import {BlockInstanceManagerToolbar} from "./parts/BlockInstanceManagerToolbar";
 import classes from "./BlockInstanceManager.module.css";
 
 export interface IBlockInstanceManagerProps {
@@ -92,8 +86,6 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
 
   const [addingInstance, setAddingInstance] = useState(false);
   const [opened, { open, close }] = useDisclosure(false);
-  const [newInstanceName, setNewInstanceName] = useState("");
-  const [newShortDescription, setNewShortDescription] = useState("");
   const [currentGroupUuid, setCurrentGroupUuid] = useState<string | "none">("none");
   const [groupsModalOpened, setGroupsModalOpened] = useState(false);
   const [movingInstanceUuid, setMovingInstanceUuid] = useState<string | null>(null);
@@ -108,7 +100,18 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
   const { showDialog } = useDialog();
   const { setHeader } = useMobileHeader();
 
-  const header = (
+  const { uniqueParamValuesMap, getByGroup, visibleLinkGroups } = useInstanceList(
+    instancesWithParams,
+    displayedParameters,
+    groupingParam,
+    currentGroupUuid,
+    groups,
+    linkGroups,
+    block,
+    blockInstanceSortType
+  );
+
+  const desktopHeader = (
     <Group>
       <IconViewer
         icon={block?.icon}
@@ -165,13 +168,11 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
   }, [block, isMobile, blockInstanceSortType]);
 
   const handleAddClick = () => {
-    setNewInstanceName("");
-    setNewShortDescription("");
     open();
   };
 
-  const handleCreateInstance = async () => {
-    if (!bookDb || !newInstanceName.trim()) return;
+  const handleCreateInstance = async (name: string, description: string, group: string) => {
+    if (!bookDb || !name.trim()) return;
 
     setAddingInstance(true);
     try {
@@ -179,23 +180,21 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
       const newInstance: IBlockInstance = {
         blockUuid: props.blockUuid,
         uuid,
-        title: newInstanceName.trim(),
-        description: newShortDescription.trim() ? newShortDescription.trim() : undefined,
-        blockInstanceGroupUuid:
-          block?.useGroups === 1 && currentGroupUuid !== "none" ? currentGroupUuid : undefined,
+        title: name.trim(),
+        description: description.trim() ? description.trim() : undefined,
+        blockInstanceGroupUuid: block?.useGroups === 1 && group !== "none" ? group : undefined,
       };
       await addBlockInstance(newInstance);
-      if (groupingParam && block?.useGroups !== 1 && currentGroupUuid !== "none") {
+      if (groupingParam && block?.useGroups !== 1 && group !== "none") {
         const paramInstance = {
           uuid: generateUUID(),
           blockInstanceUuid: uuid,
           blockParameterUuid: groupingParam.uuid!,
           blockParameterGroupUuid: groupingParam.groupUuid,
-          value: currentGroupUuid,
+          value: group,
         };
         await BlockParameterInstanceRepository.addParameterInstance(bookDb, paramInstance);
       }
-      setNewShortDescription("");
       close();
       navigate(`/block-instance/card?uuid=${uuid}`);
     } finally {
@@ -229,97 +228,10 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
     setMovingInstanceUuid(null);
   };
 
-  // Функция для сбора уникальных значений параметров
-  const uniqueParamValuesMap = useMemo(() => {
-    if (!instancesWithParams || !displayedParameters)
-      return {} as Record<string, { value: string; label: string }[]>;
-
-    const map: Record<string, { value: string; label: string }[]> = {};
-
-    displayedParameters.forEach((param) => {
-      const values = new Map<string, string>();
-      instancesWithParams.forEach((instance) => {
-        instance.params.forEach((p) => {
-          if (p.blockParameterUuid === param.uuid) {
-            if (param.dataType === "blockLink") {
-              values.set(p.linkedBlockInstanceUuid || "", p.displayValue || "—");
-            } else {
-              const valueKey = p.displayValue;
-              values.set(valueKey, valueKey);
-            }
-          }
-        });
-      });
-
-      map[param.uuid!] = Array.from(values.entries()).map(([value, label]) => ({ value, label }));
-    });
-
-    return map;
-  }, [instancesWithParams, displayedParameters]);
-
-  // Функция фильтрации данных
-  const filteredInstances = useMemo(() => {
-    if (!instancesWithParams) return [] as typeof instancesWithParams;
-    return instancesWithParams.filter((instance) => {
-      return Object.entries(filters).every(([paramUuid, values]) => {
-        if (values.length === 0) return true;
-        const param = instance.params.find((p) => p.blockParameterUuid === paramUuid);
-        if (!param) return false;
-
-        const displayedParam = displayedParameters?.find((p) => p.uuid === paramUuid);
-        const valueToCompare =
-          displayedParam?.dataType === IBlockParameterDataType.blockLink
-            ? param.linkedBlockInstanceUuid || ""
-            : param.displayValue;
-        return values.includes(valueToCompare);
-      });
-    });
-  }, [instancesWithParams, filters, displayedParameters]);
-
-  const sortedAndFilteredInstances = useMemo(() => {
-    const items = [...filteredInstances];
-    items.sort((a, b) => {
-      if (blockInstanceSortType === "title") {
-        return (a.title || "").localeCompare(b.title || "");
-      }
-      const dateA = new Date(a.updatedAt || 0).getTime();
-      const dateB = new Date(b.updatedAt || 0).getTime();
-      return dateB - dateA;
-    });
-    return items;
-  }, [filteredInstances, blockInstanceSortType]);
-
-  const displayedInstancesByGroup = useMemo(() => {
-    if (block?.useGroups === 1) {
-      return sortedAndFilteredInstances.filter((i) =>
-        currentGroupUuid === "none"
-          ? !i.blockInstanceGroupUuid ||
-            groups?.findIndex((g) => g.uuid === i.blockInstanceGroupUuid) === -1
-          : i.blockInstanceGroupUuid === currentGroupUuid
-      );
-    }
-    if (groupingParam) {
-      return sortedAndFilteredInstances.filter((i) => {
-        const param = i.params.find((p) => p.blockParameterUuid === groupingParam.uuid);
-        if (currentGroupUuid === "none") {
-          return true;
-        }
-        return param?.linkedBlockInstanceUuid === currentGroupUuid;
-      });
-    }
-    return sortedAndFilteredInstances;
-  }, [sortedAndFilteredInstances, currentGroupUuid, block, groupingParam, linkGroups]);
-
-  const visibleLinkGroups = useMemo(() => {
-    if (!linkGroups || !instancesWithParams || !groupingParam) return linkGroups;
-    return linkGroups.filter((g) =>
-      instancesWithParams.some((inst) =>
-        inst.params.some(
-          (p) => p.blockParameterUuid === groupingParam.uuid && p.linkedBlockInstanceUuid === g.uuid
-        )
-      )
-    );
-  }, [linkGroups, instancesWithParams, groupingParam]);
+  const displayedInstancesByGroup = useMemo(
+      () => (instancesWithParams ? getByGroup(instancesWithParams, filters) : []),
+      [instancesWithParams, filters, getByGroup]
+  );
 
   // Обработчики фильтров
   const handleFilterChange = useCallback((paramUuid: string, values: string[]) => {
@@ -366,148 +278,33 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
                 borderRadius: "10px",
               }}
             >
-              {header}
+              {desktopHeader}
             </Box>
             <Space h="md" />
 
-            {block?.useGroups === 1 && (
-              <ScrollArea
-                type="hover"
-                offsetScrollbars
-                styles={{
-                  root: { maxWidth: "100%" },
-                  viewport: { scrollBehavior: "smooth" },
-                }}
-              >
-                <Tabs
-                  value={currentGroupUuid}
-                  onChange={(val) => {
-                    setCurrentGroupUuid(val || "none");
-                  }}
-                  mb={10}
-                  styles={{ root: { minWidth: "100%" } }}
-                >
-                  <Tabs.List style={{ flexWrap: "nowrap" }}>
-                    <Tabs.Tab value="none">Без групп</Tabs.Tab>
-                    {groups?.map((g) => (
-                      <Tabs.Tab key={g.uuid} value={g.uuid}>
-                        {g.title}
-                      </Tabs.Tab>
-                    ))}
-                    <ActionIcon onClick={() => setGroupsModalOpened(true)} variant="subtle" mt="3">
-                      <IconSettings size="1rem" />
-                    </ActionIcon>
-                  </Tabs.List>
-                </Tabs>
-              </ScrollArea>
-            )}
-            {block?.useGroups !== 1 && groupingParam && (
-              <ScrollArea
-                type="hover"
-                offsetScrollbars
-                styles={{
-                  root: { maxWidth: "100%" },
-                  viewport: { scrollBehavior: "smooth" },
-                }}
-              >
-                <Tabs
-                  value={currentGroupUuid}
-                  onChange={(val) => setCurrentGroupUuid(val || "none")}
-                  mb={10}
-                  styles={{ root: { minWidth: "100%" } }}
-                >
-                  <Tabs.List style={{ flexWrap: "nowrap" }}>
-                    <Tabs.Tab value="none">Все</Tabs.Tab>
-                    {visibleLinkGroups?.map((g) => (
-                      <Tabs.Tab key={g.uuid} value={g.uuid}>
-                        {g.title}
-                      </Tabs.Tab>
-                    ))}
-                  </Tabs.List>
-                </Tabs>
-              </ScrollArea>
-            )}
+            <BlockInstanceGroupTabs
+              block={block}
+              groups={groups || []}
+              linkGroups={visibleLinkGroups}
+              groupingParam={groupingParam}
+              currentGroupUuid={currentGroupUuid}
+              onChange={(val) => setCurrentGroupUuid(val)}
+              onSettings={block?.useGroups === 1 ? () => setGroupsModalOpened(true) : undefined}
+            />
 
-            <Group justify="space-between" mb="md" px={"sm"}>
-              {!isMobile && (
-                <Button
-                  onClick={handleAddClick}
-                  leftSection={<IconPlus size="1rem" />}
-                  size="sm"
-                  variant="light"
-                  className={classes.addButton}
-                >
-                  Добавить
-                </Button>
-              )}
-
-              <TextInput
-                placeholder="Поиск по названию..."
-                value={titleSearchQuery}
-                onChange={(event) => setTitleSearchQuery(event.currentTarget.value)}
-                icon={<IconSearch size="1rem" />}
-                rightSection={
-                  titleSearchQuery ? (
-                    <ActionIcon onClick={() => setTitleSearchQuery("")} title="Очистить поиск">
-                      <IconX size="1rem" />
-                    </ActionIcon>
-                  ) : null
-                }
-                style={{ flexGrow: 1, marginRight: "10px" }}
-              />
-
-              {isMobile ? (
-                displayedParameters?.length > 0 && (
-                  <Group>
-                    <ActionIcon
-                      onClick={toggleFilters}
-                      variant={filtersVisible ? "filled" : "default"}
-                    >
-                      <IconFilter size="1rem" />
-                    </ActionIcon>
-                    {Object.keys(filters).length > 0 && (
-                      <ActionIcon onClick={clearFilters} variant={"default"}>
-                        <IconFilterOff size="1rem" />
-                      </ActionIcon>
-                    )}
-                  </Group>
-                )
-              ) : (
-                <Group>
-                  <SegmentedControl
-                    value={blockInstanceSortType}
-                    onChange={(value) => setBlockInstanceSortType(value as BlockInstanceSortType)}
-                    data={[
-                      {
-                        value: "date",
-                        label: <IconCalendar size="1rem" />,
-                        title: "Сортировка по дате",
-                      },
-                      {
-                        value: "title",
-                        label: <IconSortAZ size="1rem" />,
-                        title: "Сортировка по алфавиту",
-                      },
-                    ]}
-                  />
-                  {displayedParameters?.length > 0 && (
-                    <>
-                      <ActionIcon
-                        onClick={toggleFilters}
-                        variant={filtersVisible ? "filled" : "default"}
-                      >
-                        <IconFilter size="1rem" />
-                      </ActionIcon>
-                      {Object.keys(filters).length > 0 && (
-                        <ActionIcon onClick={clearFilters} variant={"default"}>
-                          <IconFilterOff size="1rem" />
-                        </ActionIcon>
-                      )}
-                    </>
-                  )}
-                </Group>
-              )}
-            </Group>
+            <BlockInstanceManagerToolbar
+              titleSearchQuery={titleSearchQuery}
+              onSearchChange={setTitleSearchQuery}
+              onAddClick={handleAddClick}
+              isMobile={isMobile}
+              sortType={blockInstanceSortType}
+              onChangeSort={(value) => setBlockInstanceSortType(value)}
+              filtersVisible={filtersVisible}
+              hasFilters={Object.keys(filters).length > 0}
+              displayedParameters={displayedParameters}
+              onToggleFilters={toggleFilters}
+              onClearFilters={clearFilters}
+            />
 
             {filtersVisible && displayedParameters && (
               <div className={classes.filtersContainer}>
@@ -557,40 +354,16 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
               </>
             </Table>
 
-            <Modal
+            <AddInstanceModal
               opened={opened}
               onClose={close}
-              fullScreen={isMobile}
               title={"Создание " + block?.titleForms?.genitive}
-              centered
-            >
-              <TextInput
-                label="Название"
-                value={newInstanceName}
-                onChange={(e) => setNewInstanceName(e.currentTarget.value)}
-                placeholder="Введите название"
-                mb="md"
-              />
-              <TextInput
-                label="Краткое описание"
-                value={newShortDescription}
-                onChange={(e) => setNewShortDescription(e.currentTarget.value)}
-                placeholder="Введите краткое описание (необязательно)"
-                mb="md"
-              />
-              <Group justify="flex-end">
-                <Button variant="default" onClick={close}>
-                  Отмена
-                </Button>
-                <Button
-                  onClick={handleCreateInstance}
-                  loading={addingInstance}
-                  disabled={!newInstanceName.trim()}
-                >
-                  Создать
-                </Button>
-              </Group>
-            </Modal>
+              groups={groups}
+              currentGroupUuid={currentGroupUuid}
+              useGroups={block?.useGroups === 1}
+              onCreate={(name, desc, group) => handleCreateInstance(name, desc, group)}
+              loading={addingInstance}
+            />
 
             {block?.useGroups === 1 && (
               <InstanceGroupsModal
@@ -610,25 +383,14 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
             )}
 
             {block?.useGroups === 1 && (
-              <Modal
+              <MoveInstanceModal
                 opened={!!movingInstanceUuid}
                 onClose={() => setMovingInstanceUuid(null)}
-                title="Переместить экземпляр"
-                fullScreen={isMobile}
-              >
-                <Select
-                  label="Группа"
-                  data={[
-                    { value: "none", label: "Без групп" },
-                    ...(groups || []).map((g) => ({ value: g.uuid!, label: g.title })),
-                  ]}
-                  value={selectedMoveGroup}
-                  onChange={(v) => setSelectedMoveGroup(v!)}
-                />
-                <Button fullWidth mt="md" onClick={handleConfirmMove}>
-                  Переместить
-                </Button>
-              </Modal>
+                groups={groups}
+                selectedGroup={selectedMoveGroup}
+                onChangeGroup={(v) => setSelectedMoveGroup(v)}
+                onConfirm={handleConfirmMove}
+              />
             )}
           </>
         )}

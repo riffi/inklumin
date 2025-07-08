@@ -1,6 +1,6 @@
 import { IconArrowRightCircleFilled, IconEdit, IconTrash } from "@tabler/icons-react";
 import { Badge, Group, Stack, Table, Text } from "@mantine/core";
-import { IBlockInstanceWithParams } from "@/components/blockInstance/BlockInstanceManager/useBlockInstanceManager";
+import { IBlockInstanceWithParams } from "@/components/blockInstance/BlockInstanceManager/hooks/useBlockInstanceManager";
 import { ParameterViewVariantRenderer } from "@/components/shared/blockParameter/ParameterViewVariantRenderer/ParameterViewVariantRenderer";
 import { IconViewer } from "@/components/shared/IconViewer/IconViewer";
 import {
@@ -64,7 +64,7 @@ export const BlockInstanceTableRow = ({
             }}
           />
           <Stack gap={0}>
-            <Text style={{ cursor: "pointer", fontSize: "1.1rem", lineHeight: "1.5rem" }}>
+            <Text style={{ cursor: "pointer", fontSize: "1rem", lineHeight: "1.5rem" }}>
               {instance.title}
             </Text>
             {instance.description && (
