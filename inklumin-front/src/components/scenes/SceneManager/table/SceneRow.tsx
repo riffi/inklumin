@@ -120,13 +120,13 @@ const SceneRowComponent = ({
       >
         <Group gap="sm" justify="space-between" wrap="nowrap">
           <Box style={{ flex: 1, minWidth: 0 }}>
-            <Group gap="sm" mb={4}>
+            <Group gap="sm" mb={2}>
               <Box c={isSelected ? theme.colors.blue[7] : theme.colors.gray[6]}>
                 <IconNote size={isMobile ? 14 : 16} />
               </Box>
               <Text
-                fw={isSelected ? 500 : 400}
-                size={isMobile ? "xs" : "sm"}
+                fw={isSelected ? 600 : 500}
+                size={isMobile ? "sm" : "sm"}
                 c={isSelected ? theme.colors.blue[8] : theme.colors.dark[7]}
                 style={{ lineHeight: 1.2 }}
               >
