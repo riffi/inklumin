@@ -39,61 +39,61 @@ export const BaseLayout = () => {
           {/* nowrap гарантирует, что контент не переносится, даже если текста много */}
           <Group px="md" justify="space-between" align="center" gap="10" wrap="nowrap">
             <Burger
-                opened={isNavbarOpened}
-                onClick={toggleNavbarOpened}
-                hiddenFrom="sm"
-                lineSize={1}
-                size="lg"
+              opened={isNavbarOpened}
+              onClick={toggleNavbarOpened}
+              hiddenFrom="sm"
+              lineSize={1}
+              size="lg"
             />
             <Box
-                style={{
-                  flexGrow: 1,
-                  textAlign: "center",
-                  minWidth: 0, // позволяет дочернему flex-элементу сжиматься
-                }}
+              style={{
+                flexGrow: 1,
+                textAlign: "center",
+                minWidth: 0, // позволяет дочернему flex-элементу сжиматься
+              }}
             >
               {isMobile && header && (
+                <Group
+                  gap="sm"
+                  justify="center"
+                  align="center"
+                  wrap="nowrap"
+                  style={{ width: "100%" }}
+                >
+                  {/* Левая часть: иконка + заголовок с минимальным зазором */}
                   <Group
-                      gap="sm"
-                      justify="center"
-                      align="center"
-                      wrap="nowrap"
-                      style={{ width: "100%" }}
+                    gap="xs"
+                    align="center"
+                    wrap="nowrap"
+                    justify="center"
+                    style={{ flexGrow: 1, minWidth: 0 }}
                   >
-                    {/* Левая часть: иконка + заголовок с минимальным зазором */}
-                    <Group
-                        gap="xs"
-                        align="center"
-                        wrap="nowrap"
-                        justify="center"
-                        style={{ flexGrow: 1, minWidth: 0 }}
-                    >
-                      {header.icon && (
-                          <IconViewer
-                              icon={header.icon}
-                              size={24}
-                              color="var(--mantine-color-gray-6)"
-                          />
-                      )}
-                      <Text
-                          fw={500}
-                          c="var(--mantine-color-gray-6)"
-                          // Обрезаем длинный текст и добавляем многоточие
-                          style={{
-                            // flexGrow: 1,
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                          }}
-                      >
-                        {header.title}
-                      </Text>
-                    </Group>
-
-                    {header.actions && header.actions.length > 0 && (
-                        <RowActionButtons actions={header.actions} />
+                    {header.icon && (
+                      <IconViewer
+                        icon={header.icon}
+                        size={24}
+                        color="var(--mantine-color-gray-6)"
+                      />
                     )}
+                    <Text
+                      fw={500}
+                      c="var(--mantine-color-gray-6)"
+                      // Обрезаем длинный текст и добавляем многоточие
+                      style={{
+                        // flexGrow: 1,
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {header.title}
+                    </Text>
                   </Group>
+
+                  {header.actions && header.actions.length > 0 && (
+                    <RowActionButtons actions={header.actions} />
+                  )}
+                </Group>
               )}
             </Box>
             {/** RowActionButtons уже содержит Drawer */}

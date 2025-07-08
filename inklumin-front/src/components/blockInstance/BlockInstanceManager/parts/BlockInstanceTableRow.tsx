@@ -123,11 +123,7 @@ export const BlockInstanceTableRow = ({
         </Group>
       </Table.Td>
       <Table.Td>
-        <RowActionButtons
-          actions={actions}
-          entityId={instance.uuid}
-          drawerTitle="Действия"
-        />
+        <RowActionButtons actions={actions} entityId={instance.uuid} drawerTitle="Действия" />
       </Table.Td>
     </Table.Tr>
   );
