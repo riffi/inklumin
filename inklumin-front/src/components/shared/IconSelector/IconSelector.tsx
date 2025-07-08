@@ -81,7 +81,7 @@ export const IconSelector = ({ opened, onSelect, onClose, initialIcon }: IconSel
   };
 
   return (
-    <Drawer opened={opened} position="right" onClose={onClose} title="Выбор иконки" size="md">
+    <Drawer opened={opened} position="right" onClose={onClose} title="Выбор иконки" size="md" zIndex={1011}>
       <Tabs value={activeTab} onChange={setActiveTab}>
         <Tabs.List>
           <Tabs.Tab value="game" icon={<IconPhoto size={14} />}>

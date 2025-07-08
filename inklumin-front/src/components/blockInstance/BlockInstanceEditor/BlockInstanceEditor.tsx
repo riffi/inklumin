@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import {
   IconArrowLeft,
   IconChartDots3Filled,
+  IconEdit,
   IconInfoCircle,
   IconList,
   IconPhoto,
@@ -69,8 +70,6 @@ export const BlockInstanceEditor = (props: IBlockInstanceEditorProps) => {
 
   const { setHeader } = useMobileHeader();
 
-
-
   const {
     blockInstance,
     block,
@@ -86,40 +85,10 @@ export const BlockInstanceEditor = (props: IBlockInstanceEditorProps) => {
     updateBlockInstanceIcon,
   } = useBlockInstanceEditor(props.blockInstanceUuid);
 
-
-
   const userDocPage = useLiveQuery(() => {
     if (!block?.userDocPageUuid) return null;
     return UserDocRepository.getByUuid(bookDb, block.userDocPageUuid);
   }, [block?.userDocPageUuid]);
-
-  const header = (
-    <Group>
-      <IconViewer
-        icon={blockInstance?.icon ?? block?.icon}
-        size={isMobile ? 20 : 28}
-        style={{
-          color: "white",
-          boxShadow: "0px 0px 5px rgba(0,0,0,0.2)",
-          backgroundColor: "var(--mantine-color-blue-5)",
-        }}
-      />
-      <Title
-        order={isMobile ? 4 : 2}
-        style={{
-          textTransform: "capitalize",
-          color: "var(--mantine-color-blue-5)",
-        }}
-      >
-        {blockInstance?.title || ""}
-      </Title>
-      {userDocPage && (
-        <ActionIcon variant="subtle" onClick={() => setKbDrawerOpen(true)} title="Статья">
-          <IconQuestionMark size={isMobile ? "1rem" : "1.2rem"} />
-        </ActionIcon>
-      )}
-    </Group>
-  );
 
   useEffect(() => {
     if (block) {
@@ -207,58 +176,70 @@ export const BlockInstanceEditor = (props: IBlockInstanceEditorProps) => {
   };
 
   const infoSection =
-      block?.structureKind !== IBlockStructureKind.single ? (
-          <Box p="sm">
-            <Group>
-              <Box
-                  onClick={() => setIconDrawerOpen(true)}
-                  style={{
-                    cursor: "pointer",
-                    borderRadius: "10px",
-                    backgroundColor: "#ffffff",
-                    display: "flex",
-                    width: "120px",
-                    height: "120px",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    border: "2px dashed var(--mantine-color-blue-filled)",
-                  }}
-              >
-                <IconViewer
-                    icon={blockInstance?.icon ?? block?.icon}
-                    size={120}
-                    backgroundColor={"transparent"}
-                    color="var(--mantine-color-blue-filled)"
-                    showNoImage
-                />
-              </Box>
-              <Box mb="lg" style={{ flex: "1" }}>
-                <InlineEdit2
-                    label={block?.title || ""}
-                    onChange={(val) => updateBlockInstanceTitle(val)}
-                    value={blockInstance?.title || ""}
-                />
-                <Space h="md" />
-                <InlineEdit2
-                    label="Краткое описание"
-                    placeholder="Введите описание..."
-                    onChange={(val) => updateBlockInstanceShortDescription(val)}
-                    value={blockInstance?.description || ""}
-                    size="sm"
-                />
-              </Box>
-            </Group>
-            <Button
-                onClick={handleRemoveIcon}
-                variant="subtle"
-                color="red"
-                size="xs"
-                leftSection={<IconTrash size={14} />}
+    block?.structureKind !== IBlockStructureKind.single ? (
+      <Box p="sm">
+        <Group>
+          <Box style={{ position: "relative", width: "120px", height: "120px" }}>
+            <Box
+              onClick={() => setIconDrawerOpen(true)}
+              style={{
+                cursor: "pointer",
+                borderRadius: "10px",
+                backgroundColor: "#ffffff",
+                display: "flex",
+                width: "120px",
+                height: "120px",
+                justifyContent: "center",
+                alignItems: "center",
+                border: "2px dashed var(--mantine-color-blue-filled)",
+              }}
             >
-              Удалить
-            </Button>
+              <IconViewer
+                icon={blockInstance?.icon ?? block?.icon}
+                size={120}
+                backgroundColor={"transparent"}
+                color="var(--mantine-color-blue-filled)"
+                showNoImage
+              />
+            </Box>
+            <Group gap={4} style={{ position: "absolute", bottom: 4, right: 4 }}>
+              <ActionIcon
+                  variant="white"
+                  size="sm"
+                  onClick={() => setIconDrawerOpen(true)}
+                  style={{border: '1px solid'}}
+              >
+                <IconEdit size="1rem" />
+              </ActionIcon>
+              {blockInstance?.icon && <ActionIcon
+                  variant="white"
+                  size="sm"
+                  color="red"
+                  onClick={handleRemoveIcon}
+                  style={{border: '1px solid'}}
+              >
+                <IconTrash size="1rem" />
+              </ActionIcon>}
+            </Group>
           </Box>
-      ) : null;
+          <Box mb="lg" style={{ flex: "1" }}>
+            <InlineEdit2
+              label={block?.title || ""}
+              onChange={(val) => updateBlockInstanceTitle(val)}
+              value={blockInstance?.title || ""}
+            />
+            <Space h="md" />
+            <InlineEdit2
+              label="Краткое описание"
+              placeholder="Введите описание..."
+              onChange={(val) => updateBlockInstanceShortDescription(val)}
+              value={blockInstance?.description || ""}
+              size="sm"
+            />
+          </Box>
+        </Group>
+      </Box>
+    ) : null;
 
   return (
     <>
@@ -294,7 +275,7 @@ export const BlockInstanceEditor = (props: IBlockInstanceEditorProps) => {
           {blockInstanceViewMode === "data" && (
             <Box>
               {/* Раздел выбора иконок для экземпляра блока */}
-              {(!isMobile || block?.showBigHeader === 1) ? infoSection : <Space h={"sm"}/>}
+              {!isMobile || block?.showBigHeader === 1 ? infoSection : <Space h={"sm"} />}
 
               <section>
                 <ScrollArea
