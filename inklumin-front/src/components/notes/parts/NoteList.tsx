@@ -54,22 +54,23 @@ export const NoteList = ({
 
   const { updateNote } = useNoteManager();
   const { isMobile } = useMedia();
-  const noteActions: ActionItem[] = [
+
+  const getNoteActions = (note: INote): ActionItem[] => [
     {
-      key: "edit",
       title: "Редактировать",
       icon: <IconEdit size={16} />,
+      handler: () => handleNoteActions(note, "edit"),
     },
     {
-      key: "move",
       title: "Переместить",
       icon: <IconArrowRightCircleFilled size={16} />,
+      handler: () => handleNoteActions(note, "move"),
     },
     {
-      key: "delete",
       title: "Удалить",
       icon: <IconTrash size={16} />,
       color: "red",
+      handler: () => handleNoteActions(note, "delete"),
     },
   ];
   // Получаем все группы заметок
@@ -169,8 +170,7 @@ export const NoteList = ({
 
         <Table.Td>
           <RowActionButtons
-            actions={noteActions}
-            onAction={(key) => handleNoteActions(note, key as "edit" | "move" | "delete")}
+            actions={getNoteActions(note)}
             entityId={note.uuid}
             drawerTitle="Действия с заметкой"
           />

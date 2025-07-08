@@ -91,19 +91,7 @@ export const BaseLayout = () => {
                     </Group>
 
                     {header.actions && header.actions.length > 0 && (
-                        <RowActionButtons
-                            actions={
-                              header.actions.map((a, idx) => ({
-                                key: idx.toString(),
-                                title: a.title,
-                                icon: a.icon,
-                              })) as ActionItem[]
-                            }
-                            onAction={(key) => {
-                              const action = header.actions[Number(key)];
-                              action.handler();
-                            }}
-                        />
+                        <RowActionButtons actions={header.actions} />
                     )}
                   </Group>
               )}

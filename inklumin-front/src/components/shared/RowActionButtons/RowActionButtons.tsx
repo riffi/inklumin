@@ -4,32 +4,30 @@ import { ActionIcon, Drawer, Group, Stack, Text } from "@mantine/core";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 
 export interface ActionItem {
-  key: string;
   title: string;
   icon: React.ReactNode;
+  handler: () => void;
   color?: string;
   variant?: string;
 }
 
 interface ActionButtonsProps {
   actions: ActionItem[];
-  onAction: (actionKey: string) => void;
   entityId?: string;
   drawerTitle?: string;
 }
 
 export const RowActionButtons = ({
   actions,
-  onAction,
   entityId,
   drawerTitle = "Действия",
 }: ActionButtonsProps) => {
   const { isMobile } = useMedia();
   const [openedDrawerId, setOpenedDrawerId] = useState<string | null>(null);
 
-  const handleDrawerAction = (actionKey: string) => {
+  const handleDrawerAction = (action: ActionItem) => {
     setOpenedDrawerId(null);
-    onAction(actionKey);
+    action.handler();
   };
 
   const drawerId = entityId || "default";
@@ -52,9 +50,9 @@ export const RowActionButtons = ({
             <Stack gap="0">
               {actions.map((action, index) => (
                 <Group
-                  key={action.key}
+                  key={index}
                   gap="sm"
-                  onClick={() => handleDrawerAction(action.key)}
+                  onClick={() => handleDrawerAction(action)}
                   style={{
                     cursor: "pointer",
                     paddingTop: "8px",
@@ -74,13 +72,13 @@ export const RowActionButtons = ({
         </>
       ) : (
         <>
-          {actions.map((action) => (
+          {actions.map((action, index) => (
             <ActionIcon
-              key={action.key}
+              key={index}
               variant="subtle"
               color={action.color}
               size={20}
-              onClick={() => onAction(action.key)}
+              onClick={action.handler}
             >
               {action.icon}
             </ActionIcon>

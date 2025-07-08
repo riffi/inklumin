@@ -29,37 +29,23 @@ export const BlockInstanceTableRow = ({
 }: BlockInstanceTableRowProps) => {
   const actions: ActionItem[] = [
     {
-      key: "edit",
       title: "Редактировать",
       icon: <IconEdit />,
       color: "blue",
+      handler: () => onEdit(instance.uuid!),
     },
     {
-      key: "move",
       title: "Переместить",
       icon: <IconArrowRightCircleFilled />,
+      handler: () => onMove(instance.uuid!),
     },
     {
-      key: "delete",
       title: "Удалить",
       icon: <IconTrash />,
       color: "red",
+      handler: () => onDelete(instance),
     },
   ];
-
-  const handleAction = (actionKey: string) => {
-    switch (actionKey) {
-      case "edit":
-        onEdit(instance.uuid!);
-        break;
-      case "delete":
-        onDelete(instance);
-        break;
-      case "move":
-        onMove(instance.uuid!);
-        break;
-    }
-  };
 
   return (
     <Table.Tr key={instance.uuid}>
@@ -139,7 +125,6 @@ export const BlockInstanceTableRow = ({
       <Table.Td>
         <RowActionButtons
           actions={actions}
-          onAction={handleAction}
           entityId={instance.uuid}
           drawerTitle="Действия"
         />
