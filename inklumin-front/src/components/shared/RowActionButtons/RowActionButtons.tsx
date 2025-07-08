@@ -47,8 +47,11 @@ export const RowActionButtons = ({
             position="bottom"
             title={drawerTitle}
             size="25%"
+            styles={{
+              body: { padding: 0 } // или любое другое значение
+            }}
           >
-            <Stack gap="0">
+            <Stack gap="xs">
               {actions.map((action, index) => (
                 <Group
                   key={index}
@@ -56,8 +59,8 @@ export const RowActionButtons = ({
                   onClick={() => handleDrawerAction(action)}
                   style={{
                     cursor: "pointer",
-                    paddingTop: "8px",
-                    paddingBottom: "8px",
+                    paddingTop: "4px",
+                    paddingBottom: "4px",
                     paddingLeft: '8px',
                     backgroundColor: action.active ? 'var(--mantine-color-blue-0)' : undefined,
                     borderBottom:
