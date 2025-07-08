@@ -115,7 +115,7 @@ export const MainTabContent = ({ block, onSave, bookUuid }: MainTabContentProps)
 
       {/* === ОБЩЕЕ ======================================================= */}
       <Card withBorder radius="md" p="lg" mb="lg">
-        <Stack gap="md">
+        <Stack gap="sm">
           <Group justify="space-between">
             <Title order={4}>Общее</Title>
             <ActionIcon

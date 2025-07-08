@@ -93,7 +93,7 @@ export const BlockInstanceEditor = (props: IBlockInstanceEditorProps) => {
   useEffect(() => {
     if (block) {
       const actions = [] as Array<{ title: string; icon: React.ReactNode; handler: () => void }>;
-      if (isMobile && block.showBigHeader === 0) {
+      if (isMobile && block.showBigHeader !== 1) {
         actions.push({
           title: "Инфо",
           icon: <IconInfoCircle size={isMobile ? "1rem" : "1.2rem"} />,
@@ -175,11 +175,13 @@ export const BlockInstanceEditor = (props: IBlockInstanceEditorProps) => {
     });
   };
 
+  const infoSectionCompactMode = block?.showBigHeader !== 1 && !isMobile
+  const imageWidth = infoSectionCompactMode ? 45 : 120
   const infoSection =
     block?.structureKind !== IBlockStructureKind.single ? (
       <Box p="sm">
         <Group>
-          <Box style={{ position: "relative", width: "120px", height: "120px" }}>
+          <Box style={{ position: "relative", width: imageWidth + "px", height: imageWidth + "px" }}>
             <Box
               onClick={() => setIconDrawerOpen(true)}
               style={{
@@ -187,57 +189,88 @@ export const BlockInstanceEditor = (props: IBlockInstanceEditorProps) => {
                 borderRadius: "10px",
                 backgroundColor: "#ffffff",
                 display: "flex",
-                width: "120px",
-                height: "120px",
+                width: imageWidth + "px",
+                height: imageWidth + "px",
                 justifyContent: "center",
                 alignItems: "center",
-                border: "2px dashed var(--mantine-color-blue-filled)",
+                border: "none",
               }}
             >
               <IconViewer
                 icon={blockInstance?.icon ?? block?.icon}
-                size={120}
+                size={imageWidth}
                 backgroundColor={"transparent"}
                 color="var(--mantine-color-blue-filled)"
                 showNoImage
               />
             </Box>
-            <Group gap={4} style={{ position: "absolute", bottom: 4, right: 4 }}>
-              <ActionIcon
+            <Group gap={4} style={{ position: "absolute", bottom: infoSectionCompactMode ? 0 : 4, right: infoSectionCompactMode ? 0 : 4 }}>
+              {!infoSectionCompactMode && <ActionIcon
                   variant="white"
                   size="sm"
                   onClick={() => setIconDrawerOpen(true)}
-                  style={{border: '1px solid'}}
+                  style={{border: '1px solid', backgroundColor: '#ffffffd1'}}
               >
                 <IconEdit size="1rem" />
-              </ActionIcon>
+              </ActionIcon>}
               {blockInstance?.icon && <ActionIcon
                   variant="white"
-                  size="sm"
+                  size={infoSectionCompactMode ? "xs" : "sm"}
                   color="red"
                   onClick={handleRemoveIcon}
-                  style={{border: '1px solid'}}
+                  style={{
+                    border: infoSectionCompactMode ? 'none' : '1px solid',
+                    backgroundColor: '#ffffffd1'
+                  }}
               >
                 <IconTrash size="1rem" />
               </ActionIcon>}
             </Group>
           </Box>
-          <Box mb="lg" style={{ flex: "1" }}>
+          {infoSectionCompactMode && (
+          <Box style={{ flex: "1" }}>
+            <Group wrap={"nowrap"} gap={5}>
+              <Text c={"dimmed"} size={"md"}>
+                {block?.title || ""}:
+              </Text>
             <InlineEdit2
-              label={block?.title || ""}
+              size={"md"}
               onChange={(val) => updateBlockInstanceTitle(val)}
               value={blockInstance?.title || ""}
             />
-            <Space h="md" />
-            <InlineEdit2
-              label="Краткое описание"
-              placeholder="Введите описание..."
-              onChange={(val) => updateBlockInstanceShortDescription(val)}
-              value={blockInstance?.description || ""}
-              size="sm"
-            />
+            </Group>
+            <Group wrap={"nowrap"} gap={5}>
+              <Text c={"dimmed"} style={{fontSize: '12px'}}>
+                Описание:
+              </Text>
+              <InlineEdit2
+                  onChange={(val) => updateBlockInstanceShortDescription(val)}
+                  value={blockInstance?.description || ""}
+                  size={"xs"}
+              />
+            </Group>
           </Box>
+          )}
+          {!infoSectionCompactMode && (
+              <Box style={{ flex: "1" }}>
+                <InlineEdit2
+                    label={block?.title || ""}
+                    size={'sm'}
+                    onChange={(val) => updateBlockInstanceTitle(val)}
+                    value={blockInstance?.title || ""}
+                />
+                <Space h="md" />
+                <InlineEdit2
+                    label="Краткое описание"
+                    placeholder="Введите описание..."
+                    onChange={(val) => updateBlockInstanceShortDescription(val)}
+                    value={blockInstance?.description || ""}
+                    size={'sm'}
+                />
+              </Box>
+          )}
         </Group>
+
       </Box>
     ) : null;
 

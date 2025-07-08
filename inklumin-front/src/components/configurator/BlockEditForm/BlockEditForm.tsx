@@ -93,9 +93,10 @@ export const BlockEditForm = ({ blockUuid, bookUuid }: IBlockEditFormProps) => {
             value={activeTab}
             onChange={handleTabChange}
             data={blockEditTabOptions}
+            className={classes.segmentedControl}
             styles={{
               root: {
-                minWidth: 380,
+                width: "100%",
               },
             }}
           />

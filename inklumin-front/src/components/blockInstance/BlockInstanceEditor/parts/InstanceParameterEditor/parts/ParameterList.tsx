@@ -83,14 +83,14 @@ export const ParameterList = ({
       const uuids = fullParams
         .map((fp) => fp.parameter?.userDocPageUuid)
         .filter((u): u is string => !!u);
-      if (uuids.length === 0) return [] as IUserDocPage[];
+      if (uuids.length === 0) {return [] as IUserDocPage[];}
       return bookDb.userDocPages.where("uuid").anyOf(uuids).toArray();
     }, [fullParams]) || [];
 
   const useDocPagesMap = useMemo(() => {
     const map: Record<string, IUserDocPage> = {};
     userDocPages.forEach((p) => {
-      if (p.uuid) map[p.uuid] = p;
+      if (p.uuid) {map[p.uuid] = p;}
     });
     return map;
   }, [userDocPages]);
@@ -140,7 +140,7 @@ export const ParameterList = ({
           const firstParamInGroup = group[0];
           const parameter = firstParamInGroup.parameter;
 
-          if (!parameter) return null; // Should not happen with valid data
+          if (!parameter) {return null;} // Should not happen with valid data
 
           // Handle parameters that allow multiple instances
           if (parameter.allowMultiple) {
@@ -183,7 +183,6 @@ export const ParameterList = ({
                 </Group>
                 <Stack gap="sm" pl="md" pt="xs">
                   {" "}
-                  {/* Added pt="xs" for space below new header */}
                   {group.map((fullParam) => {
                     const isEditingThisInstance = editingParamInstanceId === fullParam.instance.id;
                     const handleDeleteInstance = async () => {
@@ -203,7 +202,7 @@ export const ParameterList = ({
                           fullParam={fullParam}
                           onChange={(value) => onSaveEdit(fullParam.instance, value)}
                           onDelete={handleDeleteInstance}
-                          isMultiple={true}
+                          isMultiple
                           // parameterTitle={parameter.title} // Not needed for multiple items label
                         />
                       );
@@ -279,7 +278,7 @@ export const ParameterList = ({
                 </Stack>
               </Box>
             );
-          } else {
+          }
             // Handle single instance parameters (original logic, adapted for the single item in the group)
             const fullParam = firstParamInGroup; // There's only one for non-allowMultiple
             const isEditing = editingParamInstanceId === fullParam.instance.id;
@@ -289,7 +288,7 @@ export const ParameterList = ({
               return (
                 <Group
                   justify="space-between"
-                  align="flex-start"
+                  align="center"
                   w="100%"
                   className={
                     isEditing && parameter?.dataType === IBlockParameterDataType.text // Keep existing class logic for text
@@ -300,8 +299,8 @@ export const ParameterList = ({
                   <Group gap="xs">
                     <Text
                       fw={500}
-                      color={"dimmed"}
-                      style={{ fontSize: "0.8rem" }}
+                      c="dimmed"
+                      style={{ fontSize: "0.7rem" }}
                       className={classes.paramTitle}
                     >
                       {parameter?.title}
@@ -333,8 +332,8 @@ export const ParameterList = ({
                         "Подтверждение",
                         `Удалить ${parameter?.title || "Параметр"}?`
                       );
-                      if (!result) return;
-                      if (onDelete) onDelete(fullParam.instance.id);
+                      if (!result) {return;}
+                      if (onDelete) {onDelete(fullParam.instance.id);}
                     }}
                     isDefault={parameter?.isDefault}
                   />
@@ -356,8 +355,8 @@ export const ParameterList = ({
                         "Подтверждение",
                         `Удалить ${parameter?.title || "Параметр"}?`
                       );
-                      if (!result) return;
-                      if (onDelete) onDelete(fullParam.instance.id);
+                      if (!result) {return;}
+                      if (onDelete) {onDelete(fullParam.instance.id);}
                     }}
                     isMultiple={false}
                     parameterTitle={parameter?.title}
@@ -395,7 +394,7 @@ export const ParameterList = ({
                 )}
               </Box>
             );
-          }
+
         })}
       </Stack>
       <Drawer
