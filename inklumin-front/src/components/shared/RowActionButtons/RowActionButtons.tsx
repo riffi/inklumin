@@ -48,7 +48,7 @@ export const RowActionButtons = ({
             title={drawerTitle}
             size="25%"
             styles={{
-              body: { padding: 0 } // или любое другое значение
+              body: { padding: 0 }, // или любое другое значение
             }}
           >
             <Stack gap="xs">
@@ -61,8 +61,8 @@ export const RowActionButtons = ({
                     cursor: "pointer",
                     paddingTop: "4px",
                     paddingBottom: "4px",
-                    paddingLeft: '8px',
-                    backgroundColor: action.active ? 'var(--mantine-color-blue-0)' : undefined,
+                    paddingLeft: "8px",
+                    backgroundColor: action.active ? "var(--mantine-color-blue-0)" : undefined,
                     borderBottom:
                       index < actions.length - 1 ? "1px solid rgba(0,0,0,0.0.1)" : "none",
                   }}

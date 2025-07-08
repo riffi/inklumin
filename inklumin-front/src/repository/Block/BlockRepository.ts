@@ -111,6 +111,7 @@ const create = async (
   }
   block.uuid = generateUUID();
   block.showInMainMenu = 1; // Set default value for showInMainMenu
+  block.showBigHeader = 0; // Значение по умолчанию для крупного заголовка
   // Persist knowledge base link if provided
   const blockToSave: IBlock = {
     ...block,

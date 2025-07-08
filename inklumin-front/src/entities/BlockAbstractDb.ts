@@ -13,7 +13,7 @@ import {
 export const baseSchema = {
   bookConfigurations: "++id, &uuid, title",
   blocks:
-    "++id, &uuid, configurationUuid, parentBlockUuid, title, sceneLinkAllowed, showInSceneList, showInMainMenu, useGroups",
+    "++id, &uuid, configurationUuid, parentBlockUuid, title, sceneLinkAllowed, showInSceneList, showInMainMenu, showBigHeader, useGroups",
   blockParameterGroups: "++id, &uuid, blockUuid, title",
   blockParameters:
     "++id, &uuid, groupUuid, blockUuid, dataType, linkedBlockUuid, linkedParameterUuid, isDefault, displayInCard, useForInstanceGrouping ",
@@ -35,6 +35,6 @@ export class BlockAbstractDb extends Dexie {
 
   constructor(dbName: string) {
     super(dbName);
-    this.version(4).stores(baseSchema);
+    this.version(5).stores(baseSchema);
   }
 }

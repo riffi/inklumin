@@ -44,7 +44,7 @@ export class BookDB extends BlockAbstractDb {
   userDocPages!: Dexie.Table<IUserDocPage, number>;
   constructor(dbName: string) {
     super(dbName);
-    this.version(10)
+    this.version(11)
       .stores(bookSchema)
       .upgrade(async (tx) => {
         await tx
@@ -72,6 +72,14 @@ export class BookDB extends BlockAbstractDb {
           .modify((inst) => {
             if (blockLinkUuids.has(inst.blockParameterUuid)) {
               inst.linkedBlockInstanceUuid = inst.value;
+            }
+          });
+        await tx
+          .table("blocks")
+          .toCollection()
+          .modify((block) => {
+            if (block.showBigHeader === undefined) {
+              block.showBigHeader = 0;
             }
           });
       });

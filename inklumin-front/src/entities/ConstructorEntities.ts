@@ -82,6 +82,7 @@ export interface IBlock {
   customIconBase64?: string; // Кастомная иконка в формате base64
   showInSceneList: number; // Отображать ли в списке сцен
   showInMainMenu: number;
+  showBigHeader: number; // Показывать крупный заголовок на мобильных
   userDocPageUuid?: string; // Ссылка на страницу базы знаний
 }
 

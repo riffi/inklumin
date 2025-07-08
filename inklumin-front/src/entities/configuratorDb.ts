@@ -24,7 +24,7 @@ class ConfigDatabase extends BlockAbstractDb {
   userDocPages!: Dexie.Table<IUserDocPage, number>;
   constructor() {
     super("BlocksDatabase");
-    this.version(6)
+    this.version(7)
       .stores(schema)
       .upgrade(async (tx) => {
         await tx
@@ -39,6 +39,14 @@ class ConfigDatabase extends BlockAbstractDb {
         if (!metaExists) {
           await tx.table("notesMeta").add({ id: 1, syncState: "synced" });
         }
+        await tx
+          .table("blocks")
+          .toCollection()
+          .modify((block) => {
+            if (block.showBigHeader === undefined) {
+              block.showBigHeader = 0;
+            }
+          });
       });
   }
 }

@@ -189,6 +189,7 @@ bookDb — локальная база данных Dexie.js, создаваем
     - `icon` — иконка блока.
     - `showInSceneList` — отображать в списке сцен.
     - `showInMainMenu` — отображать в меню.
+    - `showBigHeader` — крупный заголовок в редакторе на мобильных.
     - `userDocPageUuid` — связанная страница базы знаний.
 - **blockParameterGroups** — группы параметров блоков
     - `id` — ключ.

@@ -190,6 +190,13 @@ export const MainTabContent = ({ block, onSave, bookUuid }: MainTabContentProps)
                 handleBlockPropertyChange({ showInMainMenu: e.currentTarget.checked ? 1 : 0 })
               }
             />
+            <Checkbox
+              checked={block?.showBigHeader === 1}
+              label="Отображать крупный заголовок"
+              onChange={(e) =>
+                handleBlockPropertyChange({ showBigHeader: e.currentTarget.checked ? 1 : 0 })
+              }
+            />
           </Stack>
         </Stack>
       </Card>

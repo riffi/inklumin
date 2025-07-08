@@ -67,6 +67,7 @@ export const BlockEditModal = (props: IBlockEditModalProps) => {
         displayKind: "list",
         sceneLinkAllowed: 0,
         showInSceneList: 0,
+        showBigHeader: 0,
       } as IBlock), // Cast needed if initialValues doesn't satisfy IBlock fully
     validate: {
       title: (value) => (value.trim().length > 0 ? null : "Название не может быть пустым"),
@@ -87,6 +88,7 @@ export const BlockEditModal = (props: IBlockEditModalProps) => {
             displayKind: "list",
             sceneLinkAllowed: 0,
             showInSceneList: 0,
+            showBigHeader: 0,
           } as IBlock)
       );
       setModalTitleForms(
