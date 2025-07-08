@@ -273,7 +273,7 @@ export const BlockInstanceEditor = (props: IBlockInstanceEditorProps) => {
           </Group>
           {blockInstanceViewMode === "diagram" && <InstanceMindMap blockInstance={blockInstance} />}
           {blockInstanceViewMode === "data" && (
-            <Box>
+            <Box >
               {/* Раздел выбора иконок для экземпляра блока */}
               {!isMobile || block?.showBigHeader === 1 ? infoSection : <Space h={"sm"} />}
 
@@ -288,11 +288,13 @@ export const BlockInstanceEditor = (props: IBlockInstanceEditorProps) => {
                       display: tabs.length <= 1 ? "none" : "",
                     },
                   }}
+
                 >
                   <SegmentedControl
                     value={activeTab || ""}
                     onChange={setActiveTab}
                     data={tabs}
+                    className={classes.segmentedControl}
                     style={{
                       textTransform: "Capitalize",
                       minWidth: "100%",
