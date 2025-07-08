@@ -294,7 +294,7 @@ export const BlockInstanceEditor = (props: IBlockInstanceEditorProps) => {
           {blockInstanceViewMode === "data" && (
             <Box>
               {/* Раздел выбора иконок для экземпляра блока */}
-              {(!isMobile || block?.showBigHeader === 1) && infoSection}
+              {(!isMobile || block?.showBigHeader === 1) ? infoSection : <Space h={"sm"}/>}
 
               <section>
                 <ScrollArea
