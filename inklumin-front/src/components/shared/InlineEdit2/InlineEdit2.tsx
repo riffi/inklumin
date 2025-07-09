@@ -14,6 +14,8 @@ interface InlineEditProps {
     weight?: string | number;
     color?: string;
   };
+  // положение подписи: сверху или слева
+  labelPosition?: "top" | "left";
 }
 
 export const InlineEdit2: React.FC<InlineEditProps> = ({
@@ -24,6 +26,8 @@ export const InlineEdit2: React.FC<InlineEditProps> = ({
   size = "sm",
   label,
   labelProps = {},
+  // по умолчанию подпись располагается сверху
+  labelPosition = "top",
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(value);
@@ -91,7 +95,7 @@ export const InlineEdit2: React.FC<InlineEditProps> = ({
 
   return (
     <Box style={{ width: "100%" }}>
-      {label && (
+      {labelPosition === "top" && label && (
         <Text
           size={size || "sm"}
           weight={labelProps.weight || 500}
@@ -112,6 +116,17 @@ export const InlineEdit2: React.FC<InlineEditProps> = ({
           width: "100%",
         }}
       >
+        {labelPosition === "left" && label && (
+          <Text
+            size={size || "sm"}
+            weight={labelProps.weight || 500}
+            color={labelProps.color || "dimmed"}
+            mr={8}
+            style={{ userSelect: "none" }}
+          >
+            {label}
+          </Text>
+        )}
         {isEditing ? (
           <>
             <TextInput
