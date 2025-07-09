@@ -6,13 +6,13 @@
 .row {
   border-radius: var(--mantine-radius-sm);
   border: 1px solid transparent;
-  transition: all 0.15s ease;
+  transition: all 0.1s ease;
   position: relative;
 
   &:hover {
     background-color: var(--mantine-color-gray-0);
     border-color: var(--mantine-color-gray-2);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    /*box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);*/
   }
 }
 
@@ -104,8 +104,8 @@
   }
 
   .iconContainer {
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
   }
 
   .title {
@@ -114,6 +114,10 @@
 
   .description {
     font-size: 12px;
+  }
+
+  .actionsContainer{
+    opacity: 1;
   }
 }
 

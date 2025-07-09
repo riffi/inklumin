@@ -17,6 +17,7 @@ import {
 } from "@/components/shared/RowActionButtons/RowActionButtons";
 import { IBlockInstance } from "@/entities/BookEntities";
 import { IBlock } from "@/entities/ConstructorEntities";
+import {useMedia} from "@/providers/MediaQueryProvider/MediaQueryProvider";
 
 interface IInstanceTreeNode extends IBlockInstanceWithParams {
   children: IInstanceTreeNode[];
@@ -43,6 +44,7 @@ export const BlockInstanceTree = ({
                                     onMove,
                                   }: IBlockInstanceTreeProps) => {
   const [expandedNodes, setExpandedNodes] = useState<Record<string, boolean>>({});
+  const {isMobile} = useMedia()
 
   const instanceTree = useMemo(() => {
     const map = new Map<string, IInstanceTreeNode>();
@@ -133,7 +135,7 @@ export const BlockInstanceTree = ({
               <Box className={classes.iconContainer}>
                 <IconViewer
                     icon={node.icon ?? block?.icon}
-                    size={35}
+                    size={isMobile ? 25 : 35}
                     color="rgb(102,102,102)"
                     backgroundColor="transparent"
                 />
