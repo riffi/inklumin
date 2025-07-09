@@ -316,8 +316,8 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
       ];
 
       return (
-        <Box key={node.uuid} ml={level * 20}>
-          <Group gap={4} align="flex-start">
+        <Box key={node.uuid} ml={level * 20} pt={5} pb={5}>
+          <Group gap={4} align="center">
             {node.children.length > 0 && (
               <ActionIcon variant="subtle" onClick={() => toggleNode(node.uuid!)}>
                 {expandedNodes[node.uuid!] ? <IconChevronDown size={16} /> : <IconChevronRight size={16} />}
@@ -325,7 +325,7 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
             )}
             {node.children.length === 0 && <Box w={24} />}
             <IconViewer icon={node.icon ?? block?.icon} size={24} color="rgb(102,102,102)" backgroundColor="transparent" />
-            <Stack gap={0} style={{ flex: 1 }}>
+            <Stack gap={0} style={{ flex: 1 }} >
               <Text style={{ cursor: "pointer" }} onClick={() => handleEditInstance(node.uuid!)}>
                 {node.title}
               </Text>
