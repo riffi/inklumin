@@ -143,6 +143,15 @@ export const MainTabContent = ({ block, onSave, bookUuid }: MainTabContentProps)
               label="Тип структуры"
               placeholder="Выберите тип структуры"
             />
+            {block?.structureKind === IBlockStructureKind.multiple && (
+              <Checkbox
+                label="Древовидное представление"
+                checked={block?.treeView === 1}
+                onChange={(e) =>
+                  handleBlockPropertyChange({ treeView: e.currentTarget.checked ? 1 : 0 })
+                }
+              />
+            )}
           </SimpleGrid>
 
           <InlineEdit2

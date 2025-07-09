@@ -1,5 +1,14 @@
 import React, {useCallback, useEffect, useMemo, useState} from "react";
-import {IconCalendar, IconPlus, IconSortAZ} from "@tabler/icons-react";
+import {
+  IconCalendar,
+  IconPlus,
+  IconSortAZ,
+  IconChevronDown,
+  IconChevronRight,
+  IconEdit,
+  IconTrash,
+  IconArrowRightCircleFilled,
+} from "@tabler/icons-react";
 import {useNavigate} from "react-router-dom";
 import {
   Box,
@@ -11,6 +20,8 @@ import {
   Table,
   Text,
   Title,
+  Stack,
+  Collapse, ActionIcon,
 } from "@mantine/core";
 import {useDebouncedValue, useDisclosure} from "@mantine/hooks";
 import {
@@ -23,9 +34,11 @@ import {
   BlockInstanceTableRow
 } from "@/components/blockInstance/BlockInstanceManager/parts/BlockInstanceTableRow";
 import {
+  IBlockInstanceWithParams,
   useBlockInstanceManager
 } from "@/components/blockInstance/BlockInstanceManager/hooks/useBlockInstanceManager";
-import {IconViewer} from "@/components/shared/IconViewer/IconViewer";
+import { IconViewer } from "@/components/shared/IconViewer/IconViewer";
+import { RowActionButtons, ActionItem } from "@/components/shared/RowActionButtons/RowActionButtons";
 import {bookDb} from "@/entities/bookDb";
 import {IBlockInstance} from "@/entities/BookEntities";
 import {useDialog} from "@/providers/DialogProvider/DialogProvider";
@@ -90,6 +103,8 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
   const [groupsModalOpened, setGroupsModalOpened] = useState(false);
   const [movingInstanceUuid, setMovingInstanceUuid] = useState<string | null>(null);
   const [selectedMoveGroup, setSelectedMoveGroup] = useState<string>("none");
+  const [parentForNew, setParentForNew] = useState<string | null>(null);
+  const [expandedNodes, setExpandedNodes] = useState<Record<string, boolean>>({});
 
   const [filtersVisible, { toggle: toggleFilters, close: closeFilters }] = useDisclosure(false);
   const [filters, setFilters] = useState<Record<string, string[]>>({});
@@ -170,10 +185,16 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
   }, [block, isMobile, blockInstanceSortType]);
 
   const handleAddClick = () => {
+    setParentForNew(null);
     open();
   };
 
-  const handleCreateInstance = async (name: string, description: string, group: string) => {
+  const handleCreateInstance = async (
+    name: string,
+    description: string,
+    group: string,
+    parentUuid?: string,
+  ) => {
     if (!bookDb || !name.trim()) return;
 
     setAddingInstance(true);
@@ -185,6 +206,7 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
         title: name.trim(),
         description: description.trim() ? description.trim() : undefined,
         blockInstanceGroupUuid: block?.useGroups === 1 && group !== "none" ? group : undefined,
+        parentInstanceUuid: parentUuid || undefined,
       };
       await addBlockInstance(newInstance);
       if (groupingParam && block?.useGroups !== 1 && group !== "none") {
@@ -198,6 +220,7 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
         await BlockParameterInstanceRepository.addParameterInstance(bookDb, paramInstance);
       }
       close();
+      setParentForNew(null);
      // navigate(`/block-instance/card?uuid=${uuid}`);
     } finally {
       setAddingInstance(false);
@@ -235,6 +258,29 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
       [instancesWithParams, filters, getByGroup]
   );
 
+  interface IInstanceTreeNode extends IBlockInstanceWithParams {
+    children: IInstanceTreeNode[];
+  }
+
+  const instanceTree = useMemo(() => {
+    const map = new Map<string, IInstanceTreeNode>();
+    const roots: IInstanceTreeNode[] = [];
+    displayedInstancesByGroup.forEach((inst) => {
+      map.set(inst.uuid!, { ...inst, children: [] });
+    });
+    displayedInstancesByGroup.forEach((inst) => {
+      const node = map.get(inst.uuid!);
+      if (!node) return;
+      const parent = inst.parentInstanceUuid ? map.get(inst.parentInstanceUuid) : null;
+      if (parent) {
+        parent.children.push(node);
+      } else {
+        roots.push(node);
+      }
+    });
+    return roots;
+  }, [displayedInstancesByGroup]);
+
   // Обработчики фильтров
   const handleFilterChange = useCallback((paramUuid: string, values: string[]) => {
     setFilters((prev) => ({
@@ -246,6 +292,72 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
   const clearFilters = () => {
     setFilters({});
     closeFilters();
+  };
+
+  const renderTree = (nodes: IInstanceTreeNode[], level = 0): React.ReactNode => {
+    return nodes.map((node) => {
+      const actions: ActionItem[] = [
+        {
+          title: "Редактировать",
+          icon: <IconEdit size={16} />,
+          handler: () => handleEditInstance(node.uuid!),
+        },
+        {
+          title: "Переместить",
+          icon: <IconArrowRightCircleFilled size={16} />,
+          handler: () => handleMoveInstance(node.uuid!),
+        },
+        {
+          title: "Удалить",
+          icon: <IconTrash size={16} />,
+          color: "red",
+          handler: () => handleDeleteInstance(node),
+        },
+      ];
+
+      return (
+        <Box key={node.uuid} ml={level * 20}>
+          <Group gap={4} align="flex-start">
+            {node.children.length > 0 && (
+              <ActionIcon variant="subtle" onClick={() => toggleNode(node.uuid!)}>
+                {expandedNodes[node.uuid!] ? <IconChevronDown size={16} /> : <IconChevronRight size={16} />}
+              </ActionIcon>
+            )}
+            {node.children.length === 0 && <Box w={24} />}
+            <IconViewer icon={node.icon ?? block?.icon} size={24} color="rgb(102,102,102)" backgroundColor="transparent" />
+            <Stack gap={0} style={{ flex: 1 }}>
+              <Text style={{ cursor: "pointer" }} onClick={() => handleEditInstance(node.uuid!)}>
+                {node.title}
+              </Text>
+              {node.description && (
+                <Text size="sm" c="dimmed">
+                  {node.description}
+                </Text>
+              )}
+            </Stack>
+            <ActionIcon
+              variant="subtle"
+              color="green"
+              onClick={() => {
+                setParentForNew(node.uuid!);
+                open();
+              }}
+              title="Добавить внутрь"
+            >
+              <IconPlus size={16} />
+            </ActionIcon>
+            <RowActionButtons actions={actions} entityId={node.uuid} />
+          </Group>
+          {node.children.length > 0 && (
+            <Collapse in={expandedNodes[node.uuid!]}> {renderTree(node.children, level + 1)} </Collapse>
+          )}
+        </Box>
+      );
+    });
+  };
+
+  const toggleNode = (uuid: string) => {
+    setExpandedNodes((prev) => ({ ...prev, [uuid]: !prev[uuid] }));
   };
 
   if (block?.structureKind === "single") {
@@ -326,44 +438,56 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
                 </Group>
               </div>
             )}
-            <Table highlightOnHover className={classes.table}>
-              <>
-                {displayedInstancesByGroup.length > 0 ? (
-                  <Table.Tbody>
-                    {displayedInstancesByGroup.map((instance) => (
-                      <BlockInstanceTableRow
-                        key={instance.uuid!}
-                        instance={instance}
-                        block={block}
-                        displayedParameters={displayedParameters}
-                        onEdit={() => handleEditInstance(instance.uuid!)}
-                        onDelete={() => handleDeleteInstance(instance)}
-                        onMove={handleMoveInstance}
-                      />
-                    ))}
-                  </Table.Tbody>
+            {block?.treeView === 1 ? (
+              <Stack gap="xs" mt="md">
+                {instanceTree.length > 0 ? (
+                  renderTree(instanceTree)
                 ) : (
-                  <Table.Tbody>
-                    <Table.Tr>
-                      <Table.Td colSpan={2}>
-                        <Text c="dimmed" ta="center" py="md" size="sm">
-                          Добавьте {block?.titleForms?.accusative}
-                        </Text>
-                      </Table.Td>
-                    </Table.Tr>
-                  </Table.Tbody>
+                  <Text c="dimmed" ta="center" py="md" size="sm">
+                    Добавьте {block?.titleForms?.accusative}
+                  </Text>
                 )}
-              </>
-            </Table>
+              </Stack>
+            ) : (
+              <Table highlightOnHover className={classes.table}>
+                <>
+                  {displayedInstancesByGroup.length > 0 ? (
+                    <Table.Tbody>
+                      {displayedInstancesByGroup.map((instance) => (
+                        <BlockInstanceTableRow
+                          key={instance.uuid!}
+                          instance={instance}
+                          block={block}
+                          displayedParameters={displayedParameters}
+                          onEdit={() => handleEditInstance(instance.uuid!)}
+                          onDelete={() => handleDeleteInstance(instance)}
+                          onMove={handleMoveInstance}
+                        />
+                      ))}
+                    </Table.Tbody>
+                  ) : (
+                    <Table.Tbody>
+                      <Table.Tr>
+                        <Table.Td colSpan={2}>
+                          <Text c="dimmed" ta="center" py="md" size="sm">
+                            Добавьте {block?.titleForms?.accusative}
+                          </Text>
+                        </Table.Td>
+                      </Table.Tr>
+                    </Table.Tbody>
+                  )}
+                </>
+              </Table>
+            )}
 
             <AddInstanceModal
               opened={opened}
-              onClose={close}
+              onClose={() => { setParentForNew(null); close(); }}
               title={"Создание " + block?.titleForms?.genitive}
               groups={groups}
               currentGroupUuid={currentGroupUuid}
               useGroups={block?.useGroups === 1}
-              onCreate={(name, desc, group) => handleCreateInstance(name, desc, group)}
+              onCreate={(name, desc, group) => handleCreateInstance(name, desc, group, parentForNew || undefined)}
               loading={addingInstance}
             />
 

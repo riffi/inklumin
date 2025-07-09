@@ -22,7 +22,7 @@ const bookSchema = {
   sceneBodies: "++id, sceneId",
 
   blockInstanceGroups: "++id, &uuid, blockUuid, title, order",
-  blockInstances: "++id, &uuid, blockUuid, title, hostInstanceUuid, blockInstanceGroupUuid",
+  blockInstances: "++id, &uuid, blockUuid, title, hostInstanceUuid, blockInstanceGroupUuid, parentInstanceUuid",
   blockParameterInstances:
     "++id, &uuid, blockParameterUuid, blockInstanceUuid, blockParameterGroupUuid, value, linkedBlockInstanceUuid",
   blockInstanceRelations:
@@ -44,7 +44,7 @@ export class BookDB extends BlockAbstractDb {
   userDocPages!: Dexie.Table<IUserDocPage, number>;
   constructor(dbName: string) {
     super(dbName);
-    this.version(11)
+    this.version(12)
       .stores(bookSchema)
       .upgrade(async (tx) => {
         await tx
@@ -80,6 +80,9 @@ export class BookDB extends BlockAbstractDb {
           .modify((block) => {
             if (block.showBigHeader === undefined) {
               block.showBigHeader = 0;
+            }
+            if (block.treeView === undefined) {
+              block.treeView = 0;
             }
           });
       });

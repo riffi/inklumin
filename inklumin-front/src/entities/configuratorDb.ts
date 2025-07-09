@@ -23,7 +23,7 @@ class ConfigDatabase extends BlockAbstractDb {
   openRouterModels!: Dexie.Table<IOpenRouterModel, number>;
   constructor() {
     super("BlocksDatabase");
-    this.version(7)
+    this.version(8)
       .stores(schema)
       .upgrade(async (tx) => {
         await tx
@@ -44,6 +44,9 @@ class ConfigDatabase extends BlockAbstractDb {
           .modify((block) => {
             if (block.showBigHeader === undefined) {
               block.showBigHeader = 0;
+            }
+            if (block.treeView === undefined) {
+              block.treeView = 0;
             }
           });
       });
