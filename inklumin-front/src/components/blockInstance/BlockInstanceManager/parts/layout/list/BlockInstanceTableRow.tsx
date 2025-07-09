@@ -122,7 +122,7 @@ export const BlockInstanceTableRow = ({
           </Stack>
         </Group>
       </Table.Td>
-      <Table.Td>
+      <Table.Td style={{width: '50px'}}>
         <RowActionButtons actions={actions} entityId={instance.uuid} drawerTitle="Действия" />
       </Table.Td>
     </Table.Tr>

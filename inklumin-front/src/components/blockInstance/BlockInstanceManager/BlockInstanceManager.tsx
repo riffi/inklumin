@@ -414,6 +414,7 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
               groups={groups}
               instances={instances || []}
               useGroups={block?.useGroups === 1}
+              treeView={block?.treeView === 1}
               selectedGroup={selectedMoveGroup}
               selectedParent={selectedParentUuid}
               excludeUuids={excludeUuids}

@@ -8,6 +8,7 @@ interface IMoveInstanceModalProps {
   groups?: IBlockInstanceGroup[];
   instances: IBlockInstance[];
   useGroups: boolean;
+  treeView: boolean;
   selectedGroup: string;
   selectedParent: string | null;
   excludeUuids: string[];
@@ -25,6 +26,7 @@ export const MoveInstanceModal = ({
   groups,
   instances,
   useGroups,
+  treeView,
   selectedGroup,
   selectedParent,
   excludeUuids,
@@ -49,14 +51,16 @@ export const MoveInstanceModal = ({
           mb="md"
         />
       )}
-      <InstanceSelector
-        blockUuid={instances[0]?.blockUuid || ""}
-        groupUuid={useGroups ? selectedGroup : undefined}
-        selectedUuid={selectedParent}
-        onSelect={onChangeParent}
-        excludeUuids={excludeUuids}
-        includeTopLevel
-      />
+      {treeView && (
+        <InstanceSelector
+          blockUuid={instances[0]?.blockUuid || ""}
+          groupUuid={useGroups ? selectedGroup : undefined}
+          selectedUuid={selectedParent}
+          onSelect={onChangeParent}
+          excludeUuids={excludeUuids}
+          includeTopLevel
+        />
+      )}
       <Button fullWidth mt="md" onClick={onConfirm}>
         Переместить
       </Button>
