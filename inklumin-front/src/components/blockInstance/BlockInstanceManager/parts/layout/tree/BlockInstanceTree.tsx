@@ -8,6 +8,7 @@ import {
   IconTrash,
 } from "@tabler/icons-react";
 import { ActionIcon, Box, Collapse, Group, Stack, Text } from "@mantine/core";
+import classes from "./BlockInstanceTree.module.css";
 import { IBlockInstanceWithParams } from "@/components/blockInstance/BlockInstanceManager/hooks/useBlockInstanceManager";
 import { IconViewer } from "@/components/shared/IconViewer/IconViewer";
 import {
@@ -94,8 +95,8 @@ export const BlockInstanceTree = ({
       ];
 
       return (
-        <Box key={node.uuid} ml={level * 20} pt={8}>
-          <Group gap={4} align="center">
+        <Box key={node.uuid} ml={level * 20}>
+          <Group gap={4} align="center" p={"6px"} className={classes.row}>
             {node.children.length > 0 && (
               <ActionIcon variant="subtle" onClick={() => toggleNode(node.uuid!)}>
                 {expandedNodes[node.uuid!] ? (
@@ -117,7 +118,7 @@ export const BlockInstanceTree = ({
                 {node.title}
               </Text>
               {node.description && (
-                <Text size="sm" c="dimmed">
+                <Text size="sm" c="dimmed" style={{ cursor: "pointer" }}>
                   {node.description}
                 </Text>
               )}
