@@ -70,6 +70,12 @@ export const BlockInstanceTree = ({
     return nodes.map((node) => {
       const actions: ActionItem[] = [
         {
+          title: "Добавить",
+          icon: <IconPlus size={16} />,
+          color: "green",
+          handler: () => onAddChild(node.uuid!),
+        },
+        {
           title: "Редактировать",
           icon: <IconEdit size={16} />,
           handler: () => onEdit(node.uuid!),
@@ -116,14 +122,6 @@ export const BlockInstanceTree = ({
                 </Text>
               )}
             </Stack>
-            <ActionIcon
-              variant="subtle"
-              color="green"
-              onClick={() => onAddChild(node.uuid!)}
-              title="Добавить внутрь"
-            >
-              <IconPlus size={16} />
-            </ActionIcon>
             <RowActionButtons actions={actions} entityId={node.uuid} />
           </Group>
           {node.children.length > 0 && (
@@ -146,8 +144,12 @@ export const BlockInstanceTree = ({
   }
 
   return (
-    <Stack gap="xs" mt="md">
-      {renderTree(instanceTree)}
-    </Stack>
+    <Box style={{
+      padding: "0px 8px"
+    }}>
+      <Stack gap="xs" mt="md">
+        {renderTree(instanceTree)}
+      </Stack>
+    </Box>
   );
 };

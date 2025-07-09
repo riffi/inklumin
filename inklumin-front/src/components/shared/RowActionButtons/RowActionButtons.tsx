@@ -44,9 +44,9 @@ export const RowActionButtons = ({
           <Drawer
             opened={openedDrawerId === drawerId}
             onClose={() => setOpenedDrawerId(null)}
-            position="bottom"
+            position="right"
             title={drawerTitle}
-            size="25%"
+            // size="25%"
             styles={{
               body: { padding: 0 }, // или любое другое значение
             }}
@@ -63,8 +63,7 @@ export const RowActionButtons = ({
                     paddingBottom: "4px",
                     paddingLeft: "8px",
                     backgroundColor: action.active ? "var(--mantine-color-blue-0)" : undefined,
-                    borderBottom:
-                      index < actions.length - 1 ? "1px solid rgba(0,0,0,0.0.1)" : "none",
+                    borderBottom: index < actions.length - 1 ? "1px solid rgba(0,0,0,0.0.1)" : "none",
                   }}
                 >
                   <ActionIcon
