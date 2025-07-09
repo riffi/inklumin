@@ -166,7 +166,7 @@ export const MainTabContent = ({ block, onSave, bookUuid }: MainTabContentProps)
           <Stack gap="xs">
             <Checkbox
               checked={block?.useTabs === 1}
-              label="Использовать вкладки для группировки параметров"
+              label="Использовать вкладки для группировки свойств"
               onChange={(e) =>
                 handleBlockPropertyChange({ useTabs: e.currentTarget.checked ? 1 : 0 })
               }
