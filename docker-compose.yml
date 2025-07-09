@@ -24,8 +24,8 @@ services:
 
   ml:
     build: ./inklumin-ml
-    ports:
-      - "5123:5123"
+    expose:
+      - "5123"
 
   front:
     build:
