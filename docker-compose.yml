@@ -20,7 +20,7 @@ services:
       - db
       - ml
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
 
   ml:
     build: ./inklumin-ml
@@ -35,7 +35,7 @@ services:
     depends_on:
       - back
     ports:
-      - "8081:80"
+      - "127.0.0.1:8081:80"
 
   docs:
     build:
