@@ -1,5 +1,5 @@
 import { IconArrowRightCircleFilled, IconEdit, IconTrash } from "@tabler/icons-react";
-import { Badge, Group, Stack, Table, Text } from "@mantine/core";
+import { Badge, Box, Group, Stack, Table, Text } from "@mantine/core";
 import { IBlockInstanceWithParams } from "@/components/blockInstance/BlockInstanceManager/hooks/useBlockInstanceManager";
 import { ParameterViewVariantRenderer } from "@/components/shared/blockParameter/ParameterViewVariantRenderer/ParameterViewVariantRenderer";
 import { IconViewer } from "@/components/shared/IconViewer/IconViewer";
@@ -9,6 +9,7 @@ import {
 } from "@/components/shared/RowActionButtons/RowActionButtons";
 import { IBlockInstance } from "@/entities/BookEntities";
 import { IBlock, IBlockParameter, IBlockParameterDataType } from "@/entities/ConstructorEntities";
+import classes from "./BlockInstanceList.module.css";
 
 interface BlockInstanceTableRowProps {
   instance: IBlockInstanceWithParams;
@@ -54,15 +55,14 @@ export const BlockInstanceTableRow = ({
         style={{ cursor: "pointer", padding: "10px 0px 10px 20px" }}
       >
         <Group gap="10" wrap="nowrap">
-          <IconViewer
-            icon={instance?.icon ?? block?.icon}
-            size={35}
-            color="rgb(102, 102, 102)"
-            backgroundColor="transparent"
-            style={{
-              paddingLeft: 0,
-            }}
-          />
+          <Box className={classes.iconContainer}>
+            <IconViewer
+              icon={instance?.icon ?? block?.icon}
+              size={45}
+              color="rgb(102, 102, 102)"
+              backgroundColor="transparent"
+            />
+          </Box>
           <Stack gap={0}>
             <Text style={{ cursor: "pointer", fontSize: "1rem", lineHeight: "1.5rem" }}>
               {instance.title}
@@ -94,6 +94,7 @@ export const BlockInstanceTableRow = ({
                       fontWeight: 400,
                       paddingLeft: "0px",
                       borderRadius: "0",
+                      cursor: "pointer",
                     }}
                   >
                     <Group

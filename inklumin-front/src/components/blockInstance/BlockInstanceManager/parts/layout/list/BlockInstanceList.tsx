@@ -4,7 +4,7 @@ import { IBlockInstanceWithParams } from "@/components/blockInstance/BlockInstan
 import { IBlockInstance } from "@/entities/BookEntities";
 import { IBlock, IBlockParameter } from "@/entities/ConstructorEntities";
 import { BlockInstanceTableRow } from "./BlockInstanceTableRow";
-import classes from "../../../BlockInstanceManager.module.css";
+import classes from "./BlockInstanceList.module.css";
 
 interface IBlockInstanceListProps {
   instances: IBlockInstanceWithParams[];

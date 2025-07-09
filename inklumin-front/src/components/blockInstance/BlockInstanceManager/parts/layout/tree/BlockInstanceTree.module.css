@@ -28,20 +28,12 @@
   }
 }
 
-.leafDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: var(--mantine-color-gray-4);
-  margin: 5px 0;
-}
-
 .iconContainer {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 48px;
+  height: 48px;
   border-radius: var(--mantine-radius-sm);
   background-color: var(--mantine-color-gray-0);
   border: 1px solid var(--mantine-color-gray-2);

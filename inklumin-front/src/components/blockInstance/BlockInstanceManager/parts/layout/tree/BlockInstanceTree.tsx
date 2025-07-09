@@ -133,7 +133,7 @@ export const BlockInstanceTree = ({
               <Box className={classes.iconContainer}>
                 <IconViewer
                     icon={node.icon ?? block?.icon}
-                    size={20}
+                    size={35}
                     color="rgb(102,102,102)"
                     backgroundColor="transparent"
                 />
