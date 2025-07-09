@@ -42,7 +42,7 @@ services:
       context: ./inklumin-docs
       dockerfile: Dockerfile
     ports:
-      - "3000:80"
+      - "127.0.0.1:3000:80"
 volumes:
   db-data:
     external: true
