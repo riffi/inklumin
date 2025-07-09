@@ -21,10 +21,10 @@ export type DatabaseType = "book" | "config";
 export const relations: Record<TableName, Record<string, { table: TableName; field: string }>> = {
   blockInstances: {
     blockUuid: { table: "blocks", field: "uuid" },
-    parentInstanceUuid: { table: "blockInstances", field: "uuid" },
+    hostInstanceUuid: { table: "blockInstances", field: "uuid" },
   },
   blocks: {
-    parentBlockUuid: { table: "blocks", field: "uuid" },
+    hostBlockUuid: { table: "blocks", field: "uuid" },
     configurationUuid: { table: "bookConfigurations", field: "uuid" },
   },
   blockParameterGroups: {
@@ -59,7 +59,7 @@ export const relations: Record<TableName, Record<string, { table: TableName; fie
   },
   blockTabs: {
     blockUuid: { table: "blocks", field: "uuid" },
-    childBlockUuid: { table: "blocks", field: "uuid" },
+    nestedBlockUuid: { table: "blocks", field: "uuid" },
     relationUuid: { table: "blocksRelations", field: "uuid" },
     referencingParamUuid: { table: "blockParameters", field: "uuid" },
   },

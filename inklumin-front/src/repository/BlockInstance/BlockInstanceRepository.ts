@@ -93,15 +93,15 @@ export const remove = async (db: BookDB, instance: IBlockInstance) => {
   await updateBookLocalUpdatedAt(db);
 };
 
-export const getChildInstances = async (
-  db: BookDB,
-  parentInstanceUuid: string,
-  childBlockUuid?: string
+export const getNestedInstances = async (
+    db: BookDB,
+    hostInstanceUuid: string,
+    nestedBlockUuid?: string
 ) => {
-  const query = db.blockInstances.where("parentInstanceUuid").equals(parentInstanceUuid);
+  const query = db.blockInstances.where("hostInstanceUuid").equals(hostInstanceUuid);
 
-  return childBlockUuid
-    ? query.filter((i) => i.blockUuid === childBlockUuid).toArray()
+  return nestedBlockUuid
+    ? query.filter((i) => i.blockUuid === nestedBlockUuid).toArray()
     : query.toArray();
 };
 
@@ -123,6 +123,6 @@ export const BlockInstanceRepository = {
   update,
   updateByInstanceUuid,
   remove,
-  getChildInstances,
+  getNestedInstances,
   removeByBlock,
 };

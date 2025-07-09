@@ -25,7 +25,7 @@ export interface IBlockInstance {
   uuid?: string;
   blockUuid: string; // Ссылка на блок, экземпляр которого мы создаем
   title: string; // Название экземпляра блока
-  parentInstanceUuid?: string; // Ссылка на родительский экземпляр блока
+  hostInstanceUuid?: string; // Ссылка на родительский экземпляр блока
   description?: string; // Краткое описание экземпляра блока
   icon?: IIcon;
   updatedAt?: string;

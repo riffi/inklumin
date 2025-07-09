@@ -183,9 +183,9 @@ export const BookConfigurationEditForm = (props: IBookConfigurationEditFormProps
                     С группами
                   </Badge>
                 )}
-                {!!c.parentBlockUuid && (
+                {!!c.hostBlockUuid && (
                   <Badge variant="light" color="grey">
-                    Дочерний
+                    Вложенный
                   </Badge>
                 )}
               </Group>

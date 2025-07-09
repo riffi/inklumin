@@ -3,11 +3,11 @@ import { IBlockInstance } from "@/entities/BookEntities";
 import { IBlock } from "@/entities/ConstructorEntities";
 import { mapInstancesToOptions } from "../utils";
 
-interface ChildBlockModalProps {
-  relatedParentBlock?: IBlock;
-  relatedParentInstances?: IBlockInstance[];
-  relatedChildInstances?: IBlockInstance[];
-  parentInstanceUuid: string;
+interface NestedBlockModalProps {
+  relatedHostBlock?: IBlock;
+  relatedHostInstances?: IBlockInstance[];
+  relatedNestedInstances?: IBlockInstance[];
+  hostInstanceUuid: string;
   targetInstanceUuid: string;
   relatedBlock: IBlock;
   onParentChange: (value: string) => void;
@@ -16,42 +16,42 @@ interface ChildBlockModalProps {
   isLoading?: boolean;
 }
 
-export const ChildBlockModal = ({
-  relatedParentBlock,
-  relatedParentInstances,
-  relatedChildInstances,
-  parentInstanceUuid,
+export const NestedBlockModal = ({
+  relatedHostBlock,
+  relatedHostInstances,
+  relatedNestedInstances,
+  hostInstanceUuid,
   targetInstanceUuid,
   relatedBlock,
   onParentChange,
   onTargetChange,
   onCreate,
   isLoading,
-}: ChildBlockModalProps) => (
+}: NestedBlockModalProps) => (
   <Stack>
     <Select
-      label={`${relatedParentBlock?.title}`}
-      placeholder={`Выберите ${relatedParentBlock?.titleForms?.accusative}`}
-      value={parentInstanceUuid}
-      data={mapInstancesToOptions(relatedParentInstances)}
+      label={`${relatedHostBlock?.title}`}
+      placeholder={`Выберите ${relatedHostBlock?.titleForms?.accusative}`}
+      value={hostInstanceUuid}
+      data={mapInstancesToOptions(relatedHostInstances)}
       onChange={(v) => onParentChange(v || "")}
       searchable
       clearable
     />
 
-    {parentInstanceUuid && (
+    {hostInstanceUuid && (
       <Select
         label={`${relatedBlock.title}`}
         placeholder={
-          relatedChildInstances?.length
+          relatedNestedInstances?.length
             ? `Выберите ${relatedBlock.titleForms?.accusative}`
             : "Нет доступных"
         }
         value={targetInstanceUuid}
-        data={mapInstancesToOptions(relatedChildInstances)}
+        data={mapInstancesToOptions(relatedNestedInstances)}
         onChange={(v) => onTargetChange(v || "")}
-        disabled={!relatedChildInstances?.length}
-        description={!relatedChildInstances?.length && "Нет дочерних элементов"}
+        disabled={!relatedNestedInstances?.length}
+        description={!relatedNestedInstances?.length && "Нет вложенных элементов"}
         searchable
       />
     )}

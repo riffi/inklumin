@@ -10,7 +10,7 @@ import {
   Space,
 } from "@mantine/core";
 import { BlockTabsManager } from "@/components/configurator/BlockEditForm/parts/BlockTabsManager/BlockTabsManager";
-import { ChildBlocksManager } from "@/components/configurator/BlockEditForm/parts/ChildBlocksManager/ChildBlocksManager";
+import { NestedBlocksManager } from "@/components/configurator/BlockEditForm/parts/NestedBlocksManager/NestedBlocksManager";
 import { MainTabContent } from "@/components/configurator/BlockEditForm/parts/MainTabContent/MainTabContent";
 import { ParamManager } from "@/components/configurator/BlockEditForm/parts/ParamManager/ParamManager";
 import { RelationManager } from "@/components/configurator/BlockEditForm/parts/RelationManager/RelationManager";
@@ -120,8 +120,8 @@ export const BlockEditForm = ({ blockUuid, bookUuid }: IBlockEditFormProps) => {
         <RelationManager otherBlocks={otherBlocks || []} block={block} bookUuid={bookUuid} />
       )}
 
-      {activeTab === BlockEditTab.children && (
-        <ChildBlocksManager
+      {activeTab === BlockEditTab.nested && (
+        <NestedBlocksManager
           otherBlocks={otherBlocks || []}
           blockUuid={blockUuid}
           bookUuid={bookUuid}

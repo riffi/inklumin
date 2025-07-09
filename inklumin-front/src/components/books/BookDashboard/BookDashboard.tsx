@@ -14,7 +14,7 @@ export const BookDashboard = (bookUuid: string) => {
     return BlockRepository.getAll(bookDb);
   }, [bookUuid]);
 
-  const notChildBlocks = blocks?.filter((block) => block.parentBlockUuid == null);
+  const notNestedBlocks = blocks?.filter((block) => block.hostBlockUuid == null);
 
   useEffect(() => {
     setHeader({
@@ -29,7 +29,7 @@ export const BookDashboard = (bookUuid: string) => {
       </Group>
 
       <SimpleGrid cols={{ base: 1, sm: 2, lg: 3, xl: 4 }} spacing="md">
-        {notChildBlocks?.map((block) => <DashboardBlockCard key={block.uuid} block={block} />)}
+        {notNestedBlocks?.map((block) => <DashboardBlockCard key={block.uuid} block={block} />)}
       </SimpleGrid>
     </Container>
   );

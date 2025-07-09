@@ -75,7 +75,7 @@ export interface IBlock {
   useGroups: number; // Группировать элементы
   structureKind: string; // Вид структуры
   displayKind: string; // Вид отображения
-  parentBlockUuid?: string; // Ссылка на родительский блок
+  hostBlockUuid?: string; // Ссылка на хост блок
   titleForms?: IBlockTitleForms; // Формы названия
   sceneLinkAllowed: number; // Разрешено ли создавать связи со сценами
   icon?: IIcon; // Иконка
@@ -145,7 +145,7 @@ export interface IBlockRelation {
 export enum IBlockTabKind {
   parameters = "parameters",
   relation = "relation",
-  childBlock = "childBlock",
+  nestedBlock = "nestedBlock",
   referencingParam = "referencingParam",
   scenes = "scenes",
 }
@@ -157,7 +157,7 @@ export interface IBlockTab {
   blockUuid: string; // Ссылка на строительный блок
   tabKind: string; // Вид вкладки
   relationUuid?: string; // Ссылка на связь
-  childBlockUuid?: string; // Ссылка на дочерний блок
+  nestedBlockUuid?: string; // Ссылка на вложенный блок
   referencingParamUuid?: string; // Ссылка на ссылающийся параметр
   isDefault: number; // Является ли вкладка вкладкой по умолчанию
 }

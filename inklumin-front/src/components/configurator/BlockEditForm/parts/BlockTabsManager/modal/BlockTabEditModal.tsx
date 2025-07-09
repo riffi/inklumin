@@ -18,7 +18,7 @@ interface BlockTabEditModalProps {
   onSave: (data: Omit<IBlockTab, "id">) => void;
   initialData?: IBlockTab;
   relations: IBlockRelation[];
-  childBlocks: IBlock[];
+  nestedBlocks: IBlock[];
   otherBlocks: IBlock[];
   referencingParams: IBlockParameterWithBlockTitle[];
   currentBlockUuid: string;
@@ -30,7 +30,7 @@ export const BlockTabEditModal = ({
   onSave,
   initialData,
   relations,
-  childBlocks,
+  nestedBlocks,
   otherBlocks,
   currentBlockUuid,
   referencingParams,
@@ -41,7 +41,7 @@ export const BlockTabEditModal = ({
       title: initialData?.title || "",
       tabKind: initialData?.tabKind || "relation",
       relationUuid: initialData?.relationUuid || "",
-      childBlockUuid: initialData?.childBlockUuid || "",
+      nestedBlockUuid: initialData?.nestedBlockUuid || "",
       orderNumber: initialData?.orderNumber || 0,
       blockUuid: initialData?.blockUuid || "",
       uuid: initialData?.uuid || "",
@@ -69,11 +69,11 @@ export const BlockTabEditModal = ({
       form.setFieldValue("title", targetBlock?.titleForms?.plural || "");
     }
 
-    if (form.values.tabKind === "childBlock" && form.values.childBlockUuid) {
-      const childBlock = childBlocks.find((b) => b.uuid === form.values.childBlockUuid);
-      form.setFieldValue("title", childBlock?.titleForms?.plural || "");
+    if (form.values.tabKind === "nestedBlock" && form.values.nestedBlockUuid) {
+      const nestedBlock = nestedBlocks.find((b) => b.uuid === form.values.nestedBlockUuid);
+      form.setFieldValue("title", nestedBlock?.titleForms?.plural || "");
     }
-  }, [form.values.relationUuid, form.values.childBlockUuid]);
+  }, [form.values.relationUuid, form.values.nestedBlockUuid]);
 
   return (
     <Modal
@@ -88,7 +88,7 @@ export const BlockTabEditModal = ({
           label="Тип вкладки"
           data={[
             { value: IBlockTabKind.relation, label: "Связи" },
-            { value: IBlockTabKind.childBlock, label: "Дочерние блоки" },
+            { value: IBlockTabKind.nestedBlock, label: "Вложенные блоки" },
             { value: IBlockTabKind.parameters, label: "Параметры" },
             { value: IBlockTabKind.referencingParam, label: "Ссылающийся параметр" },
             { value: IBlockTabKind.scenes, label: "Сцены" }, // Added new option
@@ -113,14 +113,14 @@ export const BlockTabEditModal = ({
           />
         )}
 
-        {form.values.tabKind === "childBlock" && (
+        {form.values.tabKind === "nestedBlock" && (
           <Select
-            label="Дочерний блок"
-            data={childBlocks.map((b) => ({
+            label="Вложенный блок"
+            data={nestedBlocks.map((b) => ({
               value: b.uuid!,
               label: b.title,
             }))}
-            {...form.getInputProps("childBlockUuid")}
+            {...form.getInputProps("nestedBlockUuid")}
           />
         )}
 

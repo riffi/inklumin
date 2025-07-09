@@ -110,27 +110,27 @@ export const useBlockInstanceEditor = (
     });
   }, [availableParameters, parameterInstances]);
 
-  const childBlocks = useLiveQuery<IBlock[]>(() => {
+  const nestedBlocks = useLiveQuery<IBlock[]>(() => {
     if (!block) return [];
     return BlockRepository.getChildren(bookDb, block.uuid);
   }, [block]);
 
-  const childInstancesMap = useLiveQuery<Record<string, IBlockInstance[]>>(async () => {
+  const nestedInstancesMap = useLiveQuery<Record<string, IBlockInstance[]>>(async () => {
     const result: Record<string, IBlockInstance[]> = {};
-    if (!childBlocks) return result;
+    if (!nestedBlocks) return result;
 
     await Promise.all(
-      childBlocks.map(async (childBlock) => {
-        result[childBlock.uuid] = await BlockInstanceRepository.getChildInstances(
+      nestedBlocks.map(async (nestedBlock) => {
+        result[nestedBlock.uuid] = await BlockInstanceRepository.getChildInstances(
           bookDb,
           blockInstance?.uuid,
-          childBlock.uuid
+          nestedBlock.uuid
         );
       })
     );
 
     return result;
-  }, [childBlocks]);
+  }, [nestedBlocks]);
 
   const updateBlockInstanceTitle = async (newTitle: string) => {
     if (!blockInstance) return;
@@ -164,8 +164,8 @@ export const useBlockInstanceEditor = (
     relatedBlocks,
     allBlocks,
     blockRelations,
-    childBlocks,
-    childInstancesMap,
+    childBlocks: nestedBlocks,
+    childInstancesMap: nestedInstancesMap,
     blockTabs,
     referencingParams,
     updateBlockInstanceShortDescription: updateBlockInstanceDescription,

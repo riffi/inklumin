@@ -15,7 +15,10 @@ import {
   IBlockTitleForms,
 } from "@/entities/ConstructorEntities";
 import { BlockRelationRepository } from "@/repository/Block/BlockRelationRepository";
-import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";
+import {
+  BlockInstanceRepository,
+  getNestedInstances
+} from "@/repository/BlockInstance/BlockInstanceRepository";
 import { updateBookLocalUpdatedAt } from "@/utils/bookSyncUtils";
 import { generateUUID } from "@/utils/UUIDUtils";
 import { BlockParameterRepository } from "./BlockParameterRepository"; // Added
@@ -164,11 +167,11 @@ const update = async (
     prevBlockData?.structureKind !== IBlockStructureKind.single &&
     block.structureKind === IBlockStructureKind.single
   ) {
-    const childInstances = await BlockInstanceRepository.getChildInstances(
+    const nestedInstances = await BlockInstanceRepository.getNestedInstances(
       db as BookDB,
       block.uuid
     );
-    if (childInstances.length === 0) {
+    if (nestedInstances.length === 0) {
       await BlockInstanceRepository.createSingleInstance(db as BookDB, block);
     }
   }
@@ -242,10 +245,10 @@ const getAll = async (db: BlockAbstractDb): Promise<IBlock[]> => {
   return db.blocks.toArray();
 };
 
-const unlinkChildFromParent = async (db: BlockAbstractDb, childBlock: IBlock) => {
-  await db.blocks.update(childBlock.id!, {
-    ...childBlock,
-    parentBlockUuid: null,
+const unlinkNestedFromParent = async (db: BlockAbstractDb, nestedBlock: IBlock) => {
+  await db.blocks.update(nestedBlock.id!, {
+    ...nestedBlock,
+    hostBlockUuid: null,
     displayKind: "list",
   });
   if (db instanceof BookDB) {
@@ -253,25 +256,25 @@ const unlinkChildFromParent = async (db: BlockAbstractDb, childBlock: IBlock) =>
   }
 };
 
-const linkChildToParent = async (db: BlockAbstractDb, childBlock: IBlock, parentUuid: string) => {
-  await db.blocks.update(childBlock.id!, {
-    ...childBlock,
-    parentBlockUuid: parentUuid,
+const linkNestedToHost = async (db: BlockAbstractDb, nestedBlock: IBlock, hostUuid: string) => {
+  await db.blocks.update(nestedBlock.id!, {
+    ...nestedBlock,
+    hostBlockUuid: hostUuid,
   });
   if (db instanceof BookDB) {
     await updateBookLocalUpdatedAt(db as BookDB);
   }
 };
 
-const getChildren = async (db: BlockAbstractDb, parentBlockUuid: string) => {
-  return db.blocks.where("parentBlockUuid").equals(parentBlockUuid).toArray();
+const getNested = async (db: BlockAbstractDb, hostBlockUuid: string) => {
+  return db.blocks.where("hostBlockUuid").equals(hostBlockUuid).toArray();
 };
 
 export const BlockRepository = {
   getAll,
   getByUuid,
   getByUuidList,
-  getChildren,
+  getNested,
   getSiblings,
   getBlocksByConfiguration,
   bulkAddBlocks,
@@ -285,18 +288,8 @@ export const BlockRepository = {
   bulkAddTabs,
   getRelationsByConfiguration,
   bulkAddRelations,
-  // getParameterGroups, // Moved
-  // getParamsByGroup, // Moved
-  // getGroupByUuid, // Moved
-  // getParamPossibleValues, // Moved
-  // getDisplayedParameters, // Moved
-  // getDefaultParameters, // Moved
-  // getRelatedBlocks, // Moved
-  // deleteParameterGroup, // Moved
-  // updateParamPossibleValues, // Moved
   save,
   remove,
-  unlinkChildFromParent,
-  linkChildToParent,
-  // getReferencingParametersFromBlock // Moved
-};
+  unlinkNestedFromParent,
+  linkNestedToHost
+}

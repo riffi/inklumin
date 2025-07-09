@@ -6,7 +6,7 @@ import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";
 import { generateUUID } from "@/utils/UUIDUtils";
 
-interface CreateChildInstanceModalProps {
+interface CreateNestedInstanceModalProps {
   opened: boolean;
   onClose: () => void;
   blockUuid: string;
@@ -14,12 +14,12 @@ interface CreateChildInstanceModalProps {
   relatedBlock: IBlock;
 }
 
-export const CreateChildInstanceModal = ({
+export const CreateNestedInstanceModal = ({
   opened,
   onClose,
   blockInstanceUuid,
   relatedBlock,
-}: CreateChildInstanceModalProps) => {
+}: CreateNestedInstanceModalProps) => {
   const { isMobile } = useMedia();
   const form = useForm({
     initialValues: {
@@ -35,7 +35,7 @@ export const CreateChildInstanceModal = ({
       uuid: generateUUID(),
       blockUuid: relatedBlock.uuid,
       title: form.values.title.trim(),
-      parentInstanceUuid: blockInstanceUuid,
+      hostInstanceUuid: blockInstanceUuid,
     });
     onClose();
     form.reset();

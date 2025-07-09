@@ -7,19 +7,19 @@ import { IBlockInstance } from "@/entities/BookEntities";
 import { IBlock, IBlockDisplayKind } from "@/entities/ConstructorEntities";
 import { useDialog } from "@/providers/DialogProvider/DialogProvider";
 import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";
-import { CreateChildInstanceModal } from "./modal/CreateChildInstanceModal";
+import { CreateNestedInstanceModal } from "./modal/CreateNestedInstanceModal";
 
-interface ChildInstancesTableProps {
+interface NestedInstancesTableProps {
   blockInstanceUuid: string;
   instances: IBlockInstance[];
   relatedBlock: IBlock;
 }
 
-export const ChildInstancesTable = ({
+export const NestedInstancesTable = ({
   blockInstanceUuid,
   instances,
   relatedBlock,
-}: ChildInstancesTableProps) => {
+}: NestedInstancesTableProps) => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -170,7 +170,7 @@ export const ChildInstancesTable = ({
 
       {renderContent()}
 
-      <CreateChildInstanceModal
+      <CreateNestedInstanceModal
         opened={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         relatedBlock={relatedBlock}

@@ -6,7 +6,7 @@ import { IBlockInstance, IBlockInstanceRelation } from "@/entities/BookEntities"
 interface RelationRowProps {
   relation: IBlockInstanceRelation;
   relatedParentInstances?: IBlockInstance[];
-  isRelatedBlockChild: boolean;
+  isRelatedBlockNested: boolean;
   allRelatedInstances?: IBlockInstance[];
   isRelatedBlockTarget: boolean;
   onDelete: (relation: IBlockInstanceRelation) => void;
@@ -15,7 +15,7 @@ interface RelationRowProps {
 export const RelationRow = ({
   relation,
   relatedParentInstances,
-  isRelatedBlockChild,
+  isRelatedBlockNested,
   allRelatedInstances,
   isRelatedBlockTarget,
   onDelete,
@@ -25,14 +25,14 @@ export const RelationRow = ({
     : relation.sourceInstanceUuid;
 
   const instance = allRelatedInstances?.find((i) => i.uuid === relatedInstanceUuid);
-  const parentInstance = relatedParentInstances?.find(
-    (parent) => parent.uuid === instance?.parentInstanceUuid
+  const hostInstance = relatedParentInstances?.find(
+    (parent) => parent.uuid === instance?.hostInstanceUuid
   );
 
   return (
     <Table.Tr>
       <Table.Td>{instance?.title}</Table.Td>
-      {isRelatedBlockChild && <Table.Td>{parentInstance?.title}</Table.Td>}
+      {isRelatedBlockNested && <Table.Td>{hostInstance?.title}</Table.Td>}
       <Table.Td>
         <Group gap="xs">
           <ActionIcon

@@ -1,10 +1,10 @@
-// ChildBlockEditModal.tsx
+
 import { Button, Group, Modal, Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IBlock } from "@/entities/ConstructorEntities";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 
-interface ChildBlockEditModalProps {
+interface NestedBlockEditModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (blockUuid: string, structureKind: string) => void;
@@ -17,13 +17,13 @@ const displayKindOptions = [
   { value: "timeLine", label: "Временная линия" },
 ];
 
-export const ChildBlockEditModal = ({
+export const NestedBlockEditModal = ({
   isOpen,
   onClose,
   onSave,
   availableBlocks,
   initialData,
-}: ChildBlockEditModalProps) => {
+}: NestedBlockEditModalProps) => {
   const { isMobile } = useMedia();
   const form = useForm({
     initialValues: {
@@ -41,7 +41,7 @@ export const ChildBlockEditModal = ({
     <Modal
       opened={isOpen}
       onClose={onClose}
-      title={initialData ? "Редактирование блока" : "Привязать дочерний блок"}
+      title={initialData ? "Редактирование блока" : "Вложить блок"}
       fullScreen={isMobile}
     >
       <Stack>

@@ -22,7 +22,7 @@ const bookSchema = {
   sceneBodies: "++id, sceneId",
 
   blockInstanceGroups: "++id, &uuid, blockUuid, title, order",
-  blockInstances: "++id, &uuid, blockUuid, title, parentInstanceUuid, blockInstanceGroupUuid",
+  blockInstances: "++id, &uuid, blockUuid, title, hostInstanceUuid, blockInstanceGroupUuid",
   blockParameterInstances:
     "++id, &uuid, blockParameterUuid, blockInstanceUuid, blockParameterGroupUuid, value, linkedBlockInstanceUuid",
   blockInstanceRelations:

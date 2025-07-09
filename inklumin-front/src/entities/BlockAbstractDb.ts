@@ -13,7 +13,7 @@ import {
 export const baseSchema = {
   bookConfigurations: "++id, &uuid, title",
   blocks:
-    "++id, &uuid, configurationUuid, parentBlockUuid, title, sceneLinkAllowed, showInSceneList, showInMainMenu, showBigHeader, useGroups",
+    "++id, &uuid, configurationUuid, nestedBlockUuid, title, sceneLinkAllowed, showInSceneList, showInMainMenu, showBigHeader, useGroups",
   blockParameterGroups: "++id, &uuid, blockUuid, title",
   blockParameters:
     "++id, &uuid, groupUuid, blockUuid, dataType, linkedBlockUuid, linkedParameterUuid, isDefault, displayInCard, useForInstanceGrouping ",

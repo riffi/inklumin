@@ -133,7 +133,7 @@ export const NavbarNested = ({
 
       const blockLinks =
         blocks
-          ?.filter((b) => !b.parentBlockUuid && b.showInMainMenu === 1)
+          ?.filter((b) => !b.hostBlockUuid && b.showInMainMenu === 1)
           .map((b) => ({
             label: getBlockPageTitle(b),
             icon: b.icon,

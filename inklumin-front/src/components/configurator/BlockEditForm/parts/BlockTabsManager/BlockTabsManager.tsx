@@ -25,7 +25,7 @@ export const BlockTabsManager = ({
     setIsModalOpen(true);
   }, []);
 
-  const { tabs, childBlocks, referencingParams, saveTab, deleteTab, moveTabUp, moveTabDown } =
+  const { tabs, nestedBlocks, referencingParams, saveTab, deleteTab, moveTabUp, moveTabDown } =
     useBlockTabsManager({
       bookUuid,
       blockUuid: currentBlockUuid,
@@ -86,8 +86,8 @@ export const BlockTabsManager = ({
               <Table.Td>{tab.title}</Table.Td>
               <Table.Td>{tab.tabKind}</Table.Td>
               <Table.Td>
-                {tab.tabKind === IBlockTabKind.childBlock
-                  ? childBlocks?.find((b) => b.uuid === tab.childBlockUuid)?.title
+                {tab.tabKind === IBlockTabKind.nestedBlock
+                  ? nestedBlocks?.find((b) => b.uuid === tab.nestedBlockUuid)?.title
                   : tab.tabKind === IBlockTabKind.relation
                     ? getRelatedBlockTitle(otherRelations.find((r) => r.uuid === tab.relationUuid)!)
                     : "—"}
@@ -136,10 +136,10 @@ export const BlockTabsManager = ({
                 (t) => t.relationUuid === r.uuid && (!editingTab || t.uuid !== editingTab.uuid)
               )
           )}
-          childBlocks={childBlocks?.filter(
+          nestedBlocks={nestedBlocks?.filter(
             (b) =>
               !tabs?.some(
-                (t) => t.childBlockUuid === b.uuid && (!editingTab || t.uuid !== editingTab.uuid)
+                (t) => t.nestedBlockUuid === b.uuid && (!editingTab || t.uuid !== editingTab.uuid)
               )
           )}
           referencingParams={referencingParams}

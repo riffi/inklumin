@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, Group, Modal, Table } from "@mantine/core";
 import { useBlockRelationsEditor } from "@/components/blockInstance/BlockInstanceEditor/parts/InstanceRelationsEditor/hook/useBlockRelationsEditor";
-import { ChildBlockModal } from "@/components/blockInstance/BlockInstanceEditor/parts/InstanceRelationsEditor/modal/ChildBlockModal";
+import { NestedBlockModal } from "@/components/blockInstance/BlockInstanceEditor/parts/InstanceRelationsEditor/modal/NestedBlockModal";
 import { DefaultModal } from "@/components/blockInstance/BlockInstanceEditor/parts/InstanceRelationsEditor/modal/DefaultModal";
 import { RelationRow } from "@/components/blockInstance/BlockInstanceEditor/parts/InstanceRelationsEditor/RelationRow";
 import { bookDb } from "@/entities/bookDb";
@@ -27,9 +27,9 @@ export const InstanceRelationsEditor = ({
 }: BlockRelationsEditorProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [targetInstanceUuid, setTargetInstanceUuid] = useState("");
-  const [parentInstanceUuid, setParentInstanceUuid] = useState("");
+  const [hostInstanceUuid, setHostInstanceUuid] = useState("");
 
-  const isRelatedBlockChild = !!relatedBlock?.parentBlockUuid;
+  const isRelatedBlockNested = !!relatedBlock?.hostBlockUuid;
   const isRelatedBlockTarget = blockRelation.targetBlockUuid === relatedBlock?.uuid;
   const { isMobile } = useMedia();
   const { showDialog } = useDialog();
@@ -46,8 +46,8 @@ export const InstanceRelationsEditor = ({
     blockInstanceUuid,
     relatedBlock,
     isRelatedBlockTarget,
-    isRelatedBlockChild,
-    parentInstanceUuid,
+    isRelatedBlockNested,
+    hostInstanceUuid,
     blockUuid
   );
 
@@ -66,7 +66,7 @@ export const InstanceRelationsEditor = ({
 
   const resetModalState = () => {
     setIsModalOpen(false);
-    setParentInstanceUuid("");
+    setHostInstanceUuid("");
     setTargetInstanceUuid("");
   };
 
@@ -76,7 +76,7 @@ export const InstanceRelationsEditor = ({
         <Button
           onClick={() => setIsModalOpen(true)}
           variant="light"
-          disabled={!isRelatedBlockChild && unusedRelatedInstances.length === 0}
+          disabled={!isRelatedBlockNested && unusedRelatedInstances.length === 0}
         >
           {`Добавить ${relatedBlock?.titleForms?.accusative}`}
         </Button>
@@ -86,7 +86,7 @@ export const InstanceRelationsEditor = ({
         <Table.Thead>
           <Table.Tr>
             <Table.Th>{relatedBlock.title}</Table.Th>
-            {isRelatedBlockChild && <Table.Th>{relatedParentBlock?.title}</Table.Th>}
+            {isRelatedBlockNested && <Table.Th>{relatedParentBlock?.title}</Table.Th>}
             <Table.Th>Действия</Table.Th>
           </Table.Tr>
         </Table.Thead>
@@ -96,7 +96,7 @@ export const InstanceRelationsEditor = ({
               key={relation.blockRelationUuid}
               relation={relation}
               relatedParentInstances={relatedParentInstances}
-              isRelatedBlockChild={isRelatedBlockChild}
+              isRelatedBlockNested={isRelatedBlockNested}
               isRelatedBlockTarget={isRelatedBlockTarget}
               allRelatedInstances={allRelatedInstances}
               onDelete={deleteRelation}
@@ -112,15 +112,15 @@ export const InstanceRelationsEditor = ({
         title={`Добавить ${relatedBlock?.titleForms?.accusative}`}
       >
         <>
-          {isRelatedBlockChild ? (
-            <ChildBlockModal
-              relatedParentBlock={relatedParentBlock}
-              relatedParentInstances={relatedParentInstances}
-              relatedChildInstances={relatedChildInstances}
-              parentInstanceUuid={parentInstanceUuid}
+          {isRelatedBlockNested ? (
+            <NestedBlockModal
+              relatedHostBlock={relatedParentBlock}
+              relatedHostInstances={relatedParentInstances}
+              relatedNestedInstances={relatedChildInstances}
+              hostInstanceUuid={hostInstanceUuid}
               targetInstanceUuid={targetInstanceUuid}
               relatedBlock={relatedBlock}
-              onParentChange={setParentInstanceUuid}
+              onParentChange={setHostInstanceUuid}
               onTargetChange={setTargetInstanceUuid}
               onCreate={handleCreateRelation}
               isLoading={!relatedChildInstances}

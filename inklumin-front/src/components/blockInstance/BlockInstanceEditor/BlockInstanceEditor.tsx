@@ -31,7 +31,7 @@ import {
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useBlockInstanceEditor } from "@/components/blockInstance/BlockInstanceEditor/hooks/useBlockInstanceEditor";
-import { ChildInstancesTable } from "@/components/blockInstance/BlockInstanceEditor/parts/InstanceChildrenEditor/ChildInstancesTable";
+import { NestedInstancesTable } from "@/components/blockInstance/BlockInstanceEditor/parts/InstanceNestedEditor/NestedInstancesTable";
 import { InstanceParameterEditor } from "@/components/blockInstance/BlockInstanceEditor/parts/InstanceParameterEditor/InstanceParameterEditor";
 import { InstanceRelationsEditor } from "@/components/blockInstance/BlockInstanceEditor/parts/InstanceRelationsEditor/InstanceRelationsEditor";
 import { ReferencedInstanceEditor } from "@/components/blockInstance/BlockInstanceEditor/parts/ReferencedInstanceEditor/ReferencedInstanceEditor";
@@ -77,8 +77,8 @@ export const BlockInstanceEditor = (props: IBlockInstanceEditorProps) => {
     relatedBlocks,
     allBlocks,
     blockRelations,
-    childBlocks,
-    childInstancesMap,
+    nestedBlocks,
+    nestedInstancesMap,
     blockTabs,
     referencingParams,
     updateBlockInstanceShortDescription,
@@ -126,10 +126,10 @@ export const BlockInstanceEditor = (props: IBlockInstanceEditorProps) => {
             label: tab.title,
             value: `related-${tab.relationUuid}`,
           };
-        case IBlockTabKind.childBlock:
+        case IBlockTabKind.nestedBlock:
           return {
             label: tab.title,
-            value: `child-${tab.childBlockUuid}`,
+            value: `nested-${tab.nestedBlockUuid}`,
           };
         case IBlockTabKind.referencingParam:
           return {
@@ -337,8 +337,8 @@ export const BlockInstanceEditor = (props: IBlockInstanceEditorProps) => {
                   const tabValue =
                     tab.tabKind === IBlockTabKind.relation
                       ? `related-${tab.relationUuid}`
-                      : tab.tabKind === IBlockTabKind.childBlock
-                        ? `child-${tab.childBlockUuid}`
+                      : tab.tabKind === IBlockTabKind.nestedBlock
+                        ? `nested-${tab.nestedBlockUuid}`
                         : tab.tabKind === IBlockTabKind.referencingParam
                           ? `referencing-param-${tab.referencingParamUuid}`
                           : tab.tabKind === IBlockTabKind.scenes // Added condition for scenes
@@ -381,17 +381,17 @@ export const BlockInstanceEditor = (props: IBlockInstanceEditorProps) => {
                             })()}
                         </>
                         <>
-                          {tab.tabKind === "childBlock" &&
-                            childBlocks?.map(
-                              (childBlock) =>
-                                activeTab === `child-${childBlock.uuid}` && (
-                                  <ChildInstancesTable
-                                    key={childBlock.uuid}
-                                    blockUuid={childBlock.uuid}
+                          {tab.tabKind === "nestedBlock" &&
+                            nestedBlocks?.map(
+                              (nestedBlock) =>
+                                activeTab === `nested-${nestedBlock.uuid}` && (
+                                  <NestedInstancesTable
+                                    key={nestedBlock.uuid}
+                                    blockUuid={nestedBlock.uuid}
                                     blockInstanceUuid={props.blockInstanceUuid}
-                                    instances={childInstancesMap?.[childBlock.uuid] || []}
-                                    structureKind={childBlock.structureKind}
-                                    relatedBlock={childBlock}
+                                    instances={nestedInstancesMap?.[nestedBlock.uuid] || []}
+                                    structureKind={nestedBlock.structureKind}
+                                    relatedBlock={nestedBlock}
                                   />
                                 )
                             )}

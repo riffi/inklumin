@@ -18,8 +18,8 @@ export const useBlockTabsManager = ({ bookUuid, blockUuid }: UseBlockTabsManager
     return BlockTabRepository.getBlockTabs(db, blockUuid);
   }, [blockUuid]);
 
-  const childBlocks = useLiveQuery<IBlock[]>(() => {
-    return db.blocks.where("parentBlockUuid").equals(blockUuid).toArray();
+  const nestedBlocks = useLiveQuery<IBlock[]>(() => {
+    return db.blocks.where("hostBlockUuid").equals(blockUuid).toArray();
   }, [blockUuid]);
 
   const referencingParams = useLiveQuery(async () => {
@@ -71,7 +71,7 @@ export const useBlockTabsManager = ({ bookUuid, blockUuid }: UseBlockTabsManager
 
   return {
     tabs,
-    childBlocks,
+    nestedBlocks,
     referencingParams,
     saveTab,
     deleteTab,

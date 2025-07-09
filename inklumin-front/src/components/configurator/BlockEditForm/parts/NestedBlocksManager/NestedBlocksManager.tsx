@@ -1,37 +1,37 @@
 import { useCallback, useState } from "react";
 import { IconEdit, IconPlus, IconTrash } from "@tabler/icons-react";
 import { ActionIcon, Button, Group, Table, Text } from "@mantine/core";
-import { useChildBlocksManager } from "@/components/configurator/BlockEditForm/parts/ChildBlocksManager/hook/useChildBlockManager";
+import { useNestedBlocksManager } from "@/components/configurator/BlockEditForm/parts/NestedBlocksManager/hook/useNestedBlockManager";
 import { IBlock, IBlockDisplayKindTitle } from "@/entities/ConstructorEntities";
-import { ChildBlockEditModal } from "./modal/ChildBlockEditModal";
+import { NestedBlockEditModal } from "@/components/configurator/BlockEditForm/parts/NestedBlocksManager/modal/NestedBlockEditModal";
 
-interface ChildBlocksManagerProps {
+interface NestedBlocksManagerProps {
   blockUuid: string;
   bookUuid?: string;
   otherBlocks: IBlock[];
 }
 
-export const ChildBlocksManager = ({
+export const NestedBlocksManager = ({
   blockUuid,
   bookUuid,
   otherBlocks,
-}: ChildBlocksManagerProps) => {
+}: NestedBlocksManagerProps) => {
   const [editingBlock, setEditingBlock] = useState<IBlock | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { childrenBlocks, availableBlocks, linkChild, updateChildDisplayKind, unlinkChild } =
-    useChildBlocksManager(blockUuid, bookUuid, otherBlocks);
+  const { nestedBlocks, availableBlocks, linkNested, updateNestedDisplayKind, unlinkNested } =
+    useNestedBlocksManager(blockUuid, bookUuid, otherBlocks);
 
   const handleSave = useCallback(
     async (blockUuid: string, displayKind: string) => {
       if (editingBlock) {
-        await updateChildDisplayKind(editingBlock.uuid!, displayKind);
+        await updateNestedDisplayKind(editingBlock.uuid!, displayKind);
       } else {
-        await linkChild(blockUuid, displayKind);
+        await linkNested(blockUuid, displayKind);
       }
       setEditingBlock(null);
     },
-    [editingBlock, updateChildDisplayKind, linkChild]
+    [editingBlock, updateNestedDisplayKind, linkNested]
   );
 
   return (
@@ -43,7 +43,7 @@ export const ChildBlocksManager = ({
           size="sm"
           variant="light"
         >
-          Привязать дочерний блок
+          Вложить блок
         </Button>
       </Group>
 
@@ -56,7 +56,7 @@ export const ChildBlocksManager = ({
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {childrenBlocks.map((block) => (
+          {nestedBlocks.map((block) => (
             <Table.Tr key={block.uuid}>
               <Table.Td>{block.title}</Table.Td>
               <Table.Td>
@@ -73,7 +73,7 @@ export const ChildBlocksManager = ({
                   >
                     <IconEdit size="1rem" />
                   </ActionIcon>
-                  <ActionIcon variant="subtle" color="red" onClick={() => unlinkChild(block.uuid!)}>
+                  <ActionIcon variant="subtle" color="red" onClick={() => unlinkNested(block.uuid!)}>
                     <IconTrash size="1rem" />
                   </ActionIcon>
                 </Group>
@@ -83,7 +83,7 @@ export const ChildBlocksManager = ({
         </Table.Tbody>
       </Table>
 
-      <ChildBlockEditModal
+      <NestedBlockEditModal
         isOpen={isModalOpen}
         onClose={() => {
           setIsModalOpen(false);

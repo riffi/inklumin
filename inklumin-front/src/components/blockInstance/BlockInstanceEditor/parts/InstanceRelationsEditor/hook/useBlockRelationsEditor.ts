@@ -12,35 +12,35 @@ import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanc
 import { generateUUID } from "@/utils/UUIDUtils";
 
 export const useBlockRelationsEditor = (
-  blockInstanceUuid: string,
-  relatedBlock: IBlock,
-  isRelatedBlockTarget: boolean,
-  isRelatedBlockChild: boolean,
-  parentInstanceUuid: string,
-  blockUuid: string
+    blockInstanceUuid: string,
+    relatedBlock: IBlock,
+    isRelatedBlockTarget: boolean,
+    isRelatedBlockNested: boolean,
+    hostInstanceUuid: string,
+    blockUuid: string
 ) => {
   const relatedParentInstances = useLiveQuery(
     () =>
-      isRelatedBlockChild
-        ? BlockInstanceRepository.getBlockInstances(bookDb, relatedBlock.parentBlockUuid!)
+      isRelatedBlockNested
+        ? BlockInstanceRepository.getBlockInstances(bookDb, relatedBlock.hostBlockUuid!)
         : Promise.resolve([]),
-    [relatedBlock, isRelatedBlockChild]
+    [relatedBlock, isRelatedBlockNested]
   );
 
   const relatedParentBlock = useLiveQuery(
     () =>
-      isRelatedBlockChild
-        ? BlockRepository.getByUuid(bookDb, relatedBlock.parentBlockUuid!)
+      isRelatedBlockNested
+        ? BlockRepository.getByUuid(bookDb, relatedBlock.hostBlockUuid!)
         : Promise.resolve(null),
-    [relatedBlock, isRelatedBlockChild]
+    [relatedBlock, isRelatedBlockNested]
   );
 
-  const relatedChildInstances = useLiveQuery(
+  const relatedNestedInstances = useLiveQuery(
     () =>
-      parentInstanceUuid
-        ? BlockInstanceRepository.getChildInstances(bookDb, parentInstanceUuid)
+      hostInstanceUuid
+        ? BlockInstanceRepository.getChildInstances(bookDb, hostInstanceUuid)
         : Promise.resolve([]),
-    [parentInstanceUuid]
+    [hostInstanceUuid]
   );
 
   const instanceRelations = useLiveQuery(
@@ -91,7 +91,7 @@ export const useBlockRelationsEditor = (
   return {
     relatedParentInstances,
     relatedParentBlock,
-    relatedChildInstances,
+    relatedChildInstances: relatedNestedInstances,
     instanceRelations,
     allRelatedInstances,
     unusedRelatedInstances,
