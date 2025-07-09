@@ -35,13 +35,13 @@ interface IBlockInstanceTreeProps {
  * Компонент отображает экземпляры блока в виде иерархического дерева
  */
 export const BlockInstanceTree = ({
-  instances,
-  block,
-  onAddChild,
-  onEdit,
-  onDelete,
-  onMove,
-}: IBlockInstanceTreeProps) => {
+                                    instances,
+                                    block,
+                                    onAddChild,
+                                    onEdit,
+                                    onDelete,
+                                    onMove,
+                                  }: IBlockInstanceTreeProps) => {
   const [expandedNodes, setExpandedNodes] = useState<Record<string, boolean>>({});
 
   const instanceTree = useMemo(() => {
@@ -68,7 +68,11 @@ export const BlockInstanceTree = ({
   };
 
   const renderTree = (nodes: IInstanceTreeNode[], level = 0): React.ReactNode => {
-    return nodes.map((node) => {
+    return nodes.map((node, index) => {
+      const isLast = index === nodes.length - 1;
+      const hasChildren = node.children.length > 0;
+      const isExpanded = expandedNodes[node.uuid!];
+
       const actions: ActionItem[] = [
         {
           title: "Добавить",
@@ -95,62 +99,103 @@ export const BlockInstanceTree = ({
       ];
 
       return (
-        <Box key={node.uuid} ml={level * 20}>
-          <Group gap={4} align="center" p={"6px"} className={classes.row}>
-            {node.children.length > 0 && (
-              <ActionIcon variant="subtle" onClick={() => toggleNode(node.uuid!)}>
-                {expandedNodes[node.uuid!] ? (
-                  <IconChevronDown size={16} />
-                ) : (
-                  <IconChevronRight size={16} />
+          <Box key={node.uuid}>
+            <Group
+                gap={8}
+                align="center"
+                p="8px 12px"
+                className={classes.row}
+                style={{
+                  marginLeft: level * 24,
+                  position: 'relative'
+                }}
+            >
+
+              {/* Кнопка сворачивания/разворачивания */}
+              <Box style={{ width: 24, display: 'flex', justifyContent: 'center' }}>
+                {hasChildren && (
+                    <ActionIcon
+                        variant="subtle"
+                        size="sm"
+                        onClick={() => toggleNode(node.uuid!)}
+                        className={classes.expandButton}
+                    >
+                      {isExpanded ? (
+                          <IconChevronDown size={16} />
+                      ) : (
+                          <IconChevronRight size={16} />
+                      )}
+                    </ActionIcon>
                 )}
-              </ActionIcon>
-            )}
-            {node.children.length === 0 && <Box w={24} />}
-            <IconViewer
-              icon={node.icon ?? block?.icon}
-              size={24}
-              color="rgb(102,102,102)"
-              backgroundColor="transparent"
-            />
-            <Stack gap={0} style={{ flex: 1 }}>
-              <Text style={{ cursor: "pointer" }} onClick={() => onEdit(node.uuid!)}>
-                {node.title}
-              </Text>
-              {node.description && (
-                <Text size="sm" c="dimmed" style={{ cursor: "pointer" }}>
-                  {node.description}
+              </Box>
+
+              {/* Иконка блока */}
+              <Box className={classes.iconContainer}>
+                <IconViewer
+                    icon={node.icon ?? block?.icon}
+                    size={20}
+                    color="rgb(102,102,102)"
+                    backgroundColor="transparent"
+                />
+              </Box>
+
+              {/* Контент */}
+              <Stack gap={2} style={{ flex: 1, minWidth: 0 }}>
+                <Text
+                    style={{ cursor: "pointer" }}
+                    onClick={() => onEdit(node.uuid!)}
+                    className={classes.title}
+                    truncate
+                >
+                  {node.title}
                 </Text>
-              )}
-            </Stack>
-            <RowActionButtons actions={actions} entityId={node.uuid} />
-          </Group>
-          {node.children.length > 0 && (
-            <Collapse in={expandedNodes[node.uuid!]}>
-              {" "}
-              {renderTree(node.children, level + 1)}{" "}
-            </Collapse>
-          )}
-        </Box>
+                {node.description && (
+                    <Text
+                        size="xs"
+                        c="dimmed"
+                        style={{ cursor: "pointer" }}
+                        className={classes.description}
+                        truncate
+                    >
+                      {node.description}
+                    </Text>
+                )}
+              </Stack>
+
+              {/* Кнопки действий */}
+              <Box className={classes.actionsContainer}>
+                <RowActionButtons actions={actions} entityId={node.uuid} />
+              </Box>
+            </Group>
+
+            {/* Дочерние элементы */}
+            {hasChildren && (
+                <Collapse in={isExpanded}>
+                  <Box className={classes.childrenContainer}>
+                    {renderTree(node.children, level + 1)}
+                  </Box>
+                </Collapse>
+            )}
+          </Box>
       );
     });
   };
 
   if (instanceTree.length === 0) {
     return (
-      <Text c="dimmed" ta="center" py="md" size="sm">
-        Добавьте {block?.titleForms?.accusative}
-      </Text>
+        <Box className={classes.emptyState}>
+          <Text c="dimmed" ta="center" py="xl" size="sm">
+            Добавьте {block?.titleForms?.accusative}
+          </Text>
+        </Box>
     );
   }
 
   return (
-    <Box style={{
-      padding: "0px 8px"
-    }}>
-      <Stack gap="xs" mt="md">
-        {renderTree(instanceTree)}
-      </Stack>
-    </Box>
+      <Box className={classes.container}>
+        <Stack gap={0} mt="md">
+          {renderTree(instanceTree)}
+        </Stack>
+      </Box>
   );
 };

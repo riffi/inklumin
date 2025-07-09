@@ -1,6 +1,127 @@
+.container {
+  padding: 0 12px;
+  font-family: var(--mantine-font-family);
+}
+
 .row {
   border-radius: var(--mantine-radius-sm);
-  @mixin hover {
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+  position: relative;
+
+  &:hover {
     background-color: var(--mantine-color-gray-0);
+    border-color: var(--mantine-color-gray-2);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 }
+
+
+
+.expandButton {
+  color: var(--mantine-color-gray-6);
+  border-radius: 50%;
+
+  &:hover {
+    background-color: var(--mantine-color-gray-1);
+    color: var(--mantine-color-gray-8);
+  }
+}
+
+.leafDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--mantine-color-gray-4);
+  margin: 5px 0;
+}
+
+.iconContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--mantine-radius-sm);
+  background-color: var(--mantine-color-gray-0);
+  border: 1px solid var(--mantine-color-gray-2);
+  transition: all 0.15s ease;
+}
+
+.row:hover .iconContainer {
+  background-color: var(--mantine-color-white);
+  border-color: var(--mantine-color-gray-3);
+}
+
+.title {
+  font-weight: 500;
+  color: var(--mantine-color-gray-8);
+  line-height: 1.4;
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: var(--mantine-color-blue-6);
+  }
+}
+
+.description {
+  color: var(--mantine-color-gray-6);
+  line-height: 1.3;
+
+  &:hover {
+    color: var(--mantine-color-gray-7);
+  }
+}
+
+.actionsContainer {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  display: flex;
+  align-items: center;
+}
+
+.row:hover .actionsContainer {
+  opacity: 1;
+}
+
+.childrenContainer {
+  position: relative;
+}
+
+.emptyState {
+  background-color: var(--mantine-color-gray-0);
+  border: 2px dashed var(--mantine-color-gray-3);
+  border-radius: var(--mantine-radius-md);
+  margin: 12px 0;
+  transition: all 0.15s ease;
+}
+
+.emptyState:hover {
+  border-color: var(--mantine-color-gray-4);
+  background-color: var(--mantine-color-gray-1);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 8px;
+  }
+
+  .row {
+    padding: 6px 8px;
+  }
+
+  .iconContainer {
+    width: 28px;
+    height: 28px;
+  }
+
+  .title {
+    font-size: 14px;
+  }
+
+  .description {
+    font-size: 12px;
+  }
+}
+
