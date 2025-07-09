@@ -94,9 +94,9 @@ export const remove = async (db: BookDB, instance: IBlockInstance) => {
 };
 
 export const getNestedInstances = async (
-    db: BookDB,
-    hostInstanceUuid: string,
-    nestedBlockUuid?: string
+  db: BookDB,
+  hostInstanceUuid: string,
+  nestedBlockUuid?: string
 ) => {
   const query = db.blockInstances.where("hostInstanceUuid").equals(hostInstanceUuid);
 
@@ -113,6 +113,42 @@ export const removeByBlock = async (db: BookDB, blockUuid: string) => {
   await updateBookLocalUpdatedAt(db);
 };
 
+const updateGroupRecursively = async (
+  db: BookDB,
+  parentUuid: string,
+  groupUuid: string | undefined
+) => {
+  const children = await db.blockInstances.where("parentInstanceUuid").equals(parentUuid).toArray();
+  for (const child of children) {
+    await db.blockInstances.update(child.id!, { blockInstanceGroupUuid: groupUuid });
+    await updateGroupRecursively(db, child.uuid!, groupUuid);
+  }
+};
+
+export const moveInstance = async (
+  db: BookDB,
+  instanceUuid: string,
+  newParentUuid: string | null,
+  newGroupUuid?: string
+) => {
+  const inst = await getByUuid(db, instanceUuid);
+  if (!inst) return;
+  const groupChanged = inst.blockInstanceGroupUuid !== newGroupUuid;
+  await db.transaction("rw", db.blockInstances, async () => {
+    await db.blockInstances
+      .where("uuid")
+      .equals(instanceUuid)
+      .modify({
+        parentInstanceUuid: newParentUuid || undefined,
+        blockInstanceGroupUuid: newGroupUuid,
+      });
+    if (groupChanged) {
+      await updateGroupRecursively(db, instanceUuid, newGroupUuid);
+    }
+  });
+  await updateBookLocalUpdatedAt(db);
+};
+
 export const BlockInstanceRepository = {
   getByUuid,
   getByUuidList,
@@ -125,4 +161,5 @@ export const BlockInstanceRepository = {
   remove,
   getNestedInstances,
   removeByBlock,
+  moveInstance,
 };

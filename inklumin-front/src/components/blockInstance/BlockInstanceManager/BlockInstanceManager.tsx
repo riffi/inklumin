@@ -15,6 +15,7 @@ import { IBlockInstance } from "@/entities/BookEntities";
 import { useDialog } from "@/providers/DialogProvider/DialogProvider";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 import { useMobileHeader } from "@/providers/PageTitleProvider/MobileHeaderProvider";
+import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";
 import { BlockParameterInstanceRepository } from "@/repository/BlockInstance/BlockParameterInstanceRepository";
 import { useUiSettingsStore } from "@/stores/uiSettingsStore/uiSettingsStore";
 import { getBlockTitle } from "@/utils/configUtils";
@@ -23,8 +24,8 @@ import { useInstanceList } from "./hooks/useInstanceList";
 import { AddInstanceModal } from "./modal/AddInstanceModal/AddInstanceModal";
 import { MoveInstanceModal } from "./modal/MoveInstanceModal/MoveInstanceModal";
 import { BlockInstanceGroupTabs } from "./parts/BlockInstanceGroupTabs";
-import { BlockInstanceList } from "./parts/layout/list/BlockInstanceList";
 import { BlockInstanceManagerToolbar } from "./parts/BlockInstanceManagerToolbar";
+import { BlockInstanceList } from "./parts/layout/list/BlockInstanceList";
 import { BlockInstanceTree } from "./parts/layout/tree/BlockInstanceTree";
 import classes from "./BlockInstanceManager.module.css";
 
@@ -74,6 +75,8 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
   const [groupsModalOpened, setGroupsModalOpened] = useState(false);
   const [movingInstanceUuid, setMovingInstanceUuid] = useState<string | null>(null);
   const [selectedMoveGroup, setSelectedMoveGroup] = useState<string>("none");
+  const [selectedParentUuid, setSelectedParentUuid] = useState<string | null>(null);
+  const [excludeUuids, setExcludeUuids] = useState<string[]>([]);
   const [parentForNew, setParentForNew] = useState<string | null>(null);
 
   const [filtersVisible, { toggle: toggleFilters, close: closeFilters }] = useDisclosure(false);
@@ -208,18 +211,44 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
     }
   };
 
+  const collectDescendants = (items: IBlockInstance[], parentUuid: string): string[] => {
+    const result: string[] = [];
+    const stack = [parentUuid];
+    while (stack.length) {
+      const current = stack.pop()!;
+      items.forEach((i) => {
+        if (i.parentInstanceUuid === current) {
+          result.push(i.uuid!);
+          stack.push(i.uuid!);
+        }
+      });
+    }
+    return result;
+  };
+
   const handleMoveInstance = (uuid: string) => {
     setMovingInstanceUuid(uuid);
+    const inst = instances?.find((i) => i.uuid === uuid);
+    if (inst) {
+      setSelectedMoveGroup(inst.blockInstanceGroupUuid || "none");
+      setSelectedParentUuid(inst.parentInstanceUuid || null);
+      if (instances) {
+        const desc = collectDescendants(instances, uuid);
+        setExcludeUuids([uuid, ...desc]);
+      }
+    }
   };
 
   //@TODO перенести в репозиторий и вызывать updateBook
   const handleConfirmMove = async () => {
     if (!movingInstanceUuid) return;
-    const target = selectedMoveGroup === "none" ? undefined : selectedMoveGroup;
-    await bookDb.blockInstances
-      .where("uuid")
-      .equals(movingInstanceUuid)
-      .modify({ blockInstanceGroupUuid: target });
+    const targetGroup = selectedMoveGroup === "none" ? undefined : selectedMoveGroup;
+    await BlockInstanceRepository.moveInstance(
+      bookDb,
+      movingInstanceUuid,
+      selectedParentUuid,
+      targetGroup
+    );
     setMovingInstanceUuid(null);
   };
 
@@ -375,16 +404,23 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
               />
             )}
 
-            {block?.useGroups === 1 && (
-              <MoveInstanceModal
-                opened={!!movingInstanceUuid}
-                onClose={() => setMovingInstanceUuid(null)}
-                groups={groups}
-                selectedGroup={selectedMoveGroup}
-                onChangeGroup={(v) => setSelectedMoveGroup(v)}
-                onConfirm={handleConfirmMove}
-              />
-            )}
+            <MoveInstanceModal
+              opened={!!movingInstanceUuid}
+              onClose={() => {
+                setMovingInstanceUuid(null);
+                setSelectedParentUuid(null);
+                setExcludeUuids([]);
+              }}
+              groups={groups}
+              instances={instances || []}
+              useGroups={block?.useGroups === 1}
+              selectedGroup={selectedMoveGroup}
+              selectedParent={selectedParentUuid}
+              excludeUuids={excludeUuids}
+              onChangeGroup={(v) => setSelectedMoveGroup(v)}
+              onChangeParent={(v) => setSelectedParentUuid(v)}
+              onConfirm={handleConfirmMove}
+            />
           </>
         )}
       </Box>
