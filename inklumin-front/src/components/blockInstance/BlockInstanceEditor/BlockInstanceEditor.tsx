@@ -237,7 +237,7 @@ export const BlockInstanceEditor = (props: IBlockInstanceEditorProps) => {
                 value={blockInstance?.title || ""}
               />
               <InlineEdit2
-                  label={"описание:"}
+                  label={"Описание:"}
                   labelPosition={"left"}
                   onChange={(val) => updateBlockInstanceShortDescription(val)}
                   value={blockInstance?.description || ""}
