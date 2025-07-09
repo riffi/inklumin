@@ -96,7 +96,7 @@ export const BlockEditForm = ({ blockUuid, bookUuid }: IBlockEditFormProps) => {
             className={classes.segmentedControl}
             styles={{
               root: {
-                width: "100%",
+                minWidth: "100%",
               },
             }}
           />
