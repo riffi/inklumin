@@ -7,7 +7,7 @@ import {
   IconPlus,
   IconTrash,
 } from "@tabler/icons-react";
-import { ActionIcon, Box, Collapse, Group, Stack, Text } from "@mantine/core";
+import {ActionIcon, Badge, Box, Collapse, Group, Stack, Text} from "@mantine/core";
 import classes from "./BlockInstanceTree.module.css";
 import { IBlockInstanceWithParams } from "@/components/blockInstance/BlockInstanceManager/hooks/useBlockInstanceManager";
 import { IconViewer } from "@/components/shared/IconViewer/IconViewer";
@@ -16,8 +16,11 @@ import {
   RowActionButtons,
 } from "@/components/shared/RowActionButtons/RowActionButtons";
 import { IBlockInstance } from "@/entities/BookEntities";
-import { IBlock } from "@/entities/ConstructorEntities";
+import {IBlock, IBlockParameter, IBlockParameterDataType} from "@/entities/ConstructorEntities";
 import {useMedia} from "@/providers/MediaQueryProvider/MediaQueryProvider";
+import {
+  ParameterViewVariantRenderer
+} from "@/components/shared/blockParameter/ParameterViewVariantRenderer/ParameterViewVariantRenderer";
 
 interface IInstanceTreeNode extends IBlockInstanceWithParams {
   children: IInstanceTreeNode[];
@@ -25,6 +28,7 @@ interface IInstanceTreeNode extends IBlockInstanceWithParams {
 
 interface IBlockInstanceTreeProps {
   instances: IBlockInstanceWithParams[];
+  displayedParameters?: IBlockParameter[];
   block?: IBlock | null;
   onAddChild: (uuid: string) => void;
   onEdit: (uuid: string) => void;
@@ -37,6 +41,7 @@ interface IBlockInstanceTreeProps {
  */
 export const BlockInstanceTree = ({
                                     instances,
+                                    displayedParameters,
                                     block,
                                     onAddChild,
                                     onEdit,
@@ -162,6 +167,54 @@ export const BlockInstanceTree = ({
                       {node.description}
                     </Text>
                 )}
+                <Group
+                    gap="0"
+                    style={{
+                      marginTop: "0px",
+                    }}
+                >
+                  {displayedParameters?.map((param, index) => {
+                    const paramInstance = node.params?.find(
+                        (p) => p.blockParameterUuid === param.uuid
+                    );
+                    if (!paramInstance) return;
+                    return (
+                        <Badge
+                            key={param.uuid}
+                            variant="transparent"
+                            color="#BBB"
+                            style={{
+                              fontSize: "0.8rem",
+                              textTransform: "lowercase",
+                              fontWeight: 400,
+                              paddingLeft: "0px",
+                              borderRadius: "0",
+                              cursor: "pointer",
+                            }}
+                        >
+                          <Group
+                              gap={5}
+                              style={{
+                                borderRight:
+                                    index < displayedParameters?.length - 1 ? "1px solid #EEE" : "none",
+                                paddingRight: "10px",
+                              }}
+                          >
+                            <Text size={12}>{param.title}: </Text>
+
+                            <ParameterViewVariantRenderer
+                                dataType={param.dataType}
+                                value={
+                                  param.dataType === IBlockParameterDataType.blockLink
+                                      ? paramInstance?.linkedBlockInstanceUuid || ""
+                                      : paramInstance?.value || ""
+                                }
+                            />
+                          </Group>
+                        </Badge>
+                    );
+                  })}
+                </Group>
               </Stack>
 
               {/* Кнопки действий */}

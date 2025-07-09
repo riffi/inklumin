@@ -379,6 +379,7 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
                 onEdit={handleEditInstance}
                 onDelete={handleDeleteInstance}
                 onMove={handleMoveInstance}
+                displayedParameters={displayedParameters}
               />
             ) : (
               <BlockInstanceList
