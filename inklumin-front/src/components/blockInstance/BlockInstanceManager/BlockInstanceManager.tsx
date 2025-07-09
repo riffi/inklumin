@@ -1,60 +1,31 @@
-import React, {useCallback, useEffect, useMemo, useState} from "react";
-import {
-  IconCalendar,
-  IconPlus,
-  IconSortAZ,
-  IconChevronDown,
-  IconChevronRight,
-  IconEdit,
-  IconTrash,
-  IconArrowRightCircleFilled,
-} from "@tabler/icons-react";
-import {useNavigate} from "react-router-dom";
-import {
-  Box,
-  Container,
-  Group,
-  LoadingOverlay,
-  MultiSelect,
-  Space,
-  Table,
-  Text,
-  Title,
-  Stack,
-  Collapse, ActionIcon,
-} from "@mantine/core";
-import {useDebouncedValue, useDisclosure} from "@mantine/hooks";
-import {
-  BlockInstanceEditor
-} from "@/components/blockInstance/BlockInstanceEditor/BlockInstanceEditor";
-import {
-  InstanceGroupsModal
-} from "@/components/blockInstance/BlockInstanceManager/modal/InstanceGroupsModal/InstanceGroupsModal";
-import {
-  BlockInstanceTableRow
-} from "@/components/blockInstance/BlockInstanceManager/parts/BlockInstanceTableRow";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { IconCalendar, IconPlus, IconSortAZ } from "@tabler/icons-react";
+import { useNavigate } from "react-router-dom";
+import { Box, Container, Group, LoadingOverlay, MultiSelect, Space, Title } from "@mantine/core";
+import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
+import { BlockInstanceEditor } from "@/components/blockInstance/BlockInstanceEditor/BlockInstanceEditor";
 import {
   IBlockInstanceWithParams,
-  useBlockInstanceManager
+  useBlockInstanceManager,
 } from "@/components/blockInstance/BlockInstanceManager/hooks/useBlockInstanceManager";
+import { InstanceGroupsModal } from "@/components/blockInstance/BlockInstanceManager/modal/InstanceGroupsModal/InstanceGroupsModal";
 import { IconViewer } from "@/components/shared/IconViewer/IconViewer";
-import { RowActionButtons, ActionItem } from "@/components/shared/RowActionButtons/RowActionButtons";
-import {bookDb} from "@/entities/bookDb";
-import {IBlockInstance} from "@/entities/BookEntities";
-import {useDialog} from "@/providers/DialogProvider/DialogProvider";
-import {useMedia} from "@/providers/MediaQueryProvider/MediaQueryProvider";
-import {useMobileHeader} from "@/providers/PageTitleProvider/MobileHeaderProvider";
-import {
-  BlockParameterInstanceRepository
-} from "@/repository/BlockInstance/BlockParameterInstanceRepository";
-import {useUiSettingsStore,} from "@/stores/uiSettingsStore/uiSettingsStore";
-import {getBlockTitle} from "@/utils/configUtils";
-import {generateUUID} from "@/utils/UUIDUtils";
-import {useInstanceList} from "./hooks/useInstanceList";
-import {AddInstanceModal} from "./modal/AddInstanceModal/AddInstanceModal";
-import {MoveInstanceModal} from "./modal/MoveInstanceModal/MoveInstanceModal";
-import {BlockInstanceGroupTabs} from "./parts/BlockInstanceGroupTabs";
-import {BlockInstanceManagerToolbar} from "./parts/BlockInstanceManagerToolbar";
+import { bookDb } from "@/entities/bookDb";
+import { IBlockInstance } from "@/entities/BookEntities";
+import { useDialog } from "@/providers/DialogProvider/DialogProvider";
+import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
+import { useMobileHeader } from "@/providers/PageTitleProvider/MobileHeaderProvider";
+import { BlockParameterInstanceRepository } from "@/repository/BlockInstance/BlockParameterInstanceRepository";
+import { useUiSettingsStore } from "@/stores/uiSettingsStore/uiSettingsStore";
+import { getBlockTitle } from "@/utils/configUtils";
+import { generateUUID } from "@/utils/UUIDUtils";
+import { useInstanceList } from "./hooks/useInstanceList";
+import { AddInstanceModal } from "./modal/AddInstanceModal/AddInstanceModal";
+import { MoveInstanceModal } from "./modal/MoveInstanceModal/MoveInstanceModal";
+import { BlockInstanceGroupTabs } from "./parts/BlockInstanceGroupTabs";
+import { BlockInstanceList } from "./parts/BlockInstanceList";
+import { BlockInstanceManagerToolbar } from "./parts/BlockInstanceManagerToolbar";
+import { BlockInstanceTree } from "./parts/BlockInstanceTree";
 import classes from "./BlockInstanceManager.module.css";
 
 export interface IBlockInstanceManagerProps {
@@ -104,7 +75,6 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
   const [movingInstanceUuid, setMovingInstanceUuid] = useState<string | null>(null);
   const [selectedMoveGroup, setSelectedMoveGroup] = useState<string>("none");
   const [parentForNew, setParentForNew] = useState<string | null>(null);
-  const [expandedNodes, setExpandedNodes] = useState<Record<string, boolean>>({});
 
   const [filtersVisible, { toggle: toggleFilters, close: closeFilters }] = useDisclosure(false);
   const [filters, setFilters] = useState<Record<string, string[]>>({});
@@ -129,15 +99,15 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
   const desktopHeader = (
     <Group>
       {block?.icon && (
-          <IconViewer
-              icon={block?.icon}
-              size={isMobile ? 20 : 30}
-              style={{
-                color: isMobile ? "white" : "rgb(104 151 191)",
-                boxShadow: "0px 0px 5px rgba(0,0,0,0.2)",
-                backgroundColor: isMobile ? "var(--mantine-color-blue-5)" : "white",
-              }}
-          />
+        <IconViewer
+          icon={block?.icon}
+          size={isMobile ? 20 : 30}
+          style={{
+            color: isMobile ? "white" : "rgb(104 151 191)",
+            boxShadow: "0px 0px 5px rgba(0,0,0,0.2)",
+            backgroundColor: isMobile ? "var(--mantine-color-blue-5)" : "white",
+          }}
+        />
       )}
       <Title
         order={isMobile ? 4 : 2}
@@ -193,7 +163,7 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
     name: string,
     description: string,
     group: string,
-    parentUuid?: string,
+    parentUuid?: string
   ) => {
     if (!bookDb || !name.trim()) return;
 
@@ -221,7 +191,7 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
       }
       close();
       setParentForNew(null);
-     // navigate(`/block-instance/card?uuid=${uuid}`);
+      // navigate(`/block-instance/card?uuid=${uuid}`);
     } finally {
       setAddingInstance(false);
     }
@@ -254,32 +224,9 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
   };
 
   const displayedInstancesByGroup = useMemo(
-      () => (instancesWithParams ? getByGroup(instancesWithParams, filters) : []),
-      [instancesWithParams, filters, getByGroup]
+    () => (instancesWithParams ? getByGroup(instancesWithParams, filters) : []),
+    [instancesWithParams, filters, getByGroup]
   );
-
-  interface IInstanceTreeNode extends IBlockInstanceWithParams {
-    children: IInstanceTreeNode[];
-  }
-
-  const instanceTree = useMemo(() => {
-    const map = new Map<string, IInstanceTreeNode>();
-    const roots: IInstanceTreeNode[] = [];
-    displayedInstancesByGroup.forEach((inst) => {
-      map.set(inst.uuid!, { ...inst, children: [] });
-    });
-    displayedInstancesByGroup.forEach((inst) => {
-      const node = map.get(inst.uuid!);
-      if (!node) return;
-      const parent = inst.parentInstanceUuid ? map.get(inst.parentInstanceUuid) : null;
-      if (parent) {
-        parent.children.push(node);
-      } else {
-        roots.push(node);
-      }
-    });
-    return roots;
-  }, [displayedInstancesByGroup]);
 
   // Обработчики фильтров
   const handleFilterChange = useCallback((paramUuid: string, values: string[]) => {
@@ -292,72 +239,6 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
   const clearFilters = () => {
     setFilters({});
     closeFilters();
-  };
-
-  const renderTree = (nodes: IInstanceTreeNode[], level = 0): React.ReactNode => {
-    return nodes.map((node) => {
-      const actions: ActionItem[] = [
-        {
-          title: "Редактировать",
-          icon: <IconEdit size={16} />,
-          handler: () => handleEditInstance(node.uuid!),
-        },
-        {
-          title: "Переместить",
-          icon: <IconArrowRightCircleFilled size={16} />,
-          handler: () => handleMoveInstance(node.uuid!),
-        },
-        {
-          title: "Удалить",
-          icon: <IconTrash size={16} />,
-          color: "red",
-          handler: () => handleDeleteInstance(node),
-        },
-      ];
-
-      return (
-        <Box key={node.uuid} ml={level * 20} pt={5} pb={5}>
-          <Group gap={4} align="center">
-            {node.children.length > 0 && (
-              <ActionIcon variant="subtle" onClick={() => toggleNode(node.uuid!)}>
-                {expandedNodes[node.uuid!] ? <IconChevronDown size={16} /> : <IconChevronRight size={16} />}
-              </ActionIcon>
-            )}
-            {node.children.length === 0 && <Box w={24} />}
-            <IconViewer icon={node.icon ?? block?.icon} size={24} color="rgb(102,102,102)" backgroundColor="transparent" />
-            <Stack gap={0} style={{ flex: 1 }} >
-              <Text style={{ cursor: "pointer" }} onClick={() => handleEditInstance(node.uuid!)}>
-                {node.title}
-              </Text>
-              {node.description && (
-                <Text size="sm" c="dimmed">
-                  {node.description}
-                </Text>
-              )}
-            </Stack>
-            <ActionIcon
-              variant="subtle"
-              color="green"
-              onClick={() => {
-                setParentForNew(node.uuid!);
-                open();
-              }}
-              title="Добавить внутрь"
-            >
-              <IconPlus size={16} />
-            </ActionIcon>
-            <RowActionButtons actions={actions} entityId={node.uuid} />
-          </Group>
-          {node.children.length > 0 && (
-            <Collapse in={expandedNodes[node.uuid!]}> {renderTree(node.children, level + 1)} </Collapse>
-          )}
-        </Box>
-      );
-    });
-  };
-
-  const toggleNode = (uuid: string) => {
-    setExpandedNodes((prev) => ({ ...prev, [uuid]: !prev[uuid] }));
   };
 
   if (block?.structureKind === "single") {
@@ -439,55 +320,41 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
               </div>
             )}
             {block?.treeView === 1 ? (
-              <Stack gap="xs" mt="md">
-                {instanceTree.length > 0 ? (
-                  renderTree(instanceTree)
-                ) : (
-                  <Text c="dimmed" ta="center" py="md" size="sm">
-                    Добавьте {block?.titleForms?.accusative}
-                  </Text>
-                )}
-              </Stack>
+              <BlockInstanceTree
+                instances={displayedInstancesByGroup}
+                block={block}
+                onAddChild={(uuid) => {
+                  setParentForNew(uuid);
+                  open();
+                }}
+                onEdit={handleEditInstance}
+                onDelete={handleDeleteInstance}
+                onMove={handleMoveInstance}
+              />
             ) : (
-              <Table highlightOnHover className={classes.table}>
-                <>
-                  {displayedInstancesByGroup.length > 0 ? (
-                    <Table.Tbody>
-                      {displayedInstancesByGroup.map((instance) => (
-                        <BlockInstanceTableRow
-                          key={instance.uuid!}
-                          instance={instance}
-                          block={block}
-                          displayedParameters={displayedParameters}
-                          onEdit={() => handleEditInstance(instance.uuid!)}
-                          onDelete={() => handleDeleteInstance(instance)}
-                          onMove={handleMoveInstance}
-                        />
-                      ))}
-                    </Table.Tbody>
-                  ) : (
-                    <Table.Tbody>
-                      <Table.Tr>
-                        <Table.Td colSpan={2}>
-                          <Text c="dimmed" ta="center" py="md" size="sm">
-                            Добавьте {block?.titleForms?.accusative}
-                          </Text>
-                        </Table.Td>
-                      </Table.Tr>
-                    </Table.Tbody>
-                  )}
-                </>
-              </Table>
+              <BlockInstanceList
+                instances={displayedInstancesByGroup}
+                block={block}
+                displayedParameters={displayedParameters}
+                onEdit={handleEditInstance}
+                onDelete={handleDeleteInstance}
+                onMove={handleMoveInstance}
+              />
             )}
 
             <AddInstanceModal
               opened={opened}
-              onClose={() => { setParentForNew(null); close(); }}
+              onClose={() => {
+                setParentForNew(null);
+                close();
+              }}
               title={"Создание " + block?.titleForms?.genitive}
               groups={groups}
               currentGroupUuid={currentGroupUuid}
               useGroups={block?.useGroups === 1}
-              onCreate={(name, desc, group) => handleCreateInstance(name, desc, group, parentForNew || undefined)}
+              onCreate={(name, desc, group) =>
+                handleCreateInstance(name, desc, group, parentForNew || undefined)
+              }
               loading={addingInstance}
             />
 
