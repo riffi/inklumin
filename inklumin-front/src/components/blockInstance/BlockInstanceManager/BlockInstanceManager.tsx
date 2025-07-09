@@ -211,6 +211,26 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
     }
   };
 
+  /**
+   * Удаление группы экземпляров с предупреждением,
+   * если в ней есть элементы
+   */
+  const handleDeleteGroup = async (uuid: string) => {
+    let confirmDelete = true;
+    if (instances?.some((i) => i.blockInstanceGroupUuid === uuid)) {
+      confirmDelete = await showDialog(
+        "Предупреждение",
+        'При удалении группы все её элементы будут перенесены в блок "без групп"'
+      );
+    }
+    if (confirmDelete) {
+      await deleteGroup(uuid);
+      if (currentGroupUuid === uuid) {
+        setCurrentGroupUuid("none");
+      }
+    }
+  };
+
   const collectDescendants = (items: IBlockInstance[], parentUuid: string): string[] => {
     const result: string[] = [];
     const stack = [parentUuid];
@@ -397,7 +417,7 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
                 }
                 onMoveGroupUp={moveGroupUp}
                 onMoveGroupDown={moveGroupDown}
-                onDeleteGroup={deleteGroup}
+                onDeleteGroup={handleDeleteGroup}
                 onUpdateGroupTitle={(uuid, t) =>
                   saveGroup({ ...groups?.find((g) => g.uuid === uuid)!, title: t })
                 }

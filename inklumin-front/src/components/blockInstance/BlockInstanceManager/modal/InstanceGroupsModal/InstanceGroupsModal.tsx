@@ -90,7 +90,6 @@ export const InstanceGroupsModal = ({
               variant="light"
               color="red"
               onClick={() => onDeleteGroup(g.uuid)}
-              disabled={groups.length <= 1}
             >
               <IconTrash size="1rem" />
             </ActionIcon>
