@@ -136,22 +136,7 @@ export const MainTabContent = ({ block, onSave, bookUuid }: MainTabContentProps)
               label={"Название блока"}
             />
 
-            <Select
-              value={block?.structureKind || IBlockStructureKind.single}
-              onChange={(value) => handleBlockPropertyChange({ structureKind: value })}
-              data={structureKindOptions}
-              label="Тип структуры"
-              placeholder="Выберите тип структуры"
-            />
-            {block?.structureKind === IBlockStructureKind.multiple && (
-              <Checkbox
-                label="Древовидное представление"
-                checked={block?.treeView === 1}
-                onChange={(e) =>
-                  handleBlockPropertyChange({ treeView: e.currentTarget.checked ? 1 : 0 })
-                }
-              />
-            )}
+
           </SimpleGrid>
 
           <InlineEdit2
@@ -161,23 +146,47 @@ export const MainTabContent = ({ block, onSave, bookUuid }: MainTabContentProps)
             label={"Описание"}
           />
 
+          <Divider my="sm" label="Структура" labelPosition="center" labelProps={{ size: "sm" }} />
+          <Stack gap="xs">
+            <Select
+                value={block?.structureKind || IBlockStructureKind.single}
+                onChange={(value) => handleBlockPropertyChange({ structureKind: value })}
+                data={structureKindOptions}
+                label="Тип структуры"
+                placeholder="Сколько можно создавать элементов?"
+            />
+            {block?.structureKind === IBlockStructureKind.multiple && (
+                <Checkbox
+                    label="Древовидное представление"
+                    checked={block?.treeView === 1}
+                    onChange={(e) =>
+                        handleBlockPropertyChange({ treeView: e.currentTarget.checked ? 1 : 0 })
+                    }
+                />
+            )}
+            <Checkbox
+                checked={block?.useGroups === 1}
+                label="Группировать сущности блока в списке"
+                onChange={(e) =>
+                    handleBlockPropertyChange({ useGroups: e.currentTarget.checked ? 1 : 0 })
+                }
+            />
+
+            <Checkbox
+                checked={block?.useTabs === 1}
+                label="Использовать вкладки для группировки свойств"
+                onChange={(e) =>
+                    handleBlockPropertyChange({ useTabs: e.currentTarget.checked ? 1 : 0 })
+                }
+            />
+
+          </Stack>
+
           <Divider my="sm" label="Опции" labelPosition="center" labelProps={{ size: "sm" }} />
 
           <Stack gap="xs">
-            <Checkbox
-              checked={block?.useTabs === 1}
-              label="Использовать вкладки для группировки свойств"
-              onChange={(e) =>
-                handleBlockPropertyChange({ useTabs: e.currentTarget.checked ? 1 : 0 })
-              }
-            />
-            <Checkbox
-              checked={block?.useGroups === 1}
-              label="Группировать элементы"
-              onChange={(e) =>
-                handleBlockPropertyChange({ useGroups: e.currentTarget.checked ? 1 : 0 })
-              }
-            />
+
+
             <Checkbox
               checked={block?.sceneLinkAllowed === 1}
               label="Привязка к сцене"
