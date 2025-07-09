@@ -229,7 +229,7 @@ export const MainTabContent = ({ block, onSave, bookUuid }: MainTabContentProps)
             <Group>
               {block.icon.iconKind === IIconKind.gameIcons ? (
                 <IconViewer
-                  iconName={block.icon.iconName}
+                  icon={block.icon}
                   size={64}
                   style={{ color: "var(--mantine-color-blue-filled)" }}
                 />
