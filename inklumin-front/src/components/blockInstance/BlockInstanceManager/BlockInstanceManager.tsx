@@ -113,15 +113,17 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
 
   const desktopHeader = (
     <Group>
-      <IconViewer
-        icon={block?.icon}
-        size={isMobile ? 20 : 30}
-        style={{
-          color: isMobile ? "white" : "rgb(104 151 191)",
-          boxShadow: "0px 0px 5px rgba(0,0,0,0.2)",
-          backgroundColor: isMobile ? "var(--mantine-color-blue-5)" : "white",
-        }}
-      />
+      {block?.icon && (
+          <IconViewer
+              icon={block?.icon}
+              size={isMobile ? 20 : 30}
+              style={{
+                color: isMobile ? "white" : "rgb(104 151 191)",
+                boxShadow: "0px 0px 5px rgba(0,0,0,0.2)",
+                backgroundColor: isMobile ? "var(--mantine-color-blue-5)" : "white",
+              }}
+          />
+      )}
       <Title
         order={isMobile ? 4 : 2}
         style={{
@@ -196,7 +198,7 @@ export const BlockInstanceManager = (props: IBlockInstanceManagerProps) => {
         await BlockParameterInstanceRepository.addParameterInstance(bookDb, paramInstance);
       }
       close();
-      navigate(`/block-instance/card?uuid=${uuid}`);
+     // navigate(`/block-instance/card?uuid=${uuid}`);
     } finally {
       setAddingInstance(false);
     }

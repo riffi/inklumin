@@ -137,9 +137,9 @@ export const BookConfigurationEditForm = (props: IBookConfigurationEditFormProps
             <Text fw={500}>Добавить блок</Text>
           </Stack>
         </Card>
-        {blockList?.map((c) => (
+        {blockList?.map((block) => (
           <Card
-            key={c.uuid}
+            key={block.uuid}
             shadow="xs"
             padding="lg"
             radius="md"
@@ -147,14 +147,14 @@ export const BookConfigurationEditForm = (props: IBookConfigurationEditFormProps
               cursor: "pointer",
             }}
             withBorder
-            onClick={handleOpenBlockPage(c)}
+            onClick={handleOpenBlockPage(block)}
           >
             <Stack gap="sm">
               <Group justify="space-between" wrap="nowrap">
                 <Group gap="xs" wrap="nowrap" align="center">
-                  <IconViewer icon={c.icon} size={24} color={"gray"} />
+                  {block?.icon && (<IconViewer icon={block.icon} size={24} color={"gray"} />)}
                   <Text fw={500} truncate="end">
-                    {c.title}
+                    {block.title}
                   </Text>
                 </Group>
                 <ActionIcon
@@ -162,7 +162,7 @@ export const BookConfigurationEditForm = (props: IBookConfigurationEditFormProps
                   variant="subtle"
                   onClick={(e) => {
                     e.stopPropagation();
-                    removeBlock(c);
+                    removeBlock(block);
                   }}
                 >
                   <IconTrash size={18} />
@@ -171,28 +171,28 @@ export const BookConfigurationEditForm = (props: IBookConfigurationEditFormProps
 
               <Group gap="xs">
                 <Badge variant="light" color="grey">
-                  {IBlockStructureKindTitle[c.structureKind]}
+                  {IBlockStructureKindTitle[block.structureKind]}
                 </Badge>
-                {c.useTabs === 1 && (
+                {block.useTabs === 1 && (
                   <Badge variant="light" color="grey">
                     Со вкладками
                   </Badge>
                 )}
-                {c.useGroups === 1 && (
+                {block.useGroups === 1 && (
                   <Badge variant="light" color="grey">
                     С группами
                   </Badge>
                 )}
-                {!!c.hostBlockUuid && (
+                {!!block.hostBlockUuid && (
                   <Badge variant="light" color="grey">
                     Вложенный
                   </Badge>
                 )}
               </Group>
 
-              {c.description && (
+              {block.description && (
                 <Text size="sm" c="dimmed" lineClamp={3}>
-                  {c.description}
+                  {block.description}
                 </Text>
               )}
             </Stack>

@@ -14,7 +14,10 @@ import { BlockParameterRepository } from "@/repository/Block/BlockParameterRepos
 import { BlockRelationRepository } from "@/repository/Block/BlockRelationRepository";
 import { BlockRepository } from "@/repository/Block/BlockRepository";
 import { BlockTabRepository } from "@/repository/Block/BlockTabRepository";
-import { BlockInstanceRepository } from "@/repository/BlockInstance/BlockInstanceRepository";
+import {
+  BlockInstanceRepository,
+  getNestedInstances
+} from "@/repository/BlockInstance/BlockInstanceRepository";
 import { BlockParameterInstanceRepository } from "@/repository/BlockInstance/BlockParameterInstanceRepository";
 
 export const useBlockInstanceEditor = (
@@ -112,7 +115,7 @@ export const useBlockInstanceEditor = (
 
   const nestedBlocks = useLiveQuery<IBlock[]>(() => {
     if (!block) return [];
-    return BlockRepository.getChildren(bookDb, block.uuid);
+    return BlockRepository.getNested(bookDb, block.uuid);
   }, [block]);
 
   const nestedInstancesMap = useLiveQuery<Record<string, IBlockInstance[]>>(async () => {
@@ -121,7 +124,7 @@ export const useBlockInstanceEditor = (
 
     await Promise.all(
       nestedBlocks.map(async (nestedBlock) => {
-        result[nestedBlock.uuid] = await BlockInstanceRepository.getChildInstances(
+        result[nestedBlock.uuid] = await BlockInstanceRepository.getNestedInstances(
           bookDb,
           blockInstance?.uuid,
           nestedBlock.uuid
@@ -164,8 +167,8 @@ export const useBlockInstanceEditor = (
     relatedBlocks,
     allBlocks,
     blockRelations,
-    childBlocks: nestedBlocks,
-    childInstancesMap: nestedInstancesMap,
+    nestedBlocks,
+    nestedInstancesMap,
     blockTabs,
     referencingParams,
     updateBlockInstanceShortDescription: updateBlockInstanceDescription,

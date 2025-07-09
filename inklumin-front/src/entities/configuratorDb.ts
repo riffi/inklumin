@@ -21,7 +21,6 @@ class ConfigDatabase extends BlockAbstractDb {
   notesMeta!: Dexie.Table<INotesMeta, number>;
   globalSettings!: Dexie.Table<IGlobalSettings, number>;
   openRouterModels!: Dexie.Table<IOpenRouterModel, number>;
-  userDocPages!: Dexie.Table<IUserDocPage, number>;
   constructor() {
     super("BlocksDatabase");
     this.version(7)
