@@ -23,9 +23,9 @@ import { useInstanceList } from "./hooks/useInstanceList";
 import { AddInstanceModal } from "./modal/AddInstanceModal/AddInstanceModal";
 import { MoveInstanceModal } from "./modal/MoveInstanceModal/MoveInstanceModal";
 import { BlockInstanceGroupTabs } from "./parts/BlockInstanceGroupTabs";
-import { BlockInstanceList } from "./parts/BlockInstanceList";
+import { BlockInstanceList } from "./parts/layout/list/BlockInstanceList";
 import { BlockInstanceManagerToolbar } from "./parts/BlockInstanceManagerToolbar";
-import { BlockInstanceTree } from "./parts/BlockInstanceTree";
+import { BlockInstanceTree } from "./parts/layout/tree/BlockInstanceTree";
 import classes from "./BlockInstanceManager.module.css";
 
 export interface IBlockInstanceManagerProps {

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { IconDots } from "@tabler/icons-react";
-import { ActionIcon, Drawer, Group, Stack, Text } from "@mantine/core";
+import { ActionIcon, Drawer, Group, Stack, Text, Menu } from "@mantine/core";
 import { useMedia } from "@/providers/MediaQueryProvider/MediaQueryProvider";
 
 export interface ActionItem {
@@ -12,7 +12,8 @@ export interface ActionItem {
   active?: boolean;
 }
 
-interface ActionButtonsProps {
+// Интерфейс для свойств компонента
+interface IRowActionButtonsProps {
   actions: ActionItem[];
   entityId?: string;
   drawerTitle?: string;
@@ -22,7 +23,7 @@ export const RowActionButtons = ({
   actions,
   entityId,
   drawerTitle = "Действия",
-}: ActionButtonsProps) => {
+}: IRowActionButtonsProps) => {
   const { isMobile } = useMedia();
   const [openedDrawerId, setOpenedDrawerId] = useState<string | null>(null);
 
@@ -79,19 +80,25 @@ export const RowActionButtons = ({
           </Drawer>
         </>
       ) : (
-        <>
-          {actions.map((action, index) => (
-            <ActionIcon
-              key={index}
-              variant={action.active ? "filled" : (action.variant ?? "subtle")}
-              color={action.color || (action.active ? "blue" : undefined)}
-              size={20}
-              onClick={action.handler}
-            >
-              {action.icon}
+        <Menu withinPortal={false} position="bottom-end">
+          <Menu.Target>
+            <ActionIcon variant="subtle">
+              <IconDots size={16} />
             </ActionIcon>
-          ))}
-        </>
+          </Menu.Target>
+          <Menu.Dropdown>
+            {actions.map((action, index) => (
+              <Menu.Item
+                key={index}
+                leftSection={action.icon}
+                onClick={action.handler}
+                color={action.color || (action.active ? "blue" : undefined)}
+              >
+                {action.title}
+              </Menu.Item>
+            ))}
+          </Menu.Dropdown>
+        </Menu>
       )}
     </Group>
   );
