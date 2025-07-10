@@ -10,6 +10,7 @@ import {
 import { IBlockInstance } from "@/entities/BookEntities";
 import { IBlock, IBlockParameter, IBlockParameterDataType } from "@/entities/ConstructorEntities";
 import classes from "./BlockInstanceList.module.css";
+import {useMedia} from "@/providers/MediaQueryProvider/MediaQueryProvider";
 
 interface BlockInstanceTableRowProps {
   instance: IBlockInstanceWithParams;
@@ -28,6 +29,9 @@ export const BlockInstanceTableRow = ({
   onDelete,
   onMove,
 }: BlockInstanceTableRowProps) => {
+
+  const {isMobile} = useMedia()
+
   const actions: ActionItem[] = [
     {
       title: "Редактировать",
@@ -52,13 +56,13 @@ export const BlockInstanceTableRow = ({
     <Table.Tr key={instance.uuid}>
       <Table.Td
         onClick={() => onEdit(instance.uuid!)}
-        style={{ cursor: "pointer", padding: "10px 0px 10px 20px" }}
+        style={{ cursor: "pointer", padding: isMobile ? "5px 0px 5px 15px" : "10px 0px 10px 20px"}}
       >
         <Group gap="10" wrap="nowrap">
           <Box className={classes.iconContainer}>
             <IconViewer
               icon={instance?.icon ?? block?.icon}
-              size={45}
+              size={isMobile ? 25 : 40}
               color="rgb(102, 102, 102)"
               backgroundColor="transparent"
             />
@@ -75,7 +79,8 @@ export const BlockInstanceTableRow = ({
             <Group
               gap="0"
               style={{
-                marginTop: "0px",
+                /*@TODO убрать костыль */
+                marginTop: "-3px",
               }}
             >
               {displayedParameters?.map((param, index) => {

@@ -110,10 +110,10 @@ export const BlockInstanceTree = ({
             <Group
                 gap={8}
                 align="center"
-                p="8px 12px"
+                p={isMobile ? "8px 0px" : "8px 8px"}
                 className={classes.row}
                 style={{
-                  marginLeft: level * 24,
+                  marginLeft: level * (isMobile ? 12 : 24),
                   position: 'relative'
                 }}
             >
@@ -160,7 +160,7 @@ export const BlockInstanceTree = ({
                     <Text
                         size="xs"
                         c="dimmed"
-                        style={{ cursor: "pointer" }}
+                        style={{ cursor: "pointer"}}
                         className={classes.description}
                         truncate
                     >
@@ -170,7 +170,8 @@ export const BlockInstanceTree = ({
                 <Group
                     gap="0"
                     style={{
-                      marginTop: "0px",
+                      /*@TODO убрать костыль */
+                      marginTop: "-3px",
                     }}
                 >
                   {displayedParameters?.map((param, index) => {
